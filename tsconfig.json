@@ -1,10 +1,11 @@
 {
   "compilerOptions": {
-    "target": "ES2020",
+    "target": "ES2023",
     "useDefineForClassFields": true,
     "module": "ESNext",
-    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "lib": ["ES2023", "DOM", "DOM.Iterable"],
     "skipLibCheck": true,
+    "plugins": [{ "name": "typescript-plugin-css-modules" }],
 
     /* Bundler mode */
     "moduleResolution": "bundler",
@@ -15,6 +16,7 @@
 
     /* Linting */
     "strict": true,
+    "exactOptionalPropertyTypes": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
