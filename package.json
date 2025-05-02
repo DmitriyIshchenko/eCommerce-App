@@ -6,9 +6,12 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
+    "format": "prettier --write .",
+    "ci:format": "prettier --check .",
     "preview": "vite preview"
   },
   "devDependencies": {
+    "prettier": "^3.5.3",
     "typescript": "^5.8.3",
     "vite": "^6.3.1"
   }
