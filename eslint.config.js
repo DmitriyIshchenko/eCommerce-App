@@ -5,19 +5,25 @@ import pluginReact from "eslint-plugin-react";
 import prettierConfig from "eslint-config-prettier";
 import { defineConfig } from "eslint/config";
 
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 export default defineConfig([
+  { ignores: ["**/*.config.js"] },
+  { files: ["**/*.{js,mjs,cjs,ts,jsx,tsx}"], plugins: { js }, extends: ["js/recommended"] },
+  { files: ["**/*.{js,mjs,cjs,ts,jsx,tsx}"], languageOptions: { globals: globals.browser } },
+  tseslint.configs.recommendedTypeChecked,
   {
-    files: ["**/*.{ts,js}"],
     languageOptions: {
-      globals: {
-        ...globals.browser,
-        ...globals.node,
+      parserOptions: {
+        project: true,
+        tsconfigRootDir: __dirname,
       },
     },
   },
-
-  js.configs.recommended,
-  ...tseslint.configs.recommended,
   pluginReact.configs.flat.recommended,
   prettierConfig,
 
