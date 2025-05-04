@@ -1,6 +1,7 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { RouterProvider, createRouter } from "@tanstack/react-router";
+import { FluentProvider, webLightTheme } from "@fluentui/react-components";
 import "./styles/globals.css";
 
 import { routeTree } from "./routeTree.gen";
@@ -19,6 +20,8 @@ document.body.append(root);
 
 createRoot(root).render(
   <StrictMode>
-    <RouterProvider router={router} />
+    <FluentProvider theme={webLightTheme}>
+      <RouterProvider router={router} />
+    </FluentProvider>
   </StrictMode>
 );
