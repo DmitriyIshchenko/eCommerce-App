@@ -14,7 +14,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 export default defineConfig([
-  { ignores: ["**/*.config.js", "**/*.config.ts", "dist"] },
+  { ignores: ["**/*.config.js", "**/*.config.ts", "dist", "**/*.gen.ts"] },
   {
     files: ["**/*.{ts,tsx}"],
     plugins: { js, "react-hooks": reactHooks, "react-refresh": reactRefresh },
