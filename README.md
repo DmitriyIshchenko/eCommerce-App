@@ -18,6 +18,23 @@ This is an e-commerce project created by the **`200 OK team`** as part of the [R
 | **Vitest**        | ![Vitest](https://img.shields.io/badge/Vitest-6E9F18?logo=vitest&logoColor=white)             |
 | **Commercetools** | ![Commercetools](https://img.shields.io/badge/commercetools-512DA8)                           |
 
+## 🔁 Useful Commands
+
+The following scripts are available in the project and can be run using `npm run <script>`:
+
+| Script          | Description                                              |
+|-----------------|----------------------------------------------------------|
+| `dev`           | Starts Vite for development.                             |
+| `build`         | Builds the project for production using Vite.            |
+| `format`        | Formats files using Prettier.                            |
+| `ci:format`     | Checks code formatting with Prettier.                    |
+| `preview`       | Previews the project using Vite.                         |
+| `ci:lint`       | Runs ESLint to check for linting errors.                 |
+| `lint`          | Runs ESLint and automatically fixes fixable issues.      |
+| `prepare`       | Installs Husky in the project directory.                 |
+| `test`          | Runs tests using Vitest.                                 |
+| `coverage:test` | Runs tests and generates a coverage report using Vitest. |
+
 ## 🐾 Authors
 
 - 👨‍💻 [**Dmitriy Ishchenko**](https://github.com/DmitriyIshchenko)
