@@ -1,5 +1,6 @@
 import * as React from "react";
 import { Outlet, createRootRoute } from "@tanstack/react-router";
+import HeroCarousel from "../components/hero-carousel";
 
 export const Route = createRootRoute({
   component: RootComponent,
@@ -8,7 +9,7 @@ export const Route = createRootRoute({
 function RootComponent() {
   return (
     <React.Fragment>
-      <div>Root route</div>
+      <div><HeroCarousel/></div>
       <Outlet />
     </React.Fragment>
   );
