@@ -6,6 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
+    "format": "prettier --write .",
+    "ci:format": "prettier --check .",
     "preview": "vite preview",
     "ci:lint": "eslint .",
     "lint": "eslint . --fix"
@@ -22,6 +24,7 @@
     "zod": "^3.24.3"
   },
   "devDependencies": {
+    "prettier": "^3.5.3",
     "@eslint/js": "^9.25.1",
     "@tanstack/router-plugin": "^1.119.0",
     "@tanstack/react-router-devtools": "^1.119.1",
