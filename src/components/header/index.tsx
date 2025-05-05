@@ -7,6 +7,9 @@ const useClasses = makeStyles({
     padding: tokens.spacingHorizontalS,
     backgroundColor: tokens.colorBackgroundOverlay,
 	},
+	"some-other-class": {
+		color: "dimgray",
+	}
 });
 
 export default function Header() {

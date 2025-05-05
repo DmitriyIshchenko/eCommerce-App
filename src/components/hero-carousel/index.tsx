@@ -18,6 +18,7 @@ import img1 from "../../assets/images/18th-century-french-botanical-illustration
 import img2 from "../../assets/images/a-general-view-of-the-animal-kingdom-6194567708715.webp";
 import img3 from "../../assets/images/astronomy-101-art-earth-5990881329195.webp";
 import img4 from "../../assets/images/tribute-tree.webp";
+import { Link } from "@tanstack/react-router";
 
 const useClasses = makeStyles({
 	bannerCard: {
@@ -76,9 +77,7 @@ const BannerCard: React.FC<{
 				<div className={classes.title}>{children}</div>
 				<div className={classes.subtext}>{text}</div>
 				<div>
-					<Button size="small" shape="square" appearance="primary">
-						Call to action
-					</Button>
+					<Link to={'/product1'}>Product1</Link>
 				</div>
 			</div>
 		</CarouselCard>
@@ -123,7 +122,6 @@ export default function HeroCarousel() {
 					"aria-label": "Enable autoplay",
 					checked: true,
 				}}
-
 				nextTooltip={{ content: "Go to next", relationship: "label" }}
 				prevTooltip={{ content: "Go to prev", relationship: "label" }}
 			>
