@@ -9,7 +9,7 @@ This is an e-commerce project created by the **`200 OK team`** as part of the [R
 ## 🛠️ Built With
 
 | Technology        | Badge                                                                                         |
-|-------------------|-----------------------------------------------------------------------------------------------|
+| ----------------- | --------------------------------------------------------------------------------------------- |
 | **React**         | ![React](https://img.shields.io/badge/React-20232A?style=flat&logo=react&logoColor=61DAFB)    |
 | **TypeScript**    | ![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white) |
 | **Vite**          | ![Vite](https://img.shields.io/badge/Vite-646CFF?logo=vite&logoColor=white)                   |
@@ -23,7 +23,7 @@ This is an e-commerce project created by the **`200 OK team`** as part of the [R
 The following scripts are available in the project and can be run using `npm run <script>`:
 
 | Script          | Description                                              |
-|-----------------|----------------------------------------------------------|
+| --------------- | -------------------------------------------------------- |
 | `dev`           | Starts Vite for development.                             |
 | `build`         | Builds the project for production using Vite.            |
 | `format`        | Formats files using Prettier.                            |

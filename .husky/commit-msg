@@ -1,0 +1,17 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+VALID_WORDS="init feat fix refactor docs style chore"
+COMMIT_MSG=$(cat "$1")
+valid=false
+for word in $VALID_WORDS; do
+  if echo "$COMMIT_MSG" | grep -qE "^$word:"; then
+    valid=true
+    break
+  fi
+done
+
+if [ "$valid" = false ]; then
+  echo "Сommit name error"
+  exit 1
+fi
