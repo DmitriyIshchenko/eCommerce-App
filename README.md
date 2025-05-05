@@ -18,6 +18,54 @@ This is an e-commerce project created by the **`200 OK team`** as part of the [R
 | **Vitest**        | ![Vitest](https://img.shields.io/badge/Vitest-6E9F18?logo=vitest&logoColor=white)             |
 | **Commercetools** | ![Commercetools](https://img.shields.io/badge/commercetools-512DA8)                           |
 
+## 🚀 Quick Start
+
+Get the project up and running in just a few steps:
+
+### Prerequisites
+
+- Node.js v18.x or higher
+- Git
+- Commercetools Account ([Sign up here](https://commercetools.com/))
+
+### Installation
+
+1. Clone the repository
+
+    ```bash
+    git clone https://github.com/DmitriyIshchenko/eCommerce-App.git
+    ```
+    
+2. Navigate to the project folder
+
+    ```bash
+    cd eCommerce-App
+    ```
+
+3. Install dependencies
+
+    ```bash
+    npm install
+    ```
+
+4. Configure Commercetools
+
+    Create a `.env` file in the root directory and add your Commercetools API credentials:
+
+    ```bash
+    CT_PROJECT_KEY=<your_project_key>
+    CT_CLIENT_ID=<your_client_id>
+    CT_CLIENT_SECRET=<your_client_secret>
+    CT_API_URL=<api_url>
+    CT_AUTH_URL=<auth_url>
+    ```
+
+5. Run the project
+
+    ```bash
+    npm run dev
+    ```
+
 ## 🔁 Useful Commands
 
 The following scripts are available in the project and can be run using `npm run <script>`:
