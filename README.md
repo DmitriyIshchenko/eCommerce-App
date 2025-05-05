@@ -53,11 +53,11 @@ Get the project up and running in just a few steps:
     Create a `.env` file in the root directory and add your Commercetools API credentials:
 
     ```bash
-    CT_PROJECT_KEY=<your_project_key>
-    CT_CLIENT_ID=<your_client_id>
-    CT_CLIENT_SECRET=<your_client_secret>
-    CT_API_URL=<api_url>
-    CT_AUTH_URL=<auth_url>
+    VITE_CT_PROJECT_KEY=<your_project_key>
+    VITE_CT_CLIENT_ID=<your_client_id>
+    VITE_CT_CLIENT_SECRET=<your_client_secret>
+    VITE_CT_API_URL=<api_url>
+    VITE_CT_AUTH_URL=<auth_url>
     ```
 
 5. Run the project
