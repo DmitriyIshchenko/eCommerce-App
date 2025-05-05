@@ -11,7 +11,7 @@ export default defineConfig({
       }
     }
   },
-  base: "/DmitriyIshchenko/eCommerce-App/",
+  base: "/",
   test: {
     globals: true,
     environment: 'happy-dom',
