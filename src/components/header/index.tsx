@@ -1,4 +1,5 @@
 import { makeStyles, tokens } from "@fluentui/react-components";
+import { Link } from "@tanstack/react-router";
 
 const useClasses = makeStyles({
 	header: {
@@ -15,5 +16,5 @@ const useClasses = makeStyles({
 export default function Header() {
 	const classes = useClasses();
 
-	return <div className={classes.header}>Header</div>;
+	return <div className={classes.header}>Header<Link to={'/examples'}>Examples</Link></div>;
 }
