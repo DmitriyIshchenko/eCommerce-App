@@ -18,6 +18,71 @@ This is an e-commerce project created by the **`200 OK team`** as part of the [R
 | **Vitest**        | ![Vitest](https://img.shields.io/badge/Vitest-6E9F18?logo=vitest&logoColor=white)             |
 | **Commercetools** | ![Commercetools](https://img.shields.io/badge/commercetools-512DA8)                           |
 
+## 🚀 Quick Start
+
+Get the project up and running in just a few steps:
+
+### Prerequisites
+
+- Node.js v18.x or higher
+- Git
+- Commercetools Account ([Sign up here](https://commercetools.com/))
+
+### Installation
+
+1. Clone the repository
+
+    ```bash
+    git clone https://github.com/DmitriyIshchenko/eCommerce-App.git
+    ```
+    
+2. Navigate to the project folder
+
+    ```bash
+    cd eCommerce-App
+    ```
+
+3. Install dependencies
+
+    ```bash
+    npm install
+    ```
+
+4. Configure Commercetools
+
+    Create a `.env` file in the root directory and add your Commercetools API credentials:
+
+    ```bash
+    VITE_CT_PROJECT_KEY=<your_project_key>
+    VITE_CT_CLIENT_ID=<your_client_id>
+    VITE_CT_CLIENT_SECRET=<your_client_secret>
+    VITE_CT_API_URL=<api_url>
+    VITE_CT_AUTH_URL=<auth_url>
+    ```
+
+5. Run the project
+
+    ```bash
+    npm run dev
+    ```
+
+## 🔁 Useful Commands
+
+The following scripts are available in the project and can be run using `npm run <script>`:
+
+| Script          | Description                                              |
+|-----------------|----------------------------------------------------------|
+| `dev`           | Starts Vite for development.                             |
+| `build`         | Builds the project for production using Vite.            |
+| `format`        | Formats files using Prettier.                            |
+| `ci:format`     | Checks code formatting with Prettier.                    |
+| `preview`       | Previews the project using Vite.                         |
+| `ci:lint`       | Runs ESLint to check for linting errors.                 |
+| `lint`          | Runs ESLint and automatically fixes fixable issues.      |
+| `prepare`       | Installs Husky in the project directory.                 |
+| `test`          | Runs tests using Vitest.                                 |
+| `coverage:test` | Runs tests and generates a coverage report using Vitest. |
+
 ## 🐾 Authors
 
 - 👨‍💻 [**Dmitriy Ishchenko**](https://github.com/DmitriyIshchenko)
