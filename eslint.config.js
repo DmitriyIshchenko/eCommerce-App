@@ -35,7 +35,6 @@ export default defineConfig([
       ],
       "no-console": ["error", { allow: ["error"] }],
       "import/prefer-default-export": ["off"],
-      "max-lines-per-function": ["error", 40],
       "@typescript-eslint/restrict-template-expressions": [
         "error",
         { allowNumber: true },
