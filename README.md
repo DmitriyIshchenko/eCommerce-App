@@ -9,7 +9,7 @@ This is an e-commerce project created by the **`200 OK team`** as part of the [R
 ## 🛠️ Built With
 
 | Technology        | Badge                                                                                         |
-|-------------------|-----------------------------------------------------------------------------------------------|
+| ----------------- | --------------------------------------------------------------------------------------------- |
 | **React**         | ![React](https://img.shields.io/badge/React-20232A?style=flat&logo=react&logoColor=61DAFB)    |
 | **TypeScript**    | ![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white) |
 | **Vite**          | ![Vite](https://img.shields.io/badge/Vite-646CFF?logo=vite&logoColor=white)                   |
@@ -32,46 +32,46 @@ Get the project up and running in just a few steps:
 
 1. Clone the repository
 
-    ```bash
-    git clone https://github.com/DmitriyIshchenko/eCommerce-App.git
-    ```
-    
+   ```bash
+   git clone https://github.com/DmitriyIshchenko/eCommerce-App.git
+   ```
+
 2. Navigate to the project folder
 
-    ```bash
-    cd eCommerce-App
-    ```
+   ```bash
+   cd eCommerce-App
+   ```
 
 3. Install dependencies
 
-    ```bash
-    npm install
-    ```
+   ```bash
+   npm install
+   ```
 
 4. Configure Commercetools
 
-    Create a `.env` file in the root directory and add your Commercetools API credentials:
+   Create a `.env` file in the root directory and add your Commercetools API credentials:
 
-    ```bash
-    VITE_CT_PROJECT_KEY=<your_project_key>
-    VITE_CT_CLIENT_ID=<your_client_id>
-    VITE_CT_CLIENT_SECRET=<your_client_secret>
-    VITE_CT_API_URL=<api_url>
-    VITE_CT_AUTH_URL=<auth_url>
-    ```
+   ```bash
+   VITE_CT_PROJECT_KEY=<your_project_key>
+   VITE_CT_CLIENT_ID=<your_client_id>
+   VITE_CT_CLIENT_SECRET=<your_client_secret>
+   VITE_CT_API_URL=<api_url>
+   VITE_CT_AUTH_URL=<auth_url>
+   ```
 
 5. Run the project
 
-    ```bash
-    npm run dev
-    ```
+   ```bash
+   npm run dev
+   ```
 
 ## 🔁 Useful Commands
 
 The following scripts are available in the project and can be run using `npm run <script>`:
 
 | Script          | Description                                              |
-|-----------------|----------------------------------------------------------|
+| --------------- | -------------------------------------------------------- |
 | `dev`           | Starts Vite for development.                             |
 | `build`         | Builds the project for production using Vite.            |
 | `format`        | Formats files using Prettier.                            |
