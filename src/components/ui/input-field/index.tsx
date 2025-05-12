@@ -1,15 +1,14 @@
 import type { FieldProps, InputProps } from '@fluentui/react-components';
-import { Field, Input, makeStyles } from '@fluentui/react-components';
+import { Field, Input, makeStyles, tokens } from '@fluentui/react-components';
 import { useFormContext } from 'react-hook-form';
 
 const useClasses = makeStyles({
   field: {
-    marginBottom: '30px',
+    marginBottom: tokens.spacingVerticalXXXL,
   },
   input: {
-    minWidth: '200px',
-    height: '54px',
-    borderRadius: '0',
+    padding: `${tokens.spacingVerticalM} ${tokens.spacingHorizontalM}`,
+    borderRadius: tokens.borderRadiusNone,
   },
 });
 
@@ -30,6 +29,7 @@ export default function InputField(props: Props) {
     <Field {...props} className={classes.field}>
       <Input
         className={classes.input}
+        size="large"
         type={type}
         placeholder={placeholder}
         contentBefore={contentBefore}

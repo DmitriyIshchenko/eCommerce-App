@@ -12,14 +12,13 @@ const useStyles = makeStyles({
     display: 'flex',
     flexWrap: 'wrap',
     alignItems: 'center',
-    gap: '20px',
+    gap: tokens.spacingHorizontalXL,
   },
   button: {
-    border: '2px solid #00000000',
-    borderRadius: '25px',
-    padding: '15px 30px',
-    backgroundColor: tokens.colorNeutralForeground1,
-    color: tokens.colorNeutralForegroundInverted,
+    padding: `${tokens.spacingVerticalL} ${tokens.spacingHorizontalXXXL}`,
+  },
+  eye: {
+    padding: `${tokens.spacingVerticalNone} ${tokens.spacingHorizontalNone}`,
   },
 });
 
@@ -37,13 +36,21 @@ export default function LoginForm() {
         <InputField
           placeholder="Password"
           contentBefore={<KeyRegular />}
-          contentAfter={<ShowHideButton onClick={() => setShow(!show)} show={show} />}
+          contentAfter={
+            <ShowHideButton className={classes.eye} onClick={() => setShow(!show)} show={show} />
+          }
           type={show ? 'text' : 'password'}
           name="password"
         />
 
         <div className={classes.buttonContainer}>
-          <Button className={classes.button} type="submit">
+          <Button
+            className={classes.button}
+            type="submit"
+            size="large"
+            appearance="primary"
+            shape="circular"
+          >
             LOGIN
           </Button>
           <div>
