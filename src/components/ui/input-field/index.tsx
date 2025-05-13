@@ -13,6 +13,7 @@ const useClasses = makeStyles({
 });
 
 interface Props extends Partial<FieldProps> {
+  message: string;
   name: string;
   type?: InputProps['type'];
   placeholder?: string;
@@ -22,11 +23,26 @@ interface Props extends Partial<FieldProps> {
 
 export default function InputField(props: Props) {
   const classes = useClasses();
-  const { name, type, placeholder, contentBefore, contentAfter } = props;
-  const { register } = useFormContext();
+  const { message, name, type, placeholder, contentBefore, contentAfter } = props;
+  const { register, getFieldState } = useFormContext();
+
+  const getValidationState = () => {
+    if (message) return 'error';
+    if (getFieldState(name).isDirty) return 'success';
+    return 'none';
+  };
+
+  const getValidationMessage = () => {
+    if (message) return message;
+  };
 
   return (
-    <Field {...props} className={classes.field}>
+    <Field
+      validationState={getValidationState()}
+      validationMessage={getValidationMessage()}
+      {...props}
+      className={classes.field}
+    >
       <Input
         className={classes.input}
         size="large"

@@ -6,6 +6,8 @@ import InputField from '../../components/ui/input-field';
 import ShowHideButton from '../../components/ui/buttons/show-hide';
 import { useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { loginSchema, type LoginSchema } from '../../lib/schemas';
 
 const useStyles = makeStyles({
   buttonContainer: {
@@ -26,16 +28,33 @@ export default function LoginForm() {
   const classes = useStyles();
   const [show, setShow] = useState(false);
 
-  const methods = useForm();
+  const methods = useForm<LoginSchema>({
+    resolver: zodResolver(loginSchema),
+  });
+  const {
+    handleSubmit,
+    formState: { errors },
+  } = methods;
+
+  const onSubmit = (data: LoginSchema) => {
+    return data;
+  };
 
   return (
     <FormProvider {...methods}>
-      <form>
-        <InputField type="text" placeholder="Email" contentBefore={<MailRegular />} name="email" />
+      <form onSubmit={(e) => void handleSubmit(onSubmit)(e)}>
+        <InputField
+          type="text"
+          placeholder="Email"
+          contentBefore={<MailRegular />}
+          name="email"
+          message={errors.email?.message ?? ''}
+        />
 
         <InputField
           placeholder="Password"
           contentBefore={<KeyRegular />}
+          message={errors.password?.message ?? ''}
           contentAfter={
             <ShowHideButton className={classes.eye} onClick={() => setShow(!show)} show={show} />
           }
