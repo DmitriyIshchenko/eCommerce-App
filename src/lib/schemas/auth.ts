@@ -7,7 +7,7 @@ export const loginSchema = z.object({
     .regex(/^(\S|$)/, 'Must not contain leading whitespace(s)')
     .regex(/.*\S$|^$/, 'Must not contain trailing whitespace(s)')
     .regex(/\b(?:[a-z0-9-]+\.)+[a-z]{2,}\b/, 'Must contain a domain name (e.g., example.com)')
-    .regex(/^[^@]+@[^@]+$/, "Must contain an separating '@' symbol")
+    .regex(/^[^@]+@[^@]+$/, 'Must contain a separating "@" symbol')
     .email('Must be properly formatted (e.g., user@example.com)'),
   password: z
     .string()

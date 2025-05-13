@@ -7,7 +7,7 @@ import ShowHideButton from '../../components/ui/buttons/show-hide';
 import { useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { loginSchema, type LoginSchema } from '../../lib/schemas';
+import { loginSchema, type LoginSchema } from '../../lib/schemas/auth';
 
 const useStyles = makeStyles({
   buttonContainer: {
