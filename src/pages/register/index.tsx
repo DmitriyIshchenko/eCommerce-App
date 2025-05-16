@@ -1,45 +1,57 @@
 import { LargeTitle, makeStyles, tokens } from '@fluentui/react-components';
 import RegisterForm from '../../features/register-form';
 
-const useClasses = makeStyles({
-  login: {
+const useStyles = makeStyles({
+  page: {
     maxWidth: '1440px',
     margin: '0 auto',
-    minHeight: '100vh',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
+    display: 'grid',
+    gridTemplateColumns: '1fr 1fr',
+    height: '100vh',
+
+    '@media(width<768px)': {
+      gridTemplateColumns: '1fr',
+    },
   },
-  loginContainer: {
-    width: '100%',
-    padding: `${tokens.spacingVerticalNone} ${tokens.spacingHorizontalSNudge}`,
-    display: 'flex',
-    flexWrap: 'wrap',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: '125px',
+
+  title: {
+    display: 'grid',
+    placeContent: 'center',
+
+    padding: tokens.spacingVerticalXXXL,
+
+    border: `1px solid ${tokens.colorBackgroundOverlay}`,
+    borderLeft: 'none',
+
+    '@media(width<768px)': {
+      borderRight: 'none',
+    },
   },
-  titleContainer: {
-    flexGrow: 1,
-    textAlign: 'center',
-  },
-  formContainer: {
-    flexGrow: 1,
+
+  content: {
+    padding: tokens.spacingHorizontalXXXL,
+    overflowY: 'scroll',
+
+    '@media(width<768px)': {
+      overflowY: 'visible',
+      padding: tokens.spacingHorizontalM,
+      border: 'none',
+    },
   },
 });
 
 export default function RegisterPage() {
-  const styles = useClasses();
+  const styles = useStyles();
 
   return (
-    <div className={styles.login}>
-      <div className={styles.loginContainer}>
-        <div className={styles.titleContainer}>
-          <LargeTitle as="h1">Create an account</LargeTitle>
-        </div>
-        <div className={styles.formContainer}>
-          <RegisterForm />
-        </div>
+    <div className={styles.page}>
+      <div className={styles.title}>
+        <LargeTitle as="h1" align="center">
+          Create an account
+        </LargeTitle>
+      </div>
+      <div className={styles.content}>
+        <RegisterForm />
       </div>
     </div>
   );
