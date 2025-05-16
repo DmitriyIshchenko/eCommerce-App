@@ -71,6 +71,7 @@ export default function RegisterForm() {
           }
           type={show ? 'text' : 'password'}
           name="password"
+          placeholder="Create a strong password"
         />
 
         <InputField
