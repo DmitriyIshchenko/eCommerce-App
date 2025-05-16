@@ -38,6 +38,7 @@ export default function DatePickerField<T extends FieldValues>({
       render={({ field: { onChange, onBlur, value }, fieldState: { error } }) => (
         <Field label={label} validationMessage={error?.message} className={styles.picker}>
           <DatePicker
+            size="large"
             className={styles.picker}
             onSelectDate={(date) => onChange(date)}
             onBlur={onBlur}
