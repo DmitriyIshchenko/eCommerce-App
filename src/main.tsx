@@ -1,10 +1,11 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { RouterProvider, createRouter } from '@tanstack/react-router';
-import { FluentProvider, webLightTheme } from '@fluentui/react-components';
+import { FluentProvider } from '@fluentui/react-components';
 import './styles/globals.css';
 
 import { routeTree } from './routeTree.gen';
+import { customTheme } from './styles/theme';
 
 const router = createRouter({ routeTree });
 
@@ -20,7 +21,7 @@ document.body.append(root);
 
 createRoot(root).render(
   <StrictMode>
-    <FluentProvider theme={webLightTheme}>
+    <FluentProvider theme={customTheme}>
       <RouterProvider router={router} />
     </FluentProvider>
   </StrictMode>,
