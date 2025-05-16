@@ -1,5 +1,7 @@
+import LoginForm from "../../components/login-form";
+
 export default function Login() {
   return (
-    <>Something Unique For Login Page</>
+    <LoginForm/>
   )
 }

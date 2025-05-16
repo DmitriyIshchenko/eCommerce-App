@@ -17,7 +17,8 @@ import { useUser } from "../../hooks/use-user";
 import { type LoginSchema, loginSchema } from "../../lib/schemas";
 import { login } from "../../lib/services/login";
 import ShowHideButton from "../ui/buttons/show-hide";
-import HookFormField from "../ui/hook-form-field";
+import FormFieldInput from "../ui/fields/form-input";
+import { TOASTER_ID } from "../../lib/constants";
 
 const useClasses = makeStyles({
 	wrapper: {
@@ -32,16 +33,20 @@ const useClasses = makeStyles({
 		flexDirection: "column",
 		width: "280px",
 	},
-	eye: {
+	after: {
 		position: "relative",
 		left: "8px",
+	},
+	before: {
+		position: "relative",
+		right: "2px",
 	},
 	button: {
 		marginTop: tokens.spacingVerticalM,
 	},
-  toast: {
-    lineHeight: "1.5",
-  }
+	toast: {
+		lineHeight: "1.5",
+	},
 });
 
 export default function LoginForm() {
@@ -56,8 +61,7 @@ export default function LoginForm() {
 	} = methods;
 	const { authorized, setAuthorized } = useUser();
 
-	const toasterId = useId();
-	const { dispatchToast } = useToastController(toasterId);
+	const { dispatchToast } = useToastController(TOASTER_ID);
 
 	const notify = (email: string) =>
 		dispatchToast(
@@ -68,7 +72,7 @@ export default function LoginForm() {
 					<br /> with {email} address
 				</ToastBody>
 			</Toast>,
-			{ intent: "success" },
+			{ intent: "success",timeout: 4000 },
 		);
 
 	const onSubmit = async (d: LoginSchema) => {
@@ -76,7 +80,7 @@ export default function LoginForm() {
 			const result = await login(d);
 			setAuthorized(true); // если без ошибок изменяем состояние в контексте, чтобы сделать редирект на главную смотрите доку по хуку useRouter - он вернёт роутер в котором можно вызвать метод навигации
 			notify(result.email);
-      // логика редиректа по таймауту 
+			// логика редиректа по таймауту
 		} catch (e) {
 			console.log(e);
 		}
@@ -91,20 +95,20 @@ export default function LoginForm() {
 					}}
 					className={classes.form}
 				>
-					<HookFormField
+					<FormFieldInput
 						label="E-mail"
 						placeholder="type email here..."
-						contentBefore={<MailRegular />}
+						contentBefore={<MailRegular className={classes.before} />}
 						message={errors.email?.message ?? ""}
 						name="email"
 					/>
-					<HookFormField
+					<FormFieldInput
 						label="Password"
 						placeholder="type password here..."
-						contentBefore={<KeyRegular />}
+						contentBefore={<KeyRegular className={classes.before} />}
 						contentAfter={
 							<ShowHideButton
-								className={classes.eye}
+								className={classes.after}
 								onClick={() => setShow(!show)}
 								show={show}
 							/>
@@ -122,16 +126,15 @@ export default function LoginForm() {
 					>
 						Submit
 					</Button>
-					<Toaster toasterId={toasterId} />
 					{authorized && (
 						<Confetti
-							width={window.innerWidth}
-							height={window.innerHeight}
+							width={window.innerWidth - 1}
+							height={window.innerHeight - 1}
 							recycle={false}
-							numberOfPieces={512} 
-              gravity={0.2}
-              initialVelocityY={20}
-              tweenDuration={2000}
+							numberOfPieces={512}
+							gravity={0.2}
+							initialVelocityY={20}
+							tweenDuration={2000}
 						/>
 					)}
 				</form>

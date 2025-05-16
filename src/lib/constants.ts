@@ -9,3 +9,5 @@ export const METHODS = {
 } as const;
 
 export const LOGIN_API_URL = "https://jsonplaceholder.typicode.com/posts";
+
+export const TOASTER_ID = "toasterId";

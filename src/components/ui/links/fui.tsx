@@ -1,8 +1,8 @@
 import { Link as FluentLinkBase, type LinkProps as FluentLinkProps } from "@fluentui/react-components";
 import { type LinkComponent, createLink } from "@tanstack/react-router";
-import * as React from "react";
+import { forwardRef } from "react";
 
-const FluentLink = React.forwardRef<HTMLAnchorElement, FluentLinkProps>((props, ref) => {
+const FluentLink = forwardRef<HTMLAnchorElement, FluentLinkProps>((props, ref) => {
   return <FluentLinkBase {...props} ref={ref}>{props.children}</FluentLinkBase>;
 });
 
