@@ -24,26 +24,16 @@ interface Props extends Partial<FieldProps> {
 export default function SelectField(props: Props) {
   const styles = useClasses();
   const { message, name, options } = props;
-  const { register, getFieldState } = useFormContext();
-
-  const getValidationState = () => {
-    if (message) return 'error';
-    if (getFieldState(name).isDirty) return 'success';
-    return 'none';
-  };
-
-  const getValidationMessage = () => {
-    if (message) return message;
-  };
+  const { register } = useFormContext();
 
   const selectId = useId();
 
   return (
     <Field
-      validationState={getValidationState()}
-      validationMessage={getValidationMessage()}
-      {...props}
+      validationState={message ? 'error' : 'none'}
+      validationMessage={message}
       className={styles.field}
+      {...props}
     >
       <Select
         size="large"
