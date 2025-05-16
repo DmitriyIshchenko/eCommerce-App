@@ -7,14 +7,16 @@ import {
 } from '@fluentui/react-icons';
 import { Button, tokens } from '@fluentui/react-components';
 import { makeStyles } from '@fluentui/react-components';
-import InputField from '../../components/ui/input-field';
-import ShowHideButton from '../../components/ui/buttons/show-hide';
 import { useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { registerSchema, type RegisterSchema } from '../../lib/schemas/registerSchema';
 import { Person24Regular } from '@fluentui/react-icons/fonts';
+
+import InputField from '../../components/ui/input-field';
+import ShowHideButton from '../../components/ui/buttons/show-hide';
 import SelectField from '../../components/ui/select-field';
+import DatePickerField from '../../components/ui/date-picker-field';
 
 const useStyles = makeStyles({
   buttonContainer: {
@@ -85,13 +87,10 @@ export default function RegisterForm() {
           message={errors.lastName?.message}
         />
 
-        <InputField
-          label="City"
-          placeholder="Albuquerque"
-          name="city"
-          type="text"
-          contentBefore={<City24Regular />}
-          message={errors.city?.message}
+        <DatePickerField<RegisterSchema>
+          name="dateOfBirth"
+          label="Date of birth"
+          placeholder="Select a date"
         />
 
         <InputField
