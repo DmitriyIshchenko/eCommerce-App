@@ -20,9 +20,7 @@ export const registerSchema = loginSchema.extend({
     .min(1, 'Required field')
     .regex(...patterns.NO_SPECIAL_CHARS)
     .regex(...patterns.NO_NUMBERS),
-  dateOfBirth: z.string().refine((dateStr) => {
-    const date = new Date(dateStr);
-
+  dateOfBirth: z.date().refine((userDate) => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
@@ -30,12 +28,13 @@ export const registerSchema = loginSchema.extend({
     pastDate.setFullYear(today.getFullYear() - MIN_AGE);
     pastDate.setHours(0, 0, 0, 1);
 
-    return Number(date) - Number(pastDate) < 0;
+    return userDate.getTime() - pastDate.getTime() < 0;
   }, `You must be at least ${MIN_AGE} years old`),
 
   street: z.string().min(1, 'Required field'),
   city: z
     .string()
+    .min(1, 'Required field')
     .regex(...patterns.NO_SPECIAL_CHARS)
     .regex(...patterns.NO_NUMBERS),
   postalCode: z.string().regex(...patterns.POSTAL_CODE_US),
