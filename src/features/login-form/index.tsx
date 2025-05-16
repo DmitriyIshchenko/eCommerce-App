@@ -1,11 +1,13 @@
 import { KeyRegular, MailRegular } from '@fluentui/react-icons';
-import { Button, tokens } from '@fluentui/react-components';
+import { Button, Link, tokens } from '@fluentui/react-components';
 import { makeStyles } from '@fluentui/react-components';
-import { Link } from '@tanstack/react-router';
+import { createLink } from '@tanstack/react-router';
 import InputField from '../../components/ui/input-field';
 import ShowHideButton from '../../components/ui/buttons/show-hide';
 import { useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { loginSchema, type LoginSchema } from '../../lib/schemas/login';
 
 const useStyles = makeStyles({
   buttonContainer: {
@@ -24,14 +26,31 @@ const useStyles = makeStyles({
 
 export default function LoginForm() {
   const classes = useStyles();
+  const CustomLink = createLink(Link);
   const [show, setShow] = useState(false);
 
-  const methods = useForm();
+  const methods = useForm<LoginSchema>({
+    resolver: zodResolver(loginSchema),
+  });
+  const {
+    handleSubmit,
+    formState: { errors },
+  } = methods;
+
+  const onSubmit = (data: LoginSchema) => {
+    return data;
+  };
 
   return (
     <FormProvider {...methods}>
-      <form>
-        <InputField type="text" placeholder="Email" contentBefore={<MailRegular />} name="email" />
+      <form onSubmit={(e) => void handleSubmit(onSubmit)(e)}>
+        <InputField
+          placeholder="Email"
+          contentBefore={<MailRegular />}
+          message={errors.email?.message}
+          name="email"
+          type="text"
+        />
 
         <InputField
           placeholder="Password"
@@ -39,8 +58,9 @@ export default function LoginForm() {
           contentAfter={
             <ShowHideButton className={classes.eye} onClick={() => setShow(!show)} show={show} />
           }
-          type={show ? 'text' : 'password'}
+          message={errors.password?.message}
           name="password"
+          type={show ? 'text' : 'password'}
         />
 
         <div className={classes.buttonContainer}>
@@ -54,7 +74,7 @@ export default function LoginForm() {
             LOGIN
           </Button>
           <div>
-            New customer? <Link to="/">Sign up</Link>
+            New customer? <CustomLink to="/">Sign up</CustomLink>
           </div>
         </div>
       </form>
