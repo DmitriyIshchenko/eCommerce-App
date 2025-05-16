@@ -4,7 +4,7 @@ import { useFormContext } from 'react-hook-form';
 
 const useClasses = makeStyles({
   field: {
-    marginBottom: tokens.spacingVerticalXXXL,
+    marginBottom: tokens.spacingVerticalL,
   },
   input: {
     padding: `${tokens.spacingVerticalM} ${tokens.spacingHorizontalM}`,
@@ -13,7 +13,7 @@ const useClasses = makeStyles({
 });
 
 interface Props extends Partial<FieldProps> {
-  message: string;
+  message: string | undefined;
   name: string;
   type?: InputProps['type'];
   placeholder?: string;
