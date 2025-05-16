@@ -1,5 +1,5 @@
 import type { FieldProps } from '@fluentui/react-components';
-import { Field, makeStyles, Select, tokens } from '@fluentui/react-components';
+import { Field, makeStyles, Select, tokens, useId } from '@fluentui/react-components';
 import { useFormContext } from 'react-hook-form';
 
 const useClasses = makeStyles({
@@ -36,6 +36,8 @@ export default function SelectField(props: Props) {
     if (message) return message;
   };
 
+  const selectId = useId();
+
   return (
     <Field
       validationState={getValidationState()}
@@ -43,7 +45,13 @@ export default function SelectField(props: Props) {
       {...props}
       className={styles.field}
     >
-      <Select size="large" className={styles.select} {...register(name)}>
+      <Select
+        size="large"
+        className={styles.select}
+        id={selectId}
+        defaultValue={options[0]}
+        {...register(name)}
+      >
         {options.map((value) => (
           <option key={value}>{value}</option>
         ))}

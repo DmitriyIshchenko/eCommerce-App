@@ -30,9 +30,13 @@ const useStyles = makeStyles({
   },
 });
 
+type Country = 'USA' | 'Canada';
+
 export default function RegisterForm() {
   const styles = useStyles();
   const [show, setShow] = useState(false);
+
+  const allowedCountries: Country[] = ['USA', 'Canada'];
 
   const methods = useForm<RegisterSchema>({
     resolver: zodResolver(registerSchema),
@@ -113,7 +117,7 @@ export default function RegisterForm() {
 
         <InputField
           label="Postal Code"
-          placeholder="87104"
+          placeholder="Postal code in your country"
           name="postalCode"
           type="text"
           contentBefore={<Mail24Regular />}
@@ -123,7 +127,7 @@ export default function RegisterForm() {
         <SelectField
           label="Country"
           name="country"
-          options={['USA', 'Canada']}
+          options={allowedCountries}
           message={errors.country?.message}
         />
 
