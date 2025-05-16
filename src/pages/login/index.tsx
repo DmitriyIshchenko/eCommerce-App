@@ -17,7 +17,7 @@ const useClasses = makeStyles({
     flexWrap: 'wrap',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: '125px',
+    gap: '9vw',
   },
   titleContainer: {
     flexGrow: 1,
