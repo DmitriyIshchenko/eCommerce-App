@@ -3,7 +3,7 @@ import { z } from 'zod';
 export const loginSchema = z.object({
   email: z
     .string()
-    .min(1, 'Required')
+    .min(1, 'Required field')
     .regex(/^(\S|$)/, 'Must not contain leading whitespace(s)')
     .regex(/.*\S$|^$/, 'Must not contain trailing whitespace(s)')
     .regex(/\b(?:[a-z0-9-]+\.)+[a-z]{2,}\b/, 'Must contain a domain name (e.g., example.com)')
