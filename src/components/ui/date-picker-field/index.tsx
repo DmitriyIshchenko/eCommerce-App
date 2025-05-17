@@ -1,4 +1,4 @@
-import { Field, makeStyles, tokens } from '@fluentui/react-components';
+import { Field, makeStyles, tokens, type FieldProps } from '@fluentui/react-components';
 import {
   Controller,
   useFormContext,
@@ -17,17 +17,17 @@ const useStyles = makeStyles({
   },
 });
 
-interface Props<T extends FieldValues> extends UseControllerProps<T> {
+interface Props<T extends FieldValues>
+  extends UseControllerProps<T>,
+    Omit<FieldProps, 'defaultValue'> {
   label: string;
   placeholder?: string;
 }
 
-export default function DatePickerField<T extends FieldValues>({
-  name,
-  label,
-  placeholder,
-}: Props<T>) {
+export default function DatePickerField<T extends FieldValues>(props: Props<T>) {
   const styles = useStyles();
+
+  const { name, placeholder } = props;
 
   const { control } = useFormContext<T>();
 
@@ -36,7 +36,7 @@ export default function DatePickerField<T extends FieldValues>({
       name={name}
       control={control}
       render={({ field: { onChange, onBlur, value }, fieldState: { error } }) => (
-        <Field label={label} validationMessage={error?.message} className={styles.picker}>
+        <Field validationMessage={error?.message} className={styles.picker} {...props}>
           <DatePicker
             size="large"
             className={styles.picker}
