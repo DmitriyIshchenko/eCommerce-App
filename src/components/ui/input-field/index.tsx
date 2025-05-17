@@ -7,7 +7,7 @@ const useClasses = makeStyles({
     marginBottom: tokens.spacingVerticalL,
   },
   input: {
-    padding: `${tokens.spacingVerticalM} ${tokens.spacingHorizontalM}`,
+    padding: `${tokens.spacingVerticalM} ${tokens.spacingHorizontalS}`,
     borderRadius: tokens.borderRadiusNone,
   },
 });
