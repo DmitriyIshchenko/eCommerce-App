@@ -10,7 +10,7 @@ import { makeStyles } from '@fluentui/react-components';
 import { useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { registerSchema, type RegisterSchema } from '../../lib/schemas/registerSchema';
+import { registerSchema, type RegisterSchema } from '../../lib/schemas/register-schema';
 import { Person24Regular } from '@fluentui/react-icons/fonts';
 
 import InputField from '../../components/ui/input-field';
