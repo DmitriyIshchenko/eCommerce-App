@@ -1,5 +1,15 @@
 import { KeyRegular, MailRegular } from '@fluentui/react-icons';
-import { Button, Link, tokens } from '@fluentui/react-components';
+import {
+  Button,
+  Link,
+  Toast,
+  ToastBody,
+  Toaster,
+  ToastTitle,
+  tokens,
+  useToastController,
+  type ToastIntent,
+} from '@fluentui/react-components';
 import { makeStyles } from '@fluentui/react-components';
 import { createLink } from '@tanstack/react-router';
 import InputField from '../../components/ui/input-field';
@@ -8,8 +18,12 @@ import { useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { loginSchema, type LoginSchema } from '../../lib/schemas/login';
+import { login } from '../../lib/api/login';
+import { useUser } from '../../hooks/use-user';
+import { TOASTER_ID } from '../../lib/constants';
+import Confetti from 'react-confetti';
 
-const useStyles = makeStyles({
+const useClasses = makeStyles({
   buttonContainer: {
     display: 'flex',
     flexWrap: 'wrap',
@@ -24,8 +38,15 @@ const useStyles = makeStyles({
   },
 });
 
+interface notifyOptions {
+  title: string;
+  content: string;
+  intent: ToastIntent;
+  timeout: number;
+}
+
 export default function LoginForm() {
-  const classes = useStyles();
+  const classes = useClasses();
   const CustomLink = createLink(Link);
   const [show, setShow] = useState(false);
 
@@ -37,8 +58,33 @@ export default function LoginForm() {
     formState: { errors },
   } = methods;
 
-  const onSubmit = (data: LoginSchema) => {
-    return data;
+  const { authorized, setAuthorized } = useUser();
+
+  const { dispatchToast } = useToastController(TOASTER_ID);
+
+  const notify = ({ title, content, intent, timeout }: notifyOptions) => {
+    dispatchToast(
+      <Toast>
+        <ToastTitle>{title}</ToastTitle>
+        <ToastBody>{content}</ToastBody>
+      </Toast>,
+      { intent: intent, timeout: timeout },
+    );
+  };
+
+  const onSubmit = async (data: LoginSchema) => {
+    try {
+      const response = await login(data);
+      setAuthorized(true);
+      notify({
+        title: `Hello, ${response.body.firstName}!`,
+        content: 'You have been successfully logged in',
+        intent: 'success',
+        timeout: 4000,
+      });
+    } catch (error) {
+      return error;
+    }
   };
 
   return (
@@ -77,6 +123,21 @@ export default function LoginForm() {
             New customer? <CustomLink to="/">Sign up</CustomLink>
           </div>
         </div>
+
+        <Toaster toasterId={TOASTER_ID} />
+
+        {authorized && (
+          <Confetti
+            width={window.innerWidth - 20}
+            height={window.innerHeight - 20}
+            recycle={false}
+            numberOfPieces={512}
+            gravity={0.2}
+            initialVelocityY={20}
+            tweenDuration={2000}
+            colors={['#ff49a5', '#e449ff', '#5795ff']}
+          />
+        )}
       </form>
     </FormProvider>
   );
