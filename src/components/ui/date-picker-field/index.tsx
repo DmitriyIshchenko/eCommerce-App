@@ -40,7 +40,7 @@ export default function DatePickerField<T extends FieldValues>(props: Props<T>) 
           <DatePicker
             size="large"
             className={styles.picker}
-            onSelectDate={(date) => onChange(date)}
+            onSelectDate={onChange}
             onBlur={onBlur}
             placeholder={placeholder}
             value={value || null}
