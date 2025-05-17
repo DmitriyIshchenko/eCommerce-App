@@ -20,11 +20,11 @@ const useStyles = makeStyles({
 
     padding: tokens.spacingVerticalXXXL,
 
-    border: `1px solid ${tokens.colorBackgroundOverlay}`,
-    borderLeft: 'none',
+    borderRight: `1px solid ${tokens.colorBrandBackground2Hover}`,
 
     '@media(width<768px)': {
       borderRight: 'none',
+      borderBottom: `1px solid ${tokens.colorBrandBackground2Hover}`,
     },
   },
 
