@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { loginSchema } from './login';
+import { loginSchema } from './login-schema';
 
 const patterns: Record<string, [RegExp, string]> = {
   NO_SPECIAL_CHARS: [/^[^!@#$%^&*]*$/, 'Must contain no special characters'],

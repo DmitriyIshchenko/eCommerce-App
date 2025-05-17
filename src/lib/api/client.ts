@@ -1,6 +1,6 @@
 import { createApiBuilderFromCtpClient } from '@commercetools/platform-sdk';
 import { ClientBuilder, type Client } from '@commercetools/sdk-client-v2';
-import type { LoginSchema } from '../schemas/login';
+import type { LoginSchema } from '../schemas/login-schema';
 
 if (
   typeof import.meta.env.VITE_CTP_PROJECT_KEY !== 'string' ||

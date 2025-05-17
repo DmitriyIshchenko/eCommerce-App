@@ -1,4 +1,4 @@
-import type { LoginSchema } from '../schemas/login';
+import type { LoginSchema } from '../schemas/login-schema';
 import { createClient, getApiRoot } from './client';
 
 export async function login(data: LoginSchema) {

@@ -17,7 +17,7 @@ import ShowHideButton from '../../components/ui/buttons/show-hide';
 import { useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { loginSchema, type LoginSchema } from '../../lib/schemas/login';
+import { loginSchema, type LoginSchema } from '../../lib/schemas/login-schema';
 import { login } from '../../lib/api/login';
 import { useUser } from '../../hooks/use-user';
 import { TOASTER_ID } from '../../lib/constants';
@@ -29,9 +29,6 @@ const useClasses = makeStyles({
     flexWrap: 'wrap',
     alignItems: 'center',
     gap: tokens.spacingHorizontalXL,
-  },
-  button: {
-    padding: `${tokens.spacingVerticalL} ${tokens.spacingHorizontalXXXL}`,
   },
   eye: {
     padding: `${tokens.spacingVerticalNone} ${tokens.spacingHorizontalNone}`,
@@ -56,6 +53,7 @@ export default function LoginForm() {
   const {
     handleSubmit,
     formState: { errors },
+    setError,
   } = methods;
 
   const { authorized, setAuthorized } = useUser();
@@ -77,13 +75,30 @@ export default function LoginForm() {
       const response = await login(data);
       setAuthorized(true);
       notify({
-        title: `Hello, ${response.body.firstName}!`,
+        title: `Hello, ${response.body.firstName}! 😄`,
         content: 'You have been successfully logged in',
         intent: 'success',
         timeout: 4000,
       });
     } catch (error) {
-      return error;
+      if (error instanceof Error) {
+        const errorMessage = 'Invalid login credentials. Please try again.';
+        setError('email', {
+          type: 'manual',
+          message: errorMessage,
+        });
+        setError('password', {
+          type: 'manual',
+          message: errorMessage,
+        });
+      } else {
+        notify({
+          title: 'Oops...',
+          content: 'Something went wrong. Please try again later. 😔',
+          intent: 'error',
+          timeout: 4000,
+        });
+      }
     }
   };
 
@@ -91,7 +106,8 @@ export default function LoginForm() {
     <FormProvider {...methods}>
       <form onSubmit={(e) => void handleSubmit(onSubmit)(e)}>
         <InputField
-          placeholder="Email"
+          label="Email"
+          placeholder="you@example.com"
           contentBefore={<MailRegular />}
           message={errors.email?.message}
           name="email"
@@ -99,7 +115,8 @@ export default function LoginForm() {
         />
 
         <InputField
-          placeholder="Password"
+          label="Password"
+          placeholder="••••••••"
           contentBefore={<KeyRegular />}
           contentAfter={
             <ShowHideButton className={classes.eye} onClick={() => setShow(!show)} show={show} />
@@ -110,14 +127,8 @@ export default function LoginForm() {
         />
 
         <div className={classes.buttonContainer}>
-          <Button
-            className={classes.button}
-            type="submit"
-            size="large"
-            appearance="primary"
-            shape="circular"
-          >
-            LOGIN
+          <Button type="submit" size="large" appearance="primary" shape="circular">
+            Login
           </Button>
           <div>
             New customer? <CustomLink to="/">Sign up</CustomLink>
