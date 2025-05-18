@@ -1,17 +1,6 @@
 import { createApiBuilderFromCtpClient } from '@commercetools/platform-sdk';
 import { ClientBuilder, type Client } from '@commercetools/sdk-client-v2';
-import type { LoginSchema } from '../schemas/login-schema';
-
-if (
-  typeof import.meta.env.VITE_CTP_PROJECT_KEY !== 'string' ||
-  typeof import.meta.env.VITE_CTP_CLIENT_ID !== 'string' ||
-  typeof import.meta.env.VITE_CTP_CLIENT_SECRET !== 'string' ||
-  typeof import.meta.env.VITE_CTP_AUTH_URL !== 'string' ||
-  typeof import.meta.env.VITE_CTP_API_URL !== 'string' ||
-  typeof import.meta.env.VITE_CTP_SCOPES !== 'string'
-) {
-  throw new Error('project key was not found');
-}
+import type { LoginSchema } from '../schemas/user';
 
 const projectKey = import.meta.env.VITE_CTP_PROJECT_KEY;
 const clientId = import.meta.env.VITE_CTP_CLIENT_ID;

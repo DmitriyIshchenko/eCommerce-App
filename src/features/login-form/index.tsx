@@ -4,7 +4,6 @@ import {
   Link,
   Toast,
   ToastBody,
-  Toaster,
   ToastTitle,
   tokens,
   useToastController,
@@ -17,12 +16,12 @@ import ShowHideButton from '../../components/ui/buttons/show-hide';
 import { useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { loginSchema, type LoginSchema } from '../../lib/schemas/login-schema';
+import { loginSchema, type LoginSchema } from '../../lib/schemas/user';
 import { login } from '../../lib/api/login';
 import { useUser } from '../../hooks/use-user';
 import { TOASTER_ID } from '../../lib/constants';
 import Confetti from 'react-confetti';
-import { handleLoginError } from './handle-login-error';
+import { parseLoginError } from '../../lib/api/parse-login-error';
 
 const useClasses = makeStyles({
   buttonContainer: {
@@ -33,6 +32,10 @@ const useClasses = makeStyles({
   },
   eye: {
     padding: `${tokens.spacingVerticalNone} ${tokens.spacingHorizontalNone}`,
+  },
+  confetti: {
+    width: '100%',
+    height: '100%',
   },
 });
 
@@ -82,7 +85,26 @@ export default function LoginForm() {
         timeout: 4000,
       });
     } catch (error) {
-      handleLoginError(error, setError, notify);
+      const errorType = parseLoginError(error);
+
+      if (errorType === 'invalid_credentials') {
+        const message = 'Invalid login credentials. Please try again.';
+        setError('email', {
+          type: 'manual',
+          message,
+        });
+        setError('password', {
+          type: 'manual',
+          message,
+        });
+      } else {
+        notify({
+          title: 'Oops...',
+          content: 'Something went wrong. Please try again later. 😔',
+          intent: 'error',
+          timeout: 4000,
+        });
+      }
     }
   };
 
@@ -119,12 +141,11 @@ export default function LoginForm() {
           </div>
         </div>
 
-        <Toaster toasterId={TOASTER_ID} />
-
         {authorized && (
           <Confetti
-            width={window.innerWidth - 20}
-            height={window.innerHeight - 20}
+            className={classes.confetti}
+            width={window.innerWidth}
+            height={window.innerHeight}
             recycle={false}
             numberOfPieces={512}
             gravity={0.2}

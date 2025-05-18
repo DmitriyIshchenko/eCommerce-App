@@ -2,10 +2,11 @@ import './styles/globals.css';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { RouterProvider, createRouter } from '@tanstack/react-router';
-import { FluentProvider } from '@fluentui/react-components';
+import { FluentProvider, Toaster } from '@fluentui/react-components';
 import { routeTree } from './routeTree.gen';
 import { customTheme } from './styles/theme';
 import { UserContextProvider } from './components/contexts/user/context-provider';
+import { TOASTER_ID } from './lib/constants';
 
 const router = createRouter({ routeTree });
 
@@ -24,6 +25,7 @@ createRoot(root).render(
     <FluentProvider theme={customTheme}>
       <UserContextProvider>
         <RouterProvider router={router} />
+        <Toaster toasterId={TOASTER_ID} />
       </UserContextProvider>
     </FluentProvider>
   </StrictMode>,
