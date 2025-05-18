@@ -7,10 +7,12 @@ import {
 } from '@fluentui/react-icons';
 import {
   Button,
+  Spinner,
   Toast,
   ToastBody,
   ToastTitle,
   tokens,
+  useId,
   useToastController,
   type ToastIntent,
 } from '@fluentui/react-components';
@@ -27,6 +29,15 @@ import SelectField, { type Option } from '../../components/ui/select-field';
 import DatePickerField from '../../components/ui/date-picker-field';
 import { createCustomer } from '../../lib/api/create-customer';
 import { TOASTER_ID } from '../../lib/constants';
+import { useUser } from '../../hooks/use-user';
+import Confetti from 'react-confetti';
+
+interface NotifyOptions {
+  title: string;
+  content: string;
+  intent: ToastIntent;
+  timeout: number;
+}
 
 const useStyles = makeStyles({
   buttonContainer: {
@@ -38,6 +49,10 @@ const useStyles = makeStyles({
   eye: {
     padding: `${tokens.spacingVerticalNone} ${tokens.spacingHorizontalNone}`,
   },
+  confetti: {
+    width: '100%',
+    height: '100%',
+  },
 });
 
 const allowedCountries: Option[] = [
@@ -45,16 +60,12 @@ const allowedCountries: Option[] = [
   { title: 'Canada', value: 'CA' },
 ];
 
-interface NotifyOptions {
-  title: string;
-  content: string;
-  intent: ToastIntent;
-  timeout: number;
-}
-
 export default function RegisterForm() {
   const styles = useStyles();
   const [show, setShow] = useState(false);
+
+  const { isLoading, setIsLoading, authorized, setAuthorized } = useUser();
+  const progressToastId = useId('progress');
 
   const methods = useForm<RegisterSchema>({
     resolver: zodResolver(registerSchema),
@@ -65,7 +76,7 @@ export default function RegisterForm() {
     formState: { errors },
   } = methods;
 
-  const { dispatchToast } = useToastController(TOASTER_ID);
+  const { dispatchToast, dismissToast } = useToastController(TOASTER_ID);
 
   const notify = ({ title, content, intent, timeout }: NotifyOptions) => {
     dispatchToast(
@@ -79,7 +90,18 @@ export default function RegisterForm() {
 
   const onSubmit = async (data: RegisterSchema) => {
     try {
+      setIsLoading(true);
+      dispatchToast(
+        <Toast>
+          <ToastTitle media={<Spinner size="tiny" />}>Creating an account for you...</ToastTitle>
+        </Toast>,
+        { toastId: progressToastId, timeout: -1 },
+      );
       const response = await createCustomer(data);
+
+      setIsLoading(false);
+      setAuthorized(true);
+      dismissToast(progressToastId);
 
       notify({
         title: `Hello, ${response.body.customer.firstName}! 😄`,
@@ -88,10 +110,12 @@ export default function RegisterForm() {
         timeout: 4000,
       });
     } catch (error) {
+      setIsLoading(false);
+      dismissToast(progressToastId);
       if (error instanceof Error) {
         notify({
           title: 'Oops...',
-          content: `Something went wrong:\n ${error.message} \n Please try again later. 😔`,
+          content: `Something went wrong: ${error.message} Please try again. 😔`,
           intent: 'error',
           timeout: 4000,
         });
@@ -182,10 +206,30 @@ export default function RegisterForm() {
         />
 
         <div className={styles.buttonContainer}>
-          <Button type="submit" size="large" appearance="primary" shape="circular">
+          <Button
+            type="submit"
+            size="large"
+            appearance="primary"
+            shape="circular"
+            disabled={isLoading}
+          >
             Create
           </Button>
         </div>
+
+        {authorized && (
+          <Confetti
+            className={styles.confetti}
+            width={window.innerWidth}
+            height={window.innerHeight}
+            recycle={false}
+            numberOfPieces={512}
+            gravity={0.2}
+            initialVelocityY={20}
+            tweenDuration={2000}
+            colors={['#ff49a5', '#e449ff', '#5795ff']}
+          />
+        )}
       </form>
     </FormProvider>
   );
