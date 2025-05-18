@@ -30,7 +30,7 @@ import DatePickerField from '../../components/ui/date-picker-field';
 import { createCustomer } from '../../lib/api/create-customer';
 import { TOASTER_ID } from '../../lib/constants';
 import { useUser } from '../../hooks/use-user';
-import Confetti from 'react-confetti';
+import { useNavigate } from '@tanstack/react-router';
 
 interface NotifyOptions {
   title: string;
@@ -64,8 +64,10 @@ export default function RegisterForm() {
   const styles = useStyles();
   const [show, setShow] = useState(false);
 
-  const { isLoading, setIsLoading, authorized, setAuthorized } = useUser();
+  const { isLoading, setIsLoading, setAuthorized } = useUser();
   const progressToastId = useId('progress');
+
+  const navigate = useNavigate({ from: '/register' });
 
   const methods = useForm<RegisterSchema>({
     resolver: zodResolver(registerSchema),
@@ -109,6 +111,8 @@ export default function RegisterForm() {
         intent: 'success',
         timeout: 4000,
       });
+
+      await navigate({ to: '/' });
     } catch (error) {
       setIsLoading(false);
       dismissToast(progressToastId);
@@ -216,20 +220,6 @@ export default function RegisterForm() {
             Create
           </Button>
         </div>
-
-        {authorized && (
-          <Confetti
-            className={styles.confetti}
-            width={window.innerWidth}
-            height={window.innerHeight}
-            recycle={false}
-            numberOfPieces={512}
-            gravity={0.2}
-            initialVelocityY={20}
-            tweenDuration={2000}
-            colors={['#ff49a5', '#e449ff', '#5795ff']}
-          />
-        )}
       </form>
     </FormProvider>
   );
