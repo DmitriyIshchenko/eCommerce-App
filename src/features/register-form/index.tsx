@@ -109,7 +109,6 @@ export default function RegisterForm() {
           contentBefore={<MailRegular />}
           name="email"
           message={errors.email?.message}
-          required
         />
 
         <InputField
@@ -122,7 +121,6 @@ export default function RegisterForm() {
           type={show ? 'text' : 'password'}
           name="password"
           placeholder="Create a strong password"
-          required
         />
 
         <InputField
@@ -132,7 +130,6 @@ export default function RegisterForm() {
           type="text"
           contentBefore={<Person24Regular />}
           message={errors.firstName?.message}
-          required
         />
 
         <InputField
@@ -142,14 +139,12 @@ export default function RegisterForm() {
           type="text"
           contentBefore={<Person24Regular />}
           message={errors.lastName?.message}
-          required
         />
 
         <DatePickerField<RegisterSchema>
           name="dateOfBirth"
           label="Date of birth"
           placeholder="Select a date"
-          required
         />
 
         <InputField
@@ -159,7 +154,6 @@ export default function RegisterForm() {
           type="text"
           contentBefore={<City24Regular />}
           message={errors.city?.message}
-          required
         />
 
         <InputField
@@ -169,7 +163,6 @@ export default function RegisterForm() {
           type="text"
           contentBefore={<Home24Regular />}
           message={errors.street?.message}
-          required
         />
 
         <InputField
@@ -179,7 +172,6 @@ export default function RegisterForm() {
           type="text"
           contentBefore={<Mail24Regular />}
           message={errors.postalCode?.message}
-          required
         />
 
         <SelectField
@@ -187,7 +179,6 @@ export default function RegisterForm() {
           name="country"
           options={allowedCountries}
           message={errors.country?.message}
-          required
         />
 
         <div className={styles.buttonContainer}>
