@@ -22,6 +22,7 @@ import { login } from '../../lib/api/login';
 import { useUser } from '../../hooks/use-user';
 import { TOASTER_ID } from '../../lib/constants';
 import Confetti from 'react-confetti';
+import { handleLoginError } from './handle-login-error';
 
 const useClasses = makeStyles({
   buttonContainer: {
@@ -81,24 +82,7 @@ export default function LoginForm() {
         timeout: 4000,
       });
     } catch (error) {
-      if (error instanceof Error) {
-        const errorMessage = 'Invalid login credentials. Please try again.';
-        setError('email', {
-          type: 'manual',
-          message: errorMessage,
-        });
-        setError('password', {
-          type: 'manual',
-          message: errorMessage,
-        });
-      } else {
-        notify({
-          title: 'Oops...',
-          content: 'Something went wrong. Please try again later. 😔',
-          intent: 'error',
-          timeout: 4000,
-        });
-      }
+      handleLoginError(error, setError, notify);
     }
   };
 
