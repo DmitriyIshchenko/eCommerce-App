@@ -5,10 +5,11 @@ const useClasses = makeStyles({
   header: {
     display: 'flex',
     justifyContent: 'center',
-    padding: tokens.spacingVerticalXXXL,
+    padding: `${tokens.spacingVerticalXXL}`,
     width: '100%',
     margin: '0 auto',
     boxSizing: 'border-box',
+    borderBottom: `1px solid ${tokens.colorNeutralStroke1}`,
   },
   titleLink: {
     textDecoration: 'none',

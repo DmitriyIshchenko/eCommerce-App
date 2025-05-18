@@ -3,6 +3,8 @@ import { makeStyles } from '@fluentui/react-components';
 const useClasses = makeStyles({
   main: {
     width: '100%',
+    display: 'flex',
+    alignItems: 'center',
     maxWidth: '1440px',
     boxSizing: 'border-box',
   },

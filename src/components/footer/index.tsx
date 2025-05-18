@@ -4,7 +4,7 @@ const useClasses = makeStyles({
   footer: {
     display: 'flex',
     justifyContent: 'center',
-    padding: tokens.spacingVerticalXXXL,
+    padding: tokens.spacingVerticalXXL,
     backgroundColor: tokens.colorBackgroundOverlay,
     width: '100%',
     boxSizing: 'border-box',
