@@ -17,11 +17,14 @@ const useClasses = makeStyles({
     flexWrap: 'wrap',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: '125px',
+    gap: '9vw',
   },
-  itemContainer: {
+  titleContainer: {
     flexGrow: 1,
     textAlign: 'center',
+  },
+  formContainer: {
+    flexGrow: 1,
   },
 });
 
@@ -31,10 +34,10 @@ export default function LoginPage() {
   return (
     <div className={classes.login}>
       <div className={classes.loginContainer}>
-        <div className={classes.itemContainer}>
+        <div className={classes.titleContainer}>
           <LargeTitle as="h1">Customer Login</LargeTitle>
         </div>
-        <div className={classes.itemContainer}>
+        <div className={classes.formContainer}>
           <LoginForm />
         </div>
       </div>

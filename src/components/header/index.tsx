@@ -61,11 +61,7 @@ export function Header() {
           </li>
           <li>
             {' '}
-            <RouterLink
-              className={classes.menuLink}
-              aria-label="Create new account"
-              to="/authentication"
-            >
+            <RouterLink className={classes.menuLink} aria-label="Create new account" to="/register">
               Sign Up
             </RouterLink>
           </li>

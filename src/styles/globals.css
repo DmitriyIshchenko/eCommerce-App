@@ -1,6 +1,9 @@
-* {
+*,
+*::before,
+*::after {
   margin: 0;
   padding: 0;
+  box-sizing: border-box;
 }
 
 html,
@@ -9,4 +12,10 @@ body {
   margin: 0;
   display: flex;
   flex-direction: column;
+}
+
+input,
+textarea {
+  width: 100%;
+  display: block;
 }
