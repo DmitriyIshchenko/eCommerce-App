@@ -1,8 +1,8 @@
 import {
-  City24Regular,
-  Home24Regular,
+  // City24Regular,
+  // Home24Regular,
   KeyRegular,
-  Mail24Regular,
+  // Mail24Regular,
   MailRegular,
 } from '@fluentui/react-icons';
 import {
@@ -26,12 +26,12 @@ import { Person24Regular } from '@fluentui/react-icons/fonts';
 
 import InputField from '../../components/ui/input-field';
 import ShowHideButton from '../../components/ui/buttons/show-hide';
-import SelectField, { type Option } from '../../components/ui/select-field';
 import DatePickerField from '../../components/ui/date-picker-field';
 import { createCustomer } from '../../lib/api/create-customer';
 import { TOASTER_ID } from '../../lib/constants';
 import { useUser } from '../../hooks/use-user';
 import { createLink, useNavigate } from '@tanstack/react-router';
+import AddressFieldset from '../../components/ui/address-fieldset';
 
 interface NotifyOptions {
   title: string;
@@ -55,11 +55,6 @@ const useStyles = makeStyles({
     height: '100%',
   },
 });
-
-const allowedCountries: Option[] = [
-  { title: 'USA', value: 'US' },
-  { title: 'Canada', value: 'CA' },
-];
 
 export default function RegisterForm() {
   const styles = useStyles();
@@ -189,39 +184,8 @@ export default function RegisterForm() {
           placeholder="Select a date"
         />
 
-        <InputField
-          label="City"
-          placeholder="Albuquerque"
-          name="city"
-          type="text"
-          contentBefore={<City24Regular />}
-          message={errors.city?.message}
-        />
-
-        <InputField
-          label="Street"
-          placeholder="308 Negra Arroyo Lane"
-          name="street"
-          type="text"
-          contentBefore={<Home24Regular />}
-          message={errors.street?.message}
-        />
-
-        <InputField
-          label="Postal Code"
-          placeholder="Postal code in your country"
-          name="postalCode"
-          type="text"
-          contentBefore={<Mail24Regular />}
-          message={errors.postalCode?.message}
-        />
-
-        <SelectField
-          label="Country"
-          name="country"
-          options={allowedCountries}
-          message={errors.country?.message}
-        />
+        <AddressFieldset title="shipping" />
+        {/* <AddressFieldset title="billing" /> */}
 
         <div className={styles.buttonContainer}>
           <Button

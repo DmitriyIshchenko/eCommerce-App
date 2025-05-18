@@ -1,6 +1,8 @@
 import { z } from 'zod';
+import { countries } from '../country-options';
 
 const patterns: Record<string, [RegExp, string]> = {
+  ONLY_ENGLISH_LETTERS: [/^[A-Za-z]*$/, 'Must contain only English letters'],
   NO_SPECIAL_CHARS: [/^[^!@#$%^&*]*$/, 'Must contain no special characters'],
   NO_NUMBERS: [/^[^\d]*$/, 'Must contain no numbers'],
   POSTAL_CODE_US: [/^\d{5}$/, 'Must follow US postal code pattern (e.g. 12345)'],
@@ -35,7 +37,41 @@ export const loginSchema = z.object({
 
 export type LoginSchema = z.infer<typeof loginSchema>;
 
-const baseSchema = loginSchema.extend({
+const addressSchema = z
+  .object({
+    streetName: z
+      .string()
+      .min(1, 'Required field')
+      .regex(...patterns.ONLY_ENGLISH_LETTERS),
+    city: z
+      .string()
+      .min(1, 'Required field')
+      .regex(...patterns.ONLY_ENGLISH_LETTERS)
+      .regex(...patterns.NO_SPECIAL_CHARS)
+      .regex(...patterns.NO_NUMBERS),
+    postalCode: z.string().min(1, 'Required field'),
+    country: z
+      .string()
+      .min(1, 'Required field')
+      .refine(
+        (country) =>
+          Object.values(countries)
+            .map((c) => c.code)
+            .includes(country),
+        'Must be a valid country from a predefined list',
+      ),
+  })
+  .superRefine((data, ctx) => {
+    if (!new RegExp(countries[data.country]?.zipRegex).test(data.postalCode)) {
+      ctx.addIssue({
+        path: ['postalCode'],
+        code: z.ZodIssueCode.custom,
+        message: `Must follow the format for ${countries[data.country].country} ${countries[data.country].zipFormat}`,
+      });
+    }
+  });
+
+const personalSchema = loginSchema.extend({
   firstName: z
     .string()
     .min(1, 'Required field')
@@ -58,32 +94,10 @@ const baseSchema = loginSchema.extend({
 
     return userDate.getTime() - pastDate.getTime() < 0;
   }, `You must be at least ${MIN_AGE} years old`),
-
-  street: z.string().min(1, 'Required field'),
-
-  city: z
-    .string()
-    .min(1, 'Required field')
-    .regex(...patterns.NO_SPECIAL_CHARS)
-    .regex(...patterns.NO_NUMBERS),
 });
 
-const usaSchema = baseSchema.extend({
-  country: z.literal('US'),
-  postalCode: z
-    .string()
-    .min(1, 'Required field')
-    .regex(...patterns.POSTAL_CODE_US),
+export const registerSchema = personalSchema.extend({
+  addresses: z.array(addressSchema),
 });
-
-const canadaSchema = baseSchema.extend({
-  country: z.literal('CA'),
-  postalCode: z
-    .string()
-    .min(1, 'Required field')
-    .regex(...patterns.POSTAL_CODE_CANADA),
-});
-
-export const registerSchema = z.discriminatedUnion('country', [usaSchema, canadaSchema]);
 
 export type RegisterSchema = z.infer<typeof registerSchema>;

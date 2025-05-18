@@ -16,7 +16,7 @@ const useClasses = makeStyles({
 });
 
 export interface Option {
-  title: string;
+  children: JSX.Element;
   value: string;
 }
 
@@ -47,11 +47,7 @@ export default function SelectField(props: Props) {
         defaultValue={options[0].value}
         {...register(name)}
       >
-        {options.map((option) => (
-          <option key={option.value} value={option.value}>
-            {option.title}
-          </option>
-        ))}
+        {options.map((option) => option.children)}
       </Select>
     </Field>
   );
