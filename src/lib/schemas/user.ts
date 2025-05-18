@@ -69,7 +69,7 @@ const baseSchema = loginSchema.extend({
 });
 
 const usaSchema = baseSchema.extend({
-  country: z.literal('USA'),
+  country: z.literal('US'),
   postalCode: z
     .string()
     .min(1, 'Required field')
@@ -77,7 +77,7 @@ const usaSchema = baseSchema.extend({
 });
 
 const canadaSchema = baseSchema.extend({
-  country: z.literal('Canada'),
+  country: z.literal('CA'),
   postalCode: z
     .string()
     .min(1, 'Required field')

@@ -5,7 +5,15 @@ import {
   Mail24Regular,
   MailRegular,
 } from '@fluentui/react-icons';
-import { Button, tokens } from '@fluentui/react-components';
+import {
+  Button,
+  Toast,
+  ToastBody,
+  ToastTitle,
+  tokens,
+  useToastController,
+  type ToastIntent,
+} from '@fluentui/react-components';
 import { makeStyles } from '@fluentui/react-components';
 import { useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
@@ -15,8 +23,10 @@ import { Person24Regular } from '@fluentui/react-icons/fonts';
 
 import InputField from '../../components/ui/input-field';
 import ShowHideButton from '../../components/ui/buttons/show-hide';
-import SelectField from '../../components/ui/select-field';
+import SelectField, { type Option } from '../../components/ui/select-field';
 import DatePickerField from '../../components/ui/date-picker-field';
+import { createCustomer } from '../../lib/api/create-customer';
+import { TOASTER_ID } from '../../lib/constants';
 
 const useStyles = makeStyles({
   buttonContainer: {
@@ -30,24 +40,63 @@ const useStyles = makeStyles({
   },
 });
 
-type Country = 'USA' | 'Canada';
+const allowedCountries: Option[] = [
+  { title: 'USA', value: 'US' },
+  { title: 'Canada', value: 'CA' },
+];
+
+interface NotifyOptions {
+  title: string;
+  content: string;
+  intent: ToastIntent;
+  timeout: number;
+}
 
 export default function RegisterForm() {
   const styles = useStyles();
   const [show, setShow] = useState(false);
 
-  const allowedCountries: Country[] = ['USA', 'Canada'];
-
   const methods = useForm<RegisterSchema>({
     resolver: zodResolver(registerSchema),
   });
+
   const {
     handleSubmit,
     formState: { errors },
   } = methods;
 
-  const onSubmit = (data: RegisterSchema) => {
-    return data;
+  const { dispatchToast } = useToastController(TOASTER_ID);
+
+  const notify = ({ title, content, intent, timeout }: NotifyOptions) => {
+    dispatchToast(
+      <Toast>
+        <ToastTitle>{title}</ToastTitle>
+        <ToastBody>{content}</ToastBody>
+      </Toast>,
+      { intent, timeout },
+    );
+  };
+
+  const onSubmit = async (data: RegisterSchema) => {
+    try {
+      const response = await createCustomer(data);
+
+      notify({
+        title: `Hello, ${response.body.customer.firstName}! 😄`,
+        content: 'Your account was successfully created!',
+        intent: 'success',
+        timeout: 4000,
+      });
+    } catch (error) {
+      if (error instanceof Error) {
+        notify({
+          title: 'Oops...',
+          content: `Something went wrong:\n ${error.message} \n Please try again later. 😔`,
+          intent: 'error',
+          timeout: 4000,
+        });
+      }
+    }
   };
 
   return (
