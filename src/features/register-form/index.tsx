@@ -7,6 +7,7 @@ import {
 } from '@fluentui/react-icons';
 import {
   Button,
+  Link,
   Spinner,
   Toast,
   ToastBody,
@@ -30,7 +31,7 @@ import DatePickerField from '../../components/ui/date-picker-field';
 import { createCustomer } from '../../lib/api/create-customer';
 import { TOASTER_ID } from '../../lib/constants';
 import { useUser } from '../../hooks/use-user';
-import { useNavigate } from '@tanstack/react-router';
+import { createLink, useNavigate } from '@tanstack/react-router';
 
 interface NotifyOptions {
   title: string;
@@ -67,6 +68,7 @@ export default function RegisterForm() {
   const { isLoading, setIsLoading, setAuthorized } = useUser();
   const progressToastId = useId('progress');
 
+  const CustomLink = createLink(Link);
   const navigate = useNavigate({ from: '/register' });
 
   const methods = useForm<RegisterSchema>({
@@ -217,8 +219,12 @@ export default function RegisterForm() {
             shape="circular"
             disabled={isLoading}
           >
-            Create
+            Submit
           </Button>
+
+          <div>
+            Already have an account? <CustomLink to="/login">Sign in</CustomLink>
+          </div>
         </div>
       </form>
     </FormProvider>
