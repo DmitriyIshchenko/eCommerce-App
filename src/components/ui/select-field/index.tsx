@@ -15,10 +15,15 @@ const useClasses = makeStyles({
   },
 });
 
+export interface Option {
+  title: string;
+  value: string;
+}
+
 interface Props extends Partial<FieldProps> {
   message: string | undefined;
   name: string;
-  options: string[];
+  options: Option[];
 }
 
 export default function SelectField(props: Props) {
@@ -39,11 +44,13 @@ export default function SelectField(props: Props) {
         size="large"
         className={styles.select}
         id={selectId}
-        defaultValue={options[0]}
+        defaultValue={options[0].value}
         {...register(name)}
       >
-        {options.map((value) => (
-          <option key={value}>{value}</option>
+        {options.map((option) => (
+          <option key={option.value} value={option.value}>
+            {option.title}
+          </option>
         ))}
       </Select>
     </Field>
