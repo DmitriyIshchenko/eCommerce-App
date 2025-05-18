@@ -36,7 +36,7 @@ import { createLink, useNavigate } from '@tanstack/react-router';
 interface NotifyOptions {
   title: string;
   content: string;
-  intent: ToastIntent;
+  intent: ToastIntent | 'progress';
   timeout: number;
 }
 
@@ -83,36 +83,48 @@ export default function RegisterForm() {
   const { dispatchToast, dismissToast } = useToastController(TOASTER_ID);
 
   const notify = ({ title, content, intent, timeout }: NotifyOptions) => {
-    dispatchToast(
-      <Toast>
-        <ToastTitle>{title}</ToastTitle>
-        <ToastBody>{content}</ToastBody>
-      </Toast>,
-      { intent, timeout },
-    );
+    switch (intent) {
+      case 'progress':
+        dispatchToast(
+          <Toast>
+            <ToastTitle media={<Spinner size="tiny" />}>{title}</ToastTitle>
+            <ToastBody>{content}</ToastBody>
+          </Toast>,
+          { toastId: progressToastId },
+        );
+        break;
+      default:
+        dispatchToast(
+          <Toast>
+            <ToastTitle>{title}</ToastTitle>
+            <ToastBody>{content}</ToastBody>
+          </Toast>,
+          { intent, timeout },
+        );
+    }
   };
 
   const onSubmit = async (data: RegisterSchema) => {
     try {
       setIsLoading(true);
-      dispatchToast(
-        <Toast>
-          <ToastTitle media={<Spinner size="tiny" />}>Creating an account for you...</ToastTitle>
-        </Toast>,
-        { toastId: progressToastId, timeout: -1 },
-      );
+      notify({
+        title: 'Creating an account for you...',
+        intent: 'progress',
+        content: 'Will take a second!',
+        timeout: -1,
+      });
+
       const response = await createCustomer(data);
-
-      setIsLoading(false);
-      setAuthorized(true);
-      dismissToast(progressToastId);
-
       notify({
         title: `Hello, ${response.body.customer.firstName}! 😄`,
         content: 'Your account was successfully created!',
         intent: 'success',
         timeout: 4000,
       });
+
+      setIsLoading(false);
+      setAuthorized(true);
+      dismissToast(progressToastId);
 
       await navigate({ to: '/' });
     } catch (error) {
