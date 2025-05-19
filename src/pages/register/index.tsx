@@ -7,7 +7,6 @@ const useStyles = makeStyles({
     margin: '0 auto',
     display: 'grid',
     gridTemplateColumns: '1fr 1fr',
-    height: '100vh',
 
     '@media(width<768px)': {
       gridTemplateColumns: '1fr',
@@ -30,7 +29,6 @@ const useStyles = makeStyles({
 
   content: {
     padding: tokens.spacingHorizontalXXXL,
-    overflowY: 'scroll',
 
     '@media(width<768px)': {
       overflowY: 'visible',
