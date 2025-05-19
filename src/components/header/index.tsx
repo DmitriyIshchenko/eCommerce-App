@@ -13,6 +13,7 @@ const useClasses = makeStyles({
     borderBottom: `1px solid ${tokens.colorNeutralStroke1}`,
   },
   title: {
+    marginRight: tokens.spacingHorizontalMNudge,
     fontFamily: 'Gloock, sans-serif',
     fontWeight: tokens.fontWeightRegular,
     fontSize: '2rem',
@@ -33,6 +34,7 @@ const useClasses = makeStyles({
   },
   menu: {
     display: 'flex',
+    flexWrap: 'wrap',
     alignItems: 'center',
     gap: '1rem',
     listStyle: 'none',
