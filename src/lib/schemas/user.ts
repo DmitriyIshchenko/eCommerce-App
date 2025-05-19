@@ -42,13 +42,15 @@ const personalSchema = loginSchema.extend({
     .string()
     .min(1, 'Required field')
     .regex(...patterns.NO_SPECIAL_CHARS)
-    .regex(...patterns.NO_NUMBERS),
+    .regex(...patterns.NO_NUMBERS)
+    .regex(...patterns.ONLY_ENGLISH_LETTERS),
 
   lastName: z
     .string()
     .min(1, 'Required field')
     .regex(...patterns.NO_SPECIAL_CHARS)
-    .regex(...patterns.NO_NUMBERS),
+    .regex(...patterns.NO_NUMBERS)
+    .regex(...patterns.ONLY_ENGLISH_LETTERS),
 
   dateOfBirth: z.date().refine((userDate) => {
     const today = new Date();
@@ -64,16 +66,13 @@ const personalSchema = loginSchema.extend({
 
 const addressSchema = z
   .object({
-    streetName: z
-      .string()
-      .min(1, 'Required field')
-      .regex(...patterns.ONLY_ENGLISH_LETTERS),
+    streetName: z.string().min(1, 'Required field'),
     city: z
       .string()
       .min(1, 'Required field')
-      .regex(...patterns.ONLY_ENGLISH_LETTERS)
       .regex(...patterns.NO_SPECIAL_CHARS)
-      .regex(...patterns.NO_NUMBERS),
+      .regex(...patterns.NO_NUMBERS)
+      .regex(...patterns.ONLY_ENGLISH_LETTERS),
     postalCode: z.string().min(1, 'Required field'),
     country: z
       .string()
