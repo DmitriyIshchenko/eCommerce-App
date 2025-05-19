@@ -7,7 +7,7 @@ import {
 } from '@tanstack/react-router';
 import { beforeEach, describe, expect, test } from 'vitest';
 import { render, waitFor, screen } from '@testing-library/react';
-import RegisterPage from '.';
+import LoginPage from '.';
 import { UserContextProvider } from '../../components/contexts/user/context-provider';
 
 describe('Ensure that page exists', () => {
@@ -20,7 +20,7 @@ describe('Ensure that page exists', () => {
       component: () => (
         <UserContextProvider>
           <div data-testid="is-rendered">
-            <RegisterPage />
+            <LoginPage />
           </div>
         </UserContextProvider>
       ),
@@ -36,7 +36,7 @@ describe('Ensure that page exists', () => {
     await waitFor(() => {
       expect(screen.getByTestId('is-rendered')).toBeInTheDocument();
     });
-    titleElement = screen.getByText(/create an account/i);
+    titleElement = screen.getByText(/Customer Login/i);
   });
 
   test('Title exist', () => {

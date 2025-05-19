@@ -10,15 +10,16 @@ import { render, waitFor, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import RegisterForm from './index';
+import { UserContextProvider } from '../../components/contexts/user/context-provider';
 
 describe('Ensure that input validation checks are performed in real-time when the user enters their information.', () => {
   let emailField: HTMLInputElement;
   let passwordField: HTMLInputElement;
   let firstNameField: HTMLInputElement;
   let lastNameField: HTMLInputElement;
-  let streetField: HTMLInputElement;
-  let cityField: HTMLInputElement;
-  let postalCode: HTMLInputElement;
+  let streetField: HTMLInputElement[];
+  let cityField: HTMLInputElement[];
+  let postalCode: HTMLInputElement[];
   let submitButton: HTMLButtonElement;
 
   const preFillWithValid = async () => {
@@ -27,9 +28,9 @@ describe('Ensure that input validation checks are performed in real-time when th
       passwordField,
       firstNameField,
       lastNameField,
-      streetField,
-      postalCode,
-      cityField,
+      streetField[0],
+      postalCode[0],
+      cityField[0],
     ];
 
     for (const field of fields) {
@@ -40,9 +41,9 @@ describe('Ensure that input validation checks are performed in real-time when th
     await userEvent.type(passwordField, 'qqqQQQ111!!!');
     await userEvent.type(firstNameField, 'John');
     await userEvent.type(lastNameField, 'Doe');
-    await userEvent.type(streetField, '23 Street');
-    await userEvent.type(cityField, 'New York');
-    await userEvent.type(postalCode, '12345');
+    await userEvent.type(streetField[0], '23 Street');
+    await userEvent.type(cityField[0], 'New York');
+    await userEvent.type(postalCode[0], '12345');
   };
 
   beforeEach(async () => {
@@ -51,9 +52,11 @@ describe('Ensure that input validation checks are performed in real-time when th
       getParentRoute: () => rootRoute,
       path: '/',
       component: () => (
-        <div data-testid="is-rendered">
-          <RegisterForm />
-        </div>
+        <UserContextProvider>
+          <div data-testid="is-rendered">
+            <RegisterForm />
+          </div>
+        </UserContextProvider>
       ),
     });
     const testRouter = createRouter({
@@ -72,11 +75,11 @@ describe('Ensure that input validation checks are performed in real-time when th
     firstNameField = screen.getByPlaceholderText(/Walter/i);
     lastNameField = screen.getByPlaceholderText(/White/i);
 
-    cityField = screen.getByPlaceholderText(/Albuquerque/i);
-    streetField = screen.getByPlaceholderText(/308 Negra Arroyo Lane/i);
-    postalCode = screen.getByPlaceholderText(/Postal code/i);
+    cityField = screen.getAllByPlaceholderText(/Albuquerque/i);
+    streetField = screen.getAllByPlaceholderText(/308 Negra Arroyo Lane/i);
+    postalCode = screen.getAllByPlaceholderText(/Postal code/i);
 
-    submitButton = screen.getByRole('button', { name: /Create/i });
+    submitButton = screen.getByRole('button', { name: /Submit/i });
 
     await preFillWithValid();
   });
@@ -162,29 +165,29 @@ describe('Ensure that input validation checks are performed in real-time when th
   });
 
   test('Street: Must contain at least one character', async () => {
-    await userEvent.clear(streetField);
-    await userEvent.click(streetField);
+    await userEvent.clear(streetField[0]);
+    await userEvent.click(streetField[0]);
     await userEvent.click(submitButton);
-    expect(streetField).toBeInvalid();
-    await userEvent.clear(streetField);
+    expect(streetField[0]).toBeInvalid();
+    await userEvent.clear(streetField[0]);
   });
 
   test('City: Must contain at least one character and no special characters or numbers', async () => {
-    await userEvent.clear(cityField);
-    await userEvent.click(cityField);
+    await userEvent.clear(cityField[0]);
+    await userEvent.click(cityField[0]);
     await userEvent.keyboard('!');
     await userEvent.click(submitButton);
     let errorMessage = screen.getByText(/no special characters/i);
-    expect(cityField).toBeInvalid();
+    expect(cityField[0]).toBeInvalid();
     expect(errorMessage).toBeVisible();
-    await userEvent.clear(cityField);
+    await userEvent.clear(cityField[0]);
 
-    await userEvent.click(cityField);
+    await userEvent.click(cityField[0]);
     await userEvent.keyboard('1');
     await userEvent.click(submitButton);
     errorMessage = screen.getByText(/no numbers/i);
-    expect(cityField).toBeInvalid();
+    expect(cityField[0]).toBeInvalid();
     expect(errorMessage).toBeVisible();
-    await userEvent.clear(cityField);
+    await userEvent.clear(cityField[0]);
   });
 });
