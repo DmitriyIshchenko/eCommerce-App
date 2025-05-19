@@ -22,7 +22,8 @@ export async function createCustomer(data: RegisterSchema, options: AddressOptio
   const apiRoot = getApiRoot(client);
 
   const response = await apiRoot
-    .customers()
+    .me()
+    .signup()
     .post({
       body: createCustomerDraft(data, options),
     })
