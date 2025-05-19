@@ -7,8 +7,11 @@ type AddressOptions = Record<string, CheckboxProps['checked']>;
 function createCustomerDraft(data: RegisterSchema, options: AddressOptions) {
   const { isDefaultShippingAddress, isDefaultBillingAddress, shippingAsBilling } = options;
 
+  const addresses = shippingAsBilling ? data.addresses.slice(1) : data.addresses;
+
   return {
     ...data,
+    addresses,
     dateOfBirth: data.dateOfBirth.toISOString().split('T')[0],
     shippingAddresses: [0],
     billingAddresses: [shippingAsBilling ? 0 : 1],
