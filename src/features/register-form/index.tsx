@@ -136,7 +136,9 @@ export default function RegisterForm() {
       setAuthorized(true);
       dismissToast(progressToastId);
 
-      await navigate({ to: '/' });
+      setTimeout(() => {
+        void navigate({ to: '/' });
+      }, 3000);
     } catch (error) {
       setIsLoading(false);
       dismissToast(progressToastId);
