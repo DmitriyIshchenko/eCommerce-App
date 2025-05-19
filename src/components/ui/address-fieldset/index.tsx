@@ -77,7 +77,7 @@ export default function AddressFieldset(props: Props) {
       />
 
       <Checkbox
-        label={`Save as default for ${variant}`}
+        label={`Use as default for ${variant}`}
         checked={isDefaultAddress}
         onChange={(_, data) => setIsDefaultAddress(data.checked)}
       />

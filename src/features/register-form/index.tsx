@@ -1,6 +1,7 @@
 import { KeyRegular, MailRegular } from '@fluentui/react-icons';
 import {
   Button,
+  Label,
   Link,
   Spinner,
   Toast,
@@ -41,6 +42,12 @@ const useStyles = makeStyles({
     flexWrap: 'wrap',
     alignItems: 'center',
     gap: tokens.spacingHorizontalXL,
+    marginTop: tokens.spacingVerticalM,
+  },
+  label: {
+    display: 'block',
+    marginBlock: tokens.spacingVerticalM,
+    textTransform: 'capitalize',
   },
   eye: {
     padding: `${tokens.spacingVerticalNone} ${tokens.spacingHorizontalNone}`,
@@ -53,10 +60,10 @@ const useStyles = makeStyles({
 
 export default function RegisterForm() {
   const styles = useStyles();
+
   const [show, setShow] = useState(false);
   const [isDefaultShippingAddress, setIsDefaultShippingAddress] =
     useState<CheckboxProps['checked']>(false);
-
   const [isDefaultBillingAddress, setIsDefaultBillingAddress] =
     useState<CheckboxProps['checked']>(false);
 
@@ -65,6 +72,7 @@ export default function RegisterForm() {
 
   const CustomLink = createLink(Link);
   const navigate = useNavigate({ from: '/register' });
+  const { dispatchToast, dismissToast } = useToastController(TOASTER_ID);
 
   const methods = useForm<RegisterSchema>({
     resolver: zodResolver(registerSchema),
@@ -74,8 +82,6 @@ export default function RegisterForm() {
     handleSubmit,
     formState: { errors },
   } = methods;
-
-  const { dispatchToast, dismissToast } = useToastController(TOASTER_ID);
 
   const notify = ({ title, content, intent, timeout }: NotifyOptions) => {
     switch (intent) {
@@ -143,6 +149,10 @@ export default function RegisterForm() {
   return (
     <FormProvider {...methods}>
       <form onSubmit={(e) => void handleSubmit(onSubmit)(e)}>
+        <Label weight="semibold" size="large" className={styles.label}>
+          Personal information
+        </Label>
+
         <InputField
           label="Email"
           type="text"
