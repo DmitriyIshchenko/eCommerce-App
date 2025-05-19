@@ -1,4 +1,4 @@
-import { KeyRegular, MailRegular } from '@fluentui/react-icons';
+import { KeyRegular, MailRegular, Person24Regular } from '@fluentui/react-icons';
 import {
   Button,
   Checkbox,
@@ -19,7 +19,7 @@ import { useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { registerSchema, type RegisterSchema } from '../../lib/schemas/user';
-import { Person24Regular } from '@fluentui/react-icons';
+import Confetti from 'react-confetti';
 
 import InputField from '../../components/ui/input-field';
 import ShowHideButton from '../../components/ui/buttons/show-hide';
@@ -69,7 +69,7 @@ export default function RegisterForm() {
     useState<CheckboxProps['checked']>(false);
   const [shippingAsBilling, setShippingAsBilling] = useState<CheckboxProps['checked']>(false);
 
-  const { isLoading, setIsLoading, setAuthorized } = useUser();
+  const { isLoading, setIsLoading, authorized, setAuthorized } = useUser();
   const progressToastId = useId('progress');
 
   const CustomLink = createLink(Link);
@@ -250,6 +250,20 @@ export default function RegisterForm() {
             Already have an account? <CustomLink to="/login">Sign in</CustomLink>
           </div>
         </div>
+
+        {authorized && (
+          <Confetti
+            className={styles.confetti}
+            width={window.innerWidth}
+            height={window.innerHeight}
+            recycle={false}
+            numberOfPieces={512}
+            gravity={0.2}
+            initialVelocityY={20}
+            tweenDuration={2000}
+            colors={['#ff49a5', '#e449ff', '#5795ff']}
+          />
+        )}
       </form>
     </FormProvider>
   );
