@@ -4,7 +4,13 @@ import { useFormContext } from 'react-hook-form';
 import SelectField from '../select-field';
 import type { RegisterSchema } from '../../../lib/schemas/user';
 import { countryOptions } from '../../../lib/country-options';
-import { Label, makeStyles, tokens } from '@fluentui/react-components';
+import {
+  Checkbox,
+  Label,
+  makeStyles,
+  tokens,
+  type CheckboxProps,
+} from '@fluentui/react-components';
 
 const useStyles = makeStyles({
   fieldset: {
@@ -18,54 +24,62 @@ const useStyles = makeStyles({
 });
 
 interface Props {
-  title?: string;
+  variant: string;
+  isDefaultAddress: CheckboxProps['checked'];
+  setIsDefaultAddress: React.Dispatch<React.SetStateAction<CheckboxProps['checked']>>;
 }
 
 export default function AddressFieldset(props: Props) {
   const styles = useStyles();
+
   const {
     formState: { errors },
   } = useFormContext<RegisterSchema>();
 
-  const { title } = props;
+  const { variant, isDefaultAddress, setIsDefaultAddress } = props;
+
+  const index = variant === 'shipping' ? 0 : 1;
 
   return (
     <fieldset className={styles.fieldset}>
       <Label weight="semibold" size="large" className={styles.label}>
-        {title}
+        {variant} address
       </Label>
       <InputField
         label="City"
         placeholder="Albuquerque"
-        name="addresses.0.city"
+        name={`addresses.${index}.city`}
         type="text"
         contentBefore={<City24Regular />}
-        message={errors.addresses?.[0]?.city?.message}
+        message={errors.addresses?.[index]?.city?.message}
       />
-
       <InputField
         label="Street"
         placeholder="308 Negra Arroyo Lane"
-        name="addresses.0.streetName"
+        name={`addresses.${index}.streetName`}
         type="text"
         contentBefore={<Home24Regular />}
-        message={errors.addresses?.[0]?.streetName?.message}
+        message={errors.addresses?.[index]?.streetName?.message}
       />
-
       <InputField
         label="Postal Code"
         placeholder="Postal code in your country"
-        name="addresses.0.postalCode"
+        name={`addresses.${index}.postalCode`}
         type="text"
         contentBefore={<Mail24Regular />}
-        message={errors.addresses?.[0]?.postalCode?.message}
+        message={errors.addresses?.[index]?.postalCode?.message}
       />
-
       <SelectField
         label="Country"
-        name="addresses.0.country"
+        name={`addresses.${index}.country`}
         options={countryOptions}
-        message={errors.addresses?.[0]?.country?.message}
+        message={errors.addresses?.[index]?.country?.message}
+      />
+
+      <Checkbox
+        label={`Save as default for ${variant}`}
+        checked={isDefaultAddress}
+        onChange={(_, data) => setIsDefaultAddress(data.checked)}
       />
     </fieldset>
   );

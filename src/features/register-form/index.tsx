@@ -1,10 +1,4 @@
-import {
-  // City24Regular,
-  // Home24Regular,
-  KeyRegular,
-  // Mail24Regular,
-  MailRegular,
-} from '@fluentui/react-icons';
+import { KeyRegular, MailRegular } from '@fluentui/react-icons';
 import {
   Button,
   Link,
@@ -15,6 +9,7 @@ import {
   tokens,
   useId,
   useToastController,
+  type CheckboxProps,
   type ToastIntent,
 } from '@fluentui/react-components';
 import { makeStyles } from '@fluentui/react-components';
@@ -59,6 +54,11 @@ const useStyles = makeStyles({
 export default function RegisterForm() {
   const styles = useStyles();
   const [show, setShow] = useState(false);
+  const [isDefaultShippingAddress, setIsDefaultShippingAddress] =
+    useState<CheckboxProps['checked']>(false);
+
+  const [isDefaultBillingAddress, setIsDefaultBillingAddress] =
+    useState<CheckboxProps['checked']>(false);
 
   const { isLoading, setIsLoading, setAuthorized } = useUser();
   const progressToastId = useId('progress');
@@ -109,7 +109,11 @@ export default function RegisterForm() {
         timeout: -1,
       });
 
-      const response = await createCustomer(data);
+      const response = await createCustomer(
+        data,
+        isDefaultShippingAddress,
+        isDefaultBillingAddress,
+      );
       notify({
         title: `Hello, ${response.body.customer.firstName}! 😄`,
         content: 'Your account was successfully created!',
@@ -184,8 +188,17 @@ export default function RegisterForm() {
           placeholder="Select a date"
         />
 
-        <AddressFieldset title="shipping" />
-        {/* <AddressFieldset title="billing" /> */}
+        <AddressFieldset
+          variant="shipping"
+          isDefaultAddress={isDefaultShippingAddress}
+          setIsDefaultAddress={setIsDefaultShippingAddress}
+        />
+
+        <AddressFieldset
+          variant="billing"
+          isDefaultAddress={isDefaultBillingAddress}
+          setIsDefaultAddress={setIsDefaultBillingAddress}
+        />
 
         <div className={styles.buttonContainer}>
           <Button
