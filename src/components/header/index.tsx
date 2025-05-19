@@ -1,5 +1,6 @@
-import { LargeTitle, makeStyles, tokens } from '@fluentui/react-components';
-import { CustomLink } from '../../routes/__root';
+import { Button, LargeTitle, Link, makeStyles, tokens } from '@fluentui/react-components';
+import { createLink, useNavigate } from '@tanstack/react-router';
+import { useUser } from '../../hooks/use-user';
 
 const useClasses = makeStyles({
   header: {
@@ -32,6 +33,7 @@ const useClasses = makeStyles({
   },
   menu: {
     display: 'flex',
+    alignItems: 'center',
     gap: '1rem',
     listStyle: 'none',
     fontSize: '1.2rem',
@@ -48,7 +50,10 @@ const useClasses = makeStyles({
 });
 
 export function Header() {
+  const CustomLink = createLink(Link);
   const classes = useClasses();
+  const { authorized, setAuthorized } = useUser();
+  const navigate = useNavigate();
   return (
     <header className={classes.header}>
       <div className={classes.headerContainer}>
@@ -58,16 +63,37 @@ export function Header() {
         <ul className={classes.menu}>
           <li>
             {' '}
-            <CustomLink className={classes.menuLink} aria-label="Login to your account" to="/login">
+            <CustomLink
+              className={classes.menuLink}
+              aria-label="Login to your account"
+              to={authorized ? '/' : '/login'}
+            >
               Login
             </CustomLink>
           </li>
           <li>
             {' '}
-            <CustomLink className={classes.menuLink} aria-label="Create new account" to="/register">
+            <CustomLink
+              className={classes.menuLink}
+              aria-label="Create new account"
+              to={authorized ? '/' : '/register'}
+            >
               Sign Up
             </CustomLink>
           </li>
+          {authorized && (
+            <li>
+              <Button
+                shape="circular"
+                onClick={() => {
+                  setAuthorized(false);
+                  void navigate({ to: '/login' });
+                }}
+              >
+                Logout
+              </Button>
+            </li>
+          )}
         </ul>
       </div>
     </header>

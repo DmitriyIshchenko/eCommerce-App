@@ -19,11 +19,11 @@ const useStyles = makeStyles({
 
     padding: tokens.spacingVerticalXXXL,
 
-    borderRight: `1px solid ${tokens.colorBrandBackground2Hover}`,
+    borderRight: `1px solid ${tokens.colorNeutralStroke1}`,
 
     '@media(width<768px)': {
       borderRight: 'none',
-      borderBottom: `1px solid ${tokens.colorBrandBackground2Hover}`,
+      borderBottom: `1px solid ${tokens.colorNeutralStroke1}`,
     },
   },
 
