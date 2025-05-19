@@ -1,22 +1,41 @@
+import { KeyRegular, MailRegular, Person24Regular } from '@fluentui/react-icons';
 import {
-  City24Regular,
-  Home24Regular,
-  KeyRegular,
-  Mail24Regular,
-  MailRegular,
-} from '@fluentui/react-icons';
-import { Button, tokens } from '@fluentui/react-components';
+  Button,
+  Checkbox,
+  Label,
+  Link,
+  Spinner,
+  Toast,
+  ToastBody,
+  ToastTitle,
+  tokens,
+  useId,
+  useToastController,
+  type CheckboxProps,
+  type ToastIntent,
+} from '@fluentui/react-components';
 import { makeStyles } from '@fluentui/react-components';
 import { useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { registerSchema, type RegisterSchema } from '../../lib/schemas/user';
-import { Person24Regular } from '@fluentui/react-icons/fonts';
+import Confetti from 'react-confetti';
 
 import InputField from '../../components/ui/input-field';
 import ShowHideButton from '../../components/ui/buttons/show-hide';
-import SelectField from '../../components/ui/select-field';
 import DatePickerField from '../../components/ui/date-picker-field';
+import { createCustomer } from '../../lib/api/create-customer';
+import { TOASTER_ID } from '../../lib/constants';
+import { useUser } from '../../hooks/use-user';
+import { createLink, useNavigate } from '@tanstack/react-router';
+import AddressFieldset from '../../components/ui/address-fieldset';
+
+interface NotifyOptions {
+  title: string;
+  content: string;
+  intent: ToastIntent | 'progress';
+  timeout: number;
+}
 
 const useStyles = makeStyles({
   buttonContainer: {
@@ -24,35 +43,130 @@ const useStyles = makeStyles({
     flexWrap: 'wrap',
     alignItems: 'center',
     gap: tokens.spacingHorizontalXL,
+    marginTop: tokens.spacingVerticalM,
+  },
+  label: {
+    display: 'block',
+    marginBlock: tokens.spacingVerticalM,
+    textTransform: 'capitalize',
   },
   eye: {
     padding: `${tokens.spacingVerticalNone} ${tokens.spacingHorizontalNone}`,
   },
+  confetti: {
+    width: '100%',
+    height: '100%',
+  },
 });
-
-type Country = 'USA' | 'Canada';
 
 export default function RegisterForm() {
   const styles = useStyles();
-  const [show, setShow] = useState(false);
 
-  const allowedCountries: Country[] = ['USA', 'Canada'];
+  const [show, setShow] = useState(false);
+  const [isDefaultShippingAddress, setIsDefaultShippingAddress] =
+    useState<CheckboxProps['checked']>(false);
+  const [isDefaultBillingAddress, setIsDefaultBillingAddress] =
+    useState<CheckboxProps['checked']>(false);
+  const [shippingAsBilling, setShippingAsBilling] = useState<CheckboxProps['checked']>(false);
+
+  const { isLoading, setIsLoading, authorized, setAuthorized } = useUser();
+  const progressToastId = useId('progress');
+
+  const CustomLink = createLink(Link);
+  const navigate = useNavigate({ from: '/register' });
+  const { dispatchToast, dismissToast } = useToastController(TOASTER_ID);
 
   const methods = useForm<RegisterSchema>({
     resolver: zodResolver(registerSchema),
   });
+
   const {
     handleSubmit,
+    setValue,
+    getValues,
     formState: { errors },
   } = methods;
 
-  const onSubmit = (data: RegisterSchema) => {
-    return data;
+  const notify = ({ title, content, intent, timeout }: NotifyOptions) => {
+    switch (intent) {
+      case 'progress':
+        dispatchToast(
+          <Toast>
+            <ToastTitle media={<Spinner size="tiny" />}>{title}</ToastTitle>
+            <ToastBody>{content}</ToastBody>
+          </Toast>,
+          { toastId: progressToastId },
+        );
+        break;
+      default:
+        dispatchToast(
+          <Toast>
+            <ToastTitle>{title}</ToastTitle>
+            <ToastBody>{content}</ToastBody>
+          </Toast>,
+          { intent, timeout },
+        );
+    }
+  };
+
+  const onSubmit = async (data: RegisterSchema) => {
+    try {
+      setIsLoading(true);
+      notify({
+        title: 'Creating an account for you...',
+        intent: 'progress',
+        content: 'Will take a second!',
+        timeout: -1,
+      });
+
+      const response = await createCustomer(data, {
+        isDefaultShippingAddress,
+        isDefaultBillingAddress,
+        shippingAsBilling,
+      });
+
+      notify({
+        title: `Hello, ${response.body.customer.firstName}! 😄`,
+        content: 'Your account was successfully created!',
+        intent: 'success',
+        timeout: 4000,
+      });
+
+      setIsLoading(false);
+      setAuthorized(true);
+      dismissToast(progressToastId);
+
+      setTimeout(() => {
+        void navigate({ to: '/' });
+      }, 3000);
+    } catch (error) {
+      setIsLoading(false);
+      dismissToast(progressToastId);
+      if (error instanceof Error) {
+        notify({
+          title: 'Oops...',
+          content: `Something went wrong: ${error.message} Please try again. 😔`,
+          intent: 'error',
+          timeout: 4000,
+        });
+      }
+    }
+  };
+
+  const syncBilling = () => {
+    if (shippingAsBilling) {
+      const shippingAddress = getValues('addresses.0');
+      setValue('addresses.1', shippingAddress);
+    }
   };
 
   return (
     <FormProvider {...methods}>
       <form onSubmit={(e) => void handleSubmit(onSubmit)(e)}>
+        <Label weight="semibold" size="large" className={styles.label}>
+          Personal information
+        </Label>
+
         <InputField
           label="Email"
           type="text"
@@ -60,7 +174,6 @@ export default function RegisterForm() {
           contentBefore={<MailRegular />}
           name="email"
           message={errors.email?.message}
-          required
         />
 
         <InputField
@@ -73,7 +186,6 @@ export default function RegisterForm() {
           type={show ? 'text' : 'password'}
           name="password"
           placeholder="Create a strong password"
-          required
         />
 
         <InputField
@@ -83,7 +195,6 @@ export default function RegisterForm() {
           type="text"
           contentBefore={<Person24Regular />}
           message={errors.firstName?.message}
-          required
         />
 
         <InputField
@@ -93,59 +204,68 @@ export default function RegisterForm() {
           type="text"
           contentBefore={<Person24Regular />}
           message={errors.lastName?.message}
-          required
         />
 
         <DatePickerField<RegisterSchema>
           name="dateOfBirth"
           label="Date of birth"
           placeholder="Select a date"
-          required
         />
 
-        <InputField
-          label="City"
-          placeholder="Albuquerque"
-          name="city"
-          type="text"
-          contentBefore={<City24Regular />}
-          message={errors.city?.message}
-          required
+        <AddressFieldset
+          variant="shipping"
+          isDefaultAddress={isDefaultShippingAddress}
+          setIsDefaultAddress={setIsDefaultShippingAddress}
+          onBlur={syncBilling}
         />
 
-        <InputField
-          label="Street"
-          placeholder="308 Negra Arroyo Lane"
-          name="street"
-          type="text"
-          contentBefore={<Home24Regular />}
-          message={errors.street?.message}
-          required
+        <Checkbox
+          label="Use shipping address as billing address"
+          checked={shippingAsBilling}
+          onChange={(_, data) => {
+            setShippingAsBilling(data.checked);
+            syncBilling();
+          }}
+          style={{ marginBottom: tokens.spacingVerticalM }}
         />
 
-        <InputField
-          label="Postal Code"
-          placeholder="Postal code in your country"
-          name="postalCode"
-          type="text"
-          contentBefore={<Mail24Regular />}
-          message={errors.postalCode?.message}
-          required
-        />
-
-        <SelectField
-          label="Country"
-          name="country"
-          options={allowedCountries}
-          message={errors.country?.message}
-          required
-        />
+        {!shippingAsBilling && (
+          <AddressFieldset
+            variant="billing"
+            isDefaultAddress={isDefaultBillingAddress}
+            setIsDefaultAddress={setIsDefaultBillingAddress}
+          />
+        )}
 
         <div className={styles.buttonContainer}>
-          <Button type="submit" size="large" appearance="primary" shape="circular">
-            Create
+          <Button
+            type="submit"
+            size="large"
+            appearance="primary"
+            shape="circular"
+            disabled={isLoading}
+          >
+            Submit
           </Button>
+
+          <div>
+            Already have an account? <CustomLink to="/login">Sign in</CustomLink>
+          </div>
         </div>
+
+        {authorized && (
+          <Confetti
+            className={styles.confetti}
+            width={window.innerWidth}
+            height={window.innerHeight}
+            recycle={false}
+            numberOfPieces={512}
+            gravity={0.2}
+            initialVelocityY={20}
+            tweenDuration={2000}
+            colors={['#ff49a5', '#e449ff', '#5795ff']}
+          />
+        )}
       </form>
     </FormProvider>
   );

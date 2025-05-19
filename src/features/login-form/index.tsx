@@ -137,7 +137,7 @@ export default function LoginForm() {
             Login
           </Button>
           <div>
-            New customer? <CustomLink to="/">Sign up</CustomLink>
+            New customer? <CustomLink to="/register">Sign up</CustomLink>
           </div>
         </div>
 
