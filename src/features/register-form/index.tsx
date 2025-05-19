@@ -15,8 +15,8 @@ import {
   type ToastIntent,
 } from '@fluentui/react-components';
 import { makeStyles } from '@fluentui/react-components';
-import { useEffect, useState } from 'react';
-import { FormProvider, useForm, useWatch } from 'react-hook-form';
+import { useState } from 'react';
+import { FormProvider, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { registerSchema, type RegisterSchema } from '../../lib/schemas/user';
 import { Person24Regular } from '@fluentui/react-icons/fonts';
@@ -82,27 +82,10 @@ export default function RegisterForm() {
 
   const {
     handleSubmit,
-    control,
     setValue,
-    resetField,
+    getValues,
     formState: { errors },
   } = methods;
-
-  const shippingAddress = useWatch({
-    control,
-    name: 'addresses.0',
-  });
-
-  useEffect(() => {
-    if (shippingAsBilling) {
-      setValue('addresses.1', shippingAddress);
-    } else {
-      resetField('addresses.1.city');
-      resetField('addresses.1.streetName');
-      resetField('addresses.1.postalCode');
-      setValue('addresses.1.country', 'AD');
-    }
-  }, [shippingAsBilling, shippingAddress, setValue, resetField]);
 
   const notify = ({ title, content, intent, timeout }: NotifyOptions) => {
     switch (intent) {
@@ -168,6 +151,13 @@ export default function RegisterForm() {
     }
   };
 
+  const syncBilling = () => {
+    if (shippingAsBilling) {
+      const shippingAddress = getValues('addresses.0');
+      setValue('addresses.1', shippingAddress);
+    }
+  };
+
   return (
     <FormProvider {...methods}>
       <form onSubmit={(e) => void handleSubmit(onSubmit)(e)}>
@@ -224,21 +214,26 @@ export default function RegisterForm() {
           variant="shipping"
           isDefaultAddress={isDefaultShippingAddress}
           setIsDefaultAddress={setIsDefaultShippingAddress}
+          onBlur={syncBilling}
         />
 
         <Checkbox
           label="Use shipping address as billing address"
           checked={shippingAsBilling}
-          onChange={(_, data) => setShippingAsBilling(data.checked)}
+          onChange={(_, data) => {
+            setShippingAsBilling(data.checked);
+            syncBilling();
+          }}
           style={{ marginBottom: tokens.spacingVerticalM }}
         />
 
-        <AddressFieldset
-          variant="billing"
-          isDefaultAddress={isDefaultBillingAddress}
-          setIsDefaultAddress={setIsDefaultBillingAddress}
-          disabled={!!shippingAsBilling}
-        />
+        {!shippingAsBilling && (
+          <AddressFieldset
+            variant="billing"
+            isDefaultAddress={isDefaultBillingAddress}
+            setIsDefaultAddress={setIsDefaultBillingAddress}
+          />
+        )}
 
         <div className={styles.buttonContainer}>
           <Button

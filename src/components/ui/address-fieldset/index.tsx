@@ -10,6 +10,7 @@ import {
   makeStyles,
   tokens,
   type CheckboxProps,
+  type InputProps,
 } from '@fluentui/react-components';
 
 const useStyles = makeStyles({
@@ -23,11 +24,10 @@ const useStyles = makeStyles({
   },
 });
 
-interface Props {
+interface Props extends Partial<InputProps> {
   variant: string;
   isDefaultAddress: CheckboxProps['checked'];
   setIsDefaultAddress: React.Dispatch<React.SetStateAction<CheckboxProps['checked']>>;
-  disabled?: boolean;
 }
 
 export default function AddressFieldset(props: Props) {
@@ -37,7 +37,7 @@ export default function AddressFieldset(props: Props) {
     formState: { errors },
   } = useFormContext<RegisterSchema>();
 
-  const { variant, isDefaultAddress, setIsDefaultAddress, disabled } = props;
+  const { variant, isDefaultAddress, setIsDefaultAddress, onBlur, disabled } = props;
 
   const index = variant === 'shipping' ? 0 : 1;
 
@@ -54,6 +54,7 @@ export default function AddressFieldset(props: Props) {
         contentBefore={<City24Regular />}
         message={errors.addresses?.[index]?.city?.message}
         disabled={disabled}
+        onBlur={onBlur}
       />
       <InputField
         label="Street"
@@ -63,6 +64,7 @@ export default function AddressFieldset(props: Props) {
         contentBefore={<Home24Regular />}
         message={errors.addresses?.[index]?.streetName?.message}
         disabled={disabled}
+        onBlur={onBlur}
       />
       <InputField
         label="Postal Code"
@@ -72,6 +74,7 @@ export default function AddressFieldset(props: Props) {
         contentBefore={<Mail24Regular />}
         message={errors.addresses?.[index]?.postalCode?.message}
         disabled={disabled}
+        onBlur={onBlur}
       />
       <SelectField
         label="Country"
@@ -79,6 +82,7 @@ export default function AddressFieldset(props: Props) {
         options={countryOptions}
         message={errors.addresses?.[index]?.country?.message}
         disabled={disabled}
+        onBlur={onBlur}
       />
 
       <Checkbox
