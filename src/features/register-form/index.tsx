@@ -19,7 +19,7 @@ import { useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { registerSchema, type RegisterSchema } from '../../lib/schemas/user';
-import { Person24Regular } from '@fluentui/react-icons/fonts';
+import { Person24Regular } from '@fluentui/react-icons';
 
 import InputField from '../../components/ui/input-field';
 import ShowHideButton from '../../components/ui/buttons/show-hide';
