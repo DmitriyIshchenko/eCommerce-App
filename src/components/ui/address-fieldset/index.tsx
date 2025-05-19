@@ -27,6 +27,7 @@ interface Props {
   variant: string;
   isDefaultAddress: CheckboxProps['checked'];
   setIsDefaultAddress: React.Dispatch<React.SetStateAction<CheckboxProps['checked']>>;
+  disabled?: boolean;
 }
 
 export default function AddressFieldset(props: Props) {
@@ -36,7 +37,7 @@ export default function AddressFieldset(props: Props) {
     formState: { errors },
   } = useFormContext<RegisterSchema>();
 
-  const { variant, isDefaultAddress, setIsDefaultAddress } = props;
+  const { variant, isDefaultAddress, setIsDefaultAddress, disabled } = props;
 
   const index = variant === 'shipping' ? 0 : 1;
 
@@ -52,6 +53,7 @@ export default function AddressFieldset(props: Props) {
         type="text"
         contentBefore={<City24Regular />}
         message={errors.addresses?.[index]?.city?.message}
+        disabled={disabled}
       />
       <InputField
         label="Street"
@@ -60,6 +62,7 @@ export default function AddressFieldset(props: Props) {
         type="text"
         contentBefore={<Home24Regular />}
         message={errors.addresses?.[index]?.streetName?.message}
+        disabled={disabled}
       />
       <InputField
         label="Postal Code"
@@ -68,12 +71,14 @@ export default function AddressFieldset(props: Props) {
         type="text"
         contentBefore={<Mail24Regular />}
         message={errors.addresses?.[index]?.postalCode?.message}
+        disabled={disabled}
       />
       <SelectField
         label="Country"
         name={`addresses.${index}.country`}
         options={countryOptions}
         message={errors.addresses?.[index]?.country?.message}
+        disabled={disabled}
       />
 
       <Checkbox

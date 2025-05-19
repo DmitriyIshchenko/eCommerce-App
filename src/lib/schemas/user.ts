@@ -37,6 +37,31 @@ export const loginSchema = z.object({
 
 export type LoginSchema = z.infer<typeof loginSchema>;
 
+const personalSchema = loginSchema.extend({
+  firstName: z
+    .string()
+    .min(1, 'Required field')
+    .regex(...patterns.NO_SPECIAL_CHARS)
+    .regex(...patterns.NO_NUMBERS),
+
+  lastName: z
+    .string()
+    .min(1, 'Required field')
+    .regex(...patterns.NO_SPECIAL_CHARS)
+    .regex(...patterns.NO_NUMBERS),
+
+  dateOfBirth: z.date().refine((userDate) => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const pastDate = new Date();
+    pastDate.setFullYear(today.getFullYear() - MIN_AGE);
+    pastDate.setHours(0, 0, 0, 1);
+
+    return userDate.getTime() - pastDate.getTime() < 0;
+  }, `You must be at least ${MIN_AGE} years old`),
+});
+
 const addressSchema = z
   .object({
     streetName: z
@@ -70,31 +95,6 @@ const addressSchema = z
       });
     }
   });
-
-const personalSchema = loginSchema.extend({
-  firstName: z
-    .string()
-    .min(1, 'Required field')
-    .regex(...patterns.NO_SPECIAL_CHARS)
-    .regex(...patterns.NO_NUMBERS),
-
-  lastName: z
-    .string()
-    .min(1, 'Required field')
-    .regex(...patterns.NO_SPECIAL_CHARS)
-    .regex(...patterns.NO_NUMBERS),
-
-  dateOfBirth: z.date().refine((userDate) => {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
-    const pastDate = new Date();
-    pastDate.setFullYear(today.getFullYear() - MIN_AGE);
-    pastDate.setHours(0, 0, 0, 1);
-
-    return userDate.getTime() - pastDate.getTime() < 0;
-  }, `You must be at least ${MIN_AGE} years old`),
-});
 
 export const registerSchema = personalSchema.extend({
   addresses: z.array(addressSchema),

@@ -1,6 +1,7 @@
 import { KeyRegular, MailRegular } from '@fluentui/react-icons';
 import {
   Button,
+  Checkbox,
   Label,
   Link,
   Spinner,
@@ -14,8 +15,8 @@ import {
   type ToastIntent,
 } from '@fluentui/react-components';
 import { makeStyles } from '@fluentui/react-components';
-import { useState } from 'react';
-import { FormProvider, useForm } from 'react-hook-form';
+import { useEffect, useState } from 'react';
+import { FormProvider, useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { registerSchema, type RegisterSchema } from '../../lib/schemas/user';
 import { Person24Regular } from '@fluentui/react-icons/fonts';
@@ -66,6 +67,7 @@ export default function RegisterForm() {
     useState<CheckboxProps['checked']>(false);
   const [isDefaultBillingAddress, setIsDefaultBillingAddress] =
     useState<CheckboxProps['checked']>(false);
+  const [shippingAsBilling, setShippingAsBilling] = useState<CheckboxProps['checked']>(false);
 
   const { isLoading, setIsLoading, setAuthorized } = useUser();
   const progressToastId = useId('progress');
@@ -80,8 +82,27 @@ export default function RegisterForm() {
 
   const {
     handleSubmit,
+    control,
+    setValue,
+    resetField,
     formState: { errors },
   } = methods;
+
+  const shippingAddress = useWatch({
+    control,
+    name: 'addresses.0',
+  });
+
+  useEffect(() => {
+    if (shippingAsBilling) {
+      setValue('addresses.1', shippingAddress);
+    } else {
+      resetField('addresses.1.city');
+      resetField('addresses.1.streetName');
+      resetField('addresses.1.postalCode');
+      setValue('addresses.1.country', 'AD');
+    }
+  }, [shippingAsBilling, shippingAddress, setValue, resetField]);
 
   const notify = ({ title, content, intent, timeout }: NotifyOptions) => {
     switch (intent) {
@@ -115,11 +136,12 @@ export default function RegisterForm() {
         timeout: -1,
       });
 
-      const response = await createCustomer(
-        data,
+      const response = await createCustomer(data, {
         isDefaultShippingAddress,
         isDefaultBillingAddress,
-      );
+        shippingAsBilling,
+      });
+
       notify({
         title: `Hello, ${response.body.customer.firstName}! 😄`,
         content: 'Your account was successfully created!',
@@ -204,10 +226,18 @@ export default function RegisterForm() {
           setIsDefaultAddress={setIsDefaultShippingAddress}
         />
 
+        <Checkbox
+          label="Use shipping address as billing address"
+          checked={shippingAsBilling}
+          onChange={(_, data) => setShippingAsBilling(data.checked)}
+          style={{ marginBottom: tokens.spacingVerticalM }}
+        />
+
         <AddressFieldset
           variant="billing"
           isDefaultAddress={isDefaultBillingAddress}
           setIsDefaultAddress={setIsDefaultBillingAddress}
+          disabled={!!shippingAsBilling}
         />
 
         <div className={styles.buttonContainer}>

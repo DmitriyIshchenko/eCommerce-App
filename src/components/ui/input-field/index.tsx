@@ -19,11 +19,12 @@ interface Props extends Partial<FieldProps> {
   placeholder?: string;
   contentBefore?: InputProps['contentBefore'];
   contentAfter?: InputProps['contentAfter'];
+  disabled?: boolean;
 }
 
 export default function InputField(props: Props) {
   const classes = useClasses();
-  const { message, name, type, placeholder, contentBefore, contentAfter } = props;
+  const { message, name, type, placeholder, contentBefore, contentAfter, disabled } = props;
   const { register } = useFormContext();
 
   return (
@@ -40,6 +41,7 @@ export default function InputField(props: Props) {
         placeholder={placeholder}
         contentBefore={contentBefore}
         contentAfter={contentAfter}
+        disabled={disabled}
         {...register(name)}
       />
     </Field>

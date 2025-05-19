@@ -24,11 +24,12 @@ interface Props extends Partial<FieldProps> {
   message: string | undefined;
   name: string;
   options: Option[];
+  disabled?: boolean;
 }
 
 export default function SelectField(props: Props) {
   const styles = useClasses();
-  const { message, name, options } = props;
+  const { message, name, options, disabled } = props;
   const { register } = useFormContext();
 
   const selectId = useId();
@@ -46,6 +47,7 @@ export default function SelectField(props: Props) {
         id={selectId}
         defaultValue={options[0].value}
         {...register(name)}
+        disabled={disabled}
       >
         {options.map((option) => option.children)}
       </Select>
