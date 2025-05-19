@@ -1,5 +1,4 @@
 import { createFileRoute } from '@tanstack/react-router'
-import RegistrationForm from '../components/registration-form';
 import Registration from '../features/registration';
 
 export const Route = createFileRoute('/registration')({
@@ -7,5 +6,5 @@ export const Route = createFileRoute('/registration')({
 })
 
 function RouteComponent() {
-  return <div><Registration /></div>
+  return <div><Registration/></div>
 }

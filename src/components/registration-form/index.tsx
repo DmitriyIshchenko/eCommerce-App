@@ -15,8 +15,10 @@ import {
 	useToastController,
 } from "@fluentui/react-components";
 import {
+	AddFilled,
 	CalendarAddRegular,
 	CityRegular,
+	DeleteRegular,
 	DocumentArrowRightRegular,
 	Globe20Regular,
 	KeyRegular,
@@ -33,10 +35,15 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import Confetti from "react-confetti";
-import { FormProvider, useForm } from "react-hook-form";
+import { FormProvider, useFieldArray, useForm } from "react-hook-form";
+import { useLoading } from "../../hooks/use-loading";
 import { useUser } from "../../hooks/use-user";
 import { TOASTER_ID } from "../../lib/constants";
-import { type RegistrationSchema, registrationSchema } from "../../lib/schemas";
+import {
+	type AddressSchema,
+	type RegistrationSchema,
+	registrationSchema,
+} from "../../lib/schemas";
 import { registration } from "../../lib/services/registration";
 import ShowHideButton from "../ui/buttons/show-hide";
 import FormCheckbox from "../ui/fields/form-checkbox";
@@ -88,12 +95,23 @@ const useClasses = makeStyles({
 	},
 });
 
+const defaultBilling: AddressSchema = {
+	city: "",
+	country: "",
+	default: false,
+	street: "",
+	zip: "",
+};
+
 export default function RegistrationForm() {
 	const classes = useClasses();
 	const checkboxClasses = useCheckboxClasses();
 	const [show, setShow] = useState(false);
 	const methods = useForm<RegistrationSchema>({
 		resolver: zodResolver(registrationSchema),
+		defaultValues: {
+			billing: [defaultBilling],
+		},
 	});
 	const {
 		handleSubmit,
@@ -101,15 +119,22 @@ export default function RegistrationForm() {
 		trigger,
 		clearErrors,
 		setValue,
+		control,
 	} = methods;
+
 	const { authorized, setAuthorized } = useUser();
+	const { loading, setLoading } = useLoading();
+	const { fields, append, remove } = useFieldArray({
+		control,
+		name: "billing",
+	});
 
 	const { dispatchToast } = useToastController(TOASTER_ID);
 
 	const notify = (name: string, email: string) =>
 		dispatchToast(
 			<Toast>
-				<ToastTitle>{`Congratulations, ${name}!`}</ToastTitle>
+				<ToastTitle>Congratulations, {name}!</ToastTitle>
 				<ToastBody className={classes.toast}>
 					You have been successfully registered and logged in
 					<br /> with {email} address
@@ -120,11 +145,14 @@ export default function RegistrationForm() {
 
 	const onSubmit = async (d: RegistrationSchema) => {
 		try {
+			setLoading(true);
 			const result = await registration(d);
 			setAuthorized(true);
 			notify(result.personal.firstName, result.personal.email);
 		} catch (e) {
 			console.log(e);
+		} finally {
+			setLoading(false);
 		}
 	};
 	const [selectedValue, setSelectedValue] = useState<TabValue>("personal");
@@ -346,6 +374,7 @@ export default function RegistrationForm() {
 									<DocumentArrowRightRegular />
 								)
 							}
+							disabled={shippingAsBilling && loading}
 							iconPosition="after"
 							className={classes.button}
 							onClick={() => void checkSecondStep()}
@@ -355,68 +384,88 @@ export default function RegistrationForm() {
 					</div>
 					{selectedValue === "billing" && !shippingAsBilling && (
 						<div>
-							<div className={classes.group}>
-								<FormFieldInput
-									label="Street"
-									placeholder="type street here..."
-									contentBefore={
-										<StreetSignRegular className={classes.before} />
-									}
-									message={errors.billing?.[0]?.street?.message}
-									name="billing.0.street"
-								/>
-								<FormFieldInput
-									label="City"
-									placeholder="type city here..."
-									contentBefore={<CityRegular className={classes.before} />}
-									message={errors.billing?.[0]?.city?.message}
-									name="billing.0.city"
-								/>
-								<div style={{ position: "relative" }}>
-									<Globe20Regular className={classes.icon} />
-									<FormFieldComboBox
-										message={errors.billing?.[0]?.country?.message}
-										name="billing.0.country"
-										label="Country"
-										placeholder="type country here..."
-										onOptionsSelect={(_, d) => {
-											if (d.optionValue && d.optionValue in countries) {
-												setBillingPcFormat(countries[d.optionValue]?.zipFormat);
-											} else {
-												setBillingPcFormat("");
-											}
-										}}
-										options={countryOptions}
+							{fields.map((field, index) => (
+								<div className={classes.group} key={field.id}>
+									<FormFieldInput
+										label="Street"
+										placeholder="type street here..."
+										contentBefore={
+											<StreetSignRegular className={classes.before} />
+										}
+										message={errors.billing?.[index]?.street?.message}
+										name={`billing.${index}.street`}
 									/>
+									<FormFieldInput
+										label="City"
+										placeholder="type city here..."
+										contentBefore={<CityRegular className={classes.before} />}
+										message={errors.billing?.[index]?.city?.message}
+										name={`billing.${index}.city`}
+									/>
+									<div style={{ position: "relative" }}>
+										<Globe20Regular className={classes.icon} />
+										<FormFieldComboBox
+											message={errors.billing?.[index]?.country?.message}
+											name={`billing.${index}.country`}
+											label="Country"
+											placeholder="type country here..."
+											onOptionsSelect={(_, d) => {
+												if (d.optionValue && d.optionValue in countries) {
+													setBillingPcFormat(
+														countries[d.optionValue]?.zipFormat,
+													);
+												} else {
+													setBillingPcFormat("");
+												}
+											}}
+											options={countryOptions}
+										/>
+									</div>
+									<FormFieldInput
+										label={
+											<InfoLabel
+												info={billingPcFormat && `format: ${billingPcFormat}`}
+											>
+												Postal Code
+											</InfoLabel>
+										}
+										placeholder="type postcode here..."
+										contentBefore={
+											<NumberRowRegular className={classes.before} />
+										}
+										message={errors.billing?.[index]?.zip?.message}
+										name={`billing.${index}.zip`}
+									/>
+									<FormCheckbox
+										name={`billing.${index}.default`}
+										labelPosition="before"
+										label="Use as default for billing"
+										className={checkboxClasses.root}
+									/>
+									<Button
+										icon={<DeleteRegular />}
+										onClick={() => remove(index)}
+										disabled={fields.length < 2}
+									>
+										REMOVE
+									</Button>
 								</div>
-								<FormFieldInput
-									label={
-										<InfoLabel
-											info={billingPcFormat && `format: ${billingPcFormat}`}
-										>
-											Postal Code
-										</InfoLabel>
-									}
-									placeholder="type postcode here..."
-									contentBefore={
-										<NumberRowRegular className={classes.before} />
-									}
-									message={errors.billing?.[0]?.zip?.message}
-									name="billing.0.zip"
-								/>
-								<FormCheckbox
-									name="billing.0.default"
-									labelPosition="before"
-									label="Use as default for billing"
-									className={checkboxClasses.root}
-								/>
-							</div>
+							))}
+							<Button
+								type="button"
+								appearance="secondary"
+								icon={<AddFilled />}
+								onClick={() => append(defaultBilling)}
+							>
+								ADD
+							</Button>
 							<Button
 								type="submit"
 								appearance="primary"
 								icon={<SendRegular />}
 								iconPosition="after"
 								className={classes.button}
+								disabled={loading}
 							>
 								Submit
 							</Button>

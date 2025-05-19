@@ -4,6 +4,7 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./styles/globals.css";
 
+import { LoadingContextProvider } from "./components/contexts/loading/context-provider";
 import { routeTree } from "./routeTree.gen";
 
 const router = createRouter({ routeTree });
@@ -21,7 +22,9 @@ document.body.append(root);
 createRoot(root).render(
 	<StrictMode>
 		<FluentProvider theme={webLightTheme}>
-			<RouterProvider router={router} />
+			<LoadingContextProvider>
+				<RouterProvider router={router} />
+			</LoadingContextProvider>
 		</FluentProvider>
 	</StrictMode>,
 );

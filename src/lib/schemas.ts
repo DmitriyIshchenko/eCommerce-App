@@ -68,7 +68,7 @@ const dateStringSchema = z.preprocess(
     }
     return undefined;
   },
-  z.date()
+  z.date({message: "required"})
 );
 
 export const registrationSchema = z.object({
@@ -119,3 +119,4 @@ export const registrationSchema = z.object({
 });
 
 export type RegistrationSchema = z.input<typeof registrationSchema>;
+export type AddressSchema = z.input<typeof addressSchema>;

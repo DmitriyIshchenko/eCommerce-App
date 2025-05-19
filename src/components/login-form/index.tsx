@@ -3,22 +3,22 @@ import {
 	Toast,
 	ToastBody,
 	ToastTitle,
-	Toaster,
 	makeStyles,
 	tokens,
 	useToastController,
 } from "@fluentui/react-components";
 import { KeyRegular, MailRegular, SendFilled } from "@fluentui/react-icons";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useId, useState } from "react";
+import { useState } from "react";
 import Confetti from "react-confetti";
 import { FormProvider, useForm } from "react-hook-form";
+import { useLoading } from "../../hooks/use-loading";
 import { useUser } from "../../hooks/use-user";
+import { TOASTER_ID } from "../../lib/constants";
 import { type LoginSchema, loginSchema } from "../../lib/schemas";
 import { login } from "../../lib/services/login";
 import ShowHideButton from "../ui/buttons/show-hide";
 import FormFieldInput from "../ui/fields/form-input";
-import { TOASTER_ID } from "../../lib/constants";
 
 const useClasses = makeStyles({
 	wrapper: {
@@ -72,17 +72,22 @@ export default function LoginForm() {
 					<br /> with {email} address
 				</ToastBody>
 			</Toast>,
-			{ intent: "success",timeout: 4000 },
+			{ intent: "success", timeout: 4000 },
 		);
+
+	const { loading, setLoading } = useLoading();
 
 	const onSubmit = async (d: LoginSchema) => {
 		try {
+			setLoading(true);
 			const result = await login(d);
 			setAuthorized(true); // если без ошибок изменяем состояние в контексте, чтобы сделать редирект на главную смотрите доку по хуку useRouter - он вернёт роутер в котором можно вызвать метод навигации
 			notify(result.email);
 			// логика редиректа по таймауту
 		} catch (e) {
 			console.log(e);
+		} finally {
+			setLoading(false);
 		}
 	};
 
@@ -123,6 +128,7 @@ export default function LoginForm() {
 						icon={<SendFilled />}
 						iconPosition="after"
 						className={classes.button}
+						disabled={loading}
 					>
 						Submit
 					</Button>

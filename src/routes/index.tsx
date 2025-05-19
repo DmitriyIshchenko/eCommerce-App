@@ -1,11 +1,14 @@
 import { createFileRoute } from "@tanstack/react-router";
-import App from "../App";
-import HeroCarousel from "../components/hero-carousel";
+import StrangeForm from "../components/strange-form";
 
 export const Route = createFileRoute("/")({
-  component: RouteComponent,
+	component: RouteComponent,
 });
 
 function RouteComponent() {
-  return <HeroCarousel/>;
+	return (
+		<div>
+			<StrangeForm />
+		</div>
+	);
 }
