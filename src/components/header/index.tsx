@@ -1,5 +1,5 @@
 import { LargeTitle, makeStyles, tokens } from '@fluentui/react-components';
-import { Link as RouterLink } from '@tanstack/react-router';
+import { CustomLink } from '../../routes/__root';
 
 const useClasses = makeStyles({
   header: {
@@ -11,14 +11,17 @@ const useClasses = makeStyles({
     boxSizing: 'border-box',
     borderBottom: `1px solid ${tokens.colorNeutralStroke1}`,
   },
-  titleLink: {
-    textDecoration: 'none',
-  },
   title: {
     fontFamily: 'Gloock, sans-serif',
     fontWeight: tokens.fontWeightRegular,
     fontSize: '2rem',
     color: tokens.colorNeutralForeground1,
+    '&:hover': {
+      textDecoration: 'none',
+    },
+    '&:active': {
+      textDecoration: 'none',
+    },
   },
   headerContainer: {
     width: '100%',
@@ -49,21 +52,21 @@ export function Header() {
   return (
     <header className={classes.header}>
       <div className={classes.headerContainer}>
-        <RouterLink className={classes.titleLink} aria-label="Celestia Art - Home" to="/">
+        <CustomLink className={classes.title} aria-label="Celestia Art - Home" to="/">
           <LargeTitle className={classes.title}>Celestia Art</LargeTitle>
-        </RouterLink>
+        </CustomLink>
         <ul className={classes.menu}>
           <li>
             {' '}
-            <RouterLink className={classes.menuLink} aria-label="Login to your account" to="/login">
+            <CustomLink className={classes.menuLink} aria-label="Login to your account" to="/login">
               Login
-            </RouterLink>
+            </CustomLink>
           </li>
           <li>
             {' '}
-            <RouterLink className={classes.menuLink} aria-label="Create new account" to="/register">
+            <CustomLink className={classes.menuLink} aria-label="Create new account" to="/register">
               Sign Up
-            </RouterLink>
+            </CustomLink>
           </li>
         </ul>
       </div>

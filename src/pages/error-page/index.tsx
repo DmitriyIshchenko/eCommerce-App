@@ -3,6 +3,7 @@ import { useNavigate } from '@tanstack/react-router';
 
 const useClasses = makeStyles({
   errorPageContainer: {
+    margin: '0 auto',
     width: '100%',
     maxWidth: '1440px',
     height: '100%',

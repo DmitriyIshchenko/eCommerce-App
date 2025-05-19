@@ -2,6 +2,7 @@ import { makeStyles } from '@fluentui/react-components';
 
 const useClasses = makeStyles({
   main: {
+    minHeight: `calc(100vh - 100px)`,
     width: '100%',
     display: 'flex',
     alignItems: 'center',
