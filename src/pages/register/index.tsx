@@ -14,14 +14,20 @@ const useStyles = makeStyles({
   },
 
   title: {
+    position: 'sticky',
+    top: 0,
+    height: '100vh',
+    overflowY: 'auto',
+
     display: 'grid',
     placeContent: 'center',
 
     padding: tokens.spacingVerticalXXXL,
-
     borderRight: `1px solid ${tokens.colorNeutralStroke1}`,
 
     '@media(width<768px)': {
+      position: 'static',
+      height: 'auto',
       borderRight: 'none',
       borderBottom: `1px solid ${tokens.colorNeutralStroke1}`,
     },
