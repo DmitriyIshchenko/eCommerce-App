@@ -1,6 +1,11 @@
 import type { FieldProps } from '@fluentui/react-components';
 import { Field, makeStyles, Select, tokens, useId } from '@fluentui/react-components';
-import { useFormContext } from 'react-hook-form';
+import {
+  useFormContext,
+  Controller,
+  type FieldValues,
+  type UseControllerProps,
+} from 'react-hook-form';
 
 const useClasses = makeStyles({
   field: {
@@ -20,37 +25,43 @@ export interface Option {
   value: string;
 }
 
-interface Props extends Partial<FieldProps> {
-  message: string | undefined;
-  name: string;
+interface Props<T extends FieldValues>
+  extends UseControllerProps<T>,
+    Omit<FieldProps, 'defaultValue'> {
   options: Option[];
   disabled?: boolean;
 }
 
-export default function SelectField(props: Props) {
+export default function SelectField<T extends FieldValues>(props: Props<T>) {
   const styles = useClasses();
-  const { message, name, options, disabled } = props;
-  const { register } = useFormContext();
-
+  const { name, options, disabled } = props;
+  const { control } = useFormContext<T>();
   const selectId = useId();
 
   return (
-    <Field
-      validationState={message ? 'error' : 'none'}
-      validationMessage={message}
-      className={styles.field}
-      {...props}
-    >
-      <Select
-        size="large"
-        className={styles.select}
-        id={selectId}
-        defaultValue={options[0].value}
-        {...register(name)}
-        disabled={disabled}
-      >
-        {options.map((option) => option.children)}
-      </Select>
-    </Field>
+    <Controller
+      name={name}
+      control={control}
+      render={({ field, fieldState }) => (
+        <Field
+          validationState={fieldState.error ? 'error' : 'none'}
+          validationMessage={fieldState.error?.message}
+          className={styles.field}
+          {...props}
+        >
+          <Select
+            size="large"
+            className={styles.select}
+            id={selectId}
+            value={field.value || options[0]?.value}
+            onBlur={field.onBlur}
+            onChange={(e, data) => field.onChange(data.value)}
+            disabled={disabled}
+          >
+            {options.map((option) => option.children)}
+          </Select>
+        </Field>
+      )}
+    />
   );
 }
