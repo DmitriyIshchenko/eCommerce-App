@@ -31,7 +31,7 @@ interface Props extends Partial<InputProps> {
 export default function AddressFieldset(props: Props) {
   const styles = useStyles();
 
-  const { variant, isDefaultAddress, setIsDefaultAddress } = props;
+  const { variant, isDefaultAddress, setIsDefaultAddress, disabled } = props;
 
   const index = variant === 'shipping' ? 0 : 1;
 
@@ -47,6 +47,7 @@ export default function AddressFieldset(props: Props) {
         name={`addresses.${index}.city`}
         type="text"
         contentBefore={<City24Regular />}
+        disabled={disabled}
       />
 
       <ControlledInputField
@@ -55,6 +56,7 @@ export default function AddressFieldset(props: Props) {
         name={`addresses.${index}.streetName`}
         type="text"
         contentBefore={<Home24Regular />}
+        disabled={disabled}
       />
 
       <ControlledInputField
@@ -63,9 +65,15 @@ export default function AddressFieldset(props: Props) {
         name={`addresses.${index}.postalCode`}
         type="text"
         contentBefore={<Mail24Regular />}
+        disabled={disabled}
       />
 
-      <SelectField label="Country" name={`addresses.${index}.country`} options={countryOptions} />
+      <SelectField
+        label="Country"
+        name={`addresses.${index}.country`}
+        options={countryOptions}
+        disabled={disabled}
+      />
 
       <Checkbox
         label={`Use as default for ${variant}`}
