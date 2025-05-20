@@ -7,7 +7,6 @@ const useStyles = makeStyles({
     margin: '0 auto',
     display: 'grid',
     gridTemplateColumns: '1fr 1fr',
-    height: '100vh',
 
     '@media(width<768px)': {
       gridTemplateColumns: '1fr',
@@ -20,17 +19,16 @@ const useStyles = makeStyles({
 
     padding: tokens.spacingVerticalXXXL,
 
-    borderRight: `1px solid ${tokens.colorBrandBackground2Hover}`,
+    borderRight: `1px solid ${tokens.colorNeutralStroke1}`,
 
     '@media(width<768px)': {
       borderRight: 'none',
-      borderBottom: `1px solid ${tokens.colorBrandBackground2Hover}`,
+      borderBottom: `1px solid ${tokens.colorNeutralStroke1}`,
     },
   },
 
   content: {
     padding: tokens.spacingHorizontalXXXL,
-    overflowY: 'scroll',
 
     '@media(width<768px)': {
       overflowY: 'visible',

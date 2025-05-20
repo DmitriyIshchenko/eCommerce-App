@@ -26,6 +26,7 @@ export const loginSchema = z.object({
 
   password: z
     .string()
+    .min(1, 'Required field')
     .min(8, 'At least 8 characters long')
     .regex(/[A-Z]/g, 'At least one uppercase letter (A-Z)')
     .regex(/[a-z]/g, 'At least one lowercase letter (a-z)')
