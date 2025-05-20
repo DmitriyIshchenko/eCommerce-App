@@ -53,9 +53,9 @@ export default function SelectField<T extends FieldValues>(props: Props<T>) {
             size="large"
             className={styles.select}
             id={selectId}
-            value={field.value || options[0]?.value}
+            value={field.value || options[0].value}
             onBlur={field.onBlur}
-            onChange={(e, data) => field.onChange(data.value)}
+            onChange={(_, data) => field.onChange(data.value)}
             disabled={disabled}
           >
             {options.map((option) => option.children)}

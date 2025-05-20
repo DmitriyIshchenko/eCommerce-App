@@ -25,7 +25,7 @@ import InputField from '../../components/ui/input-field';
 import ShowHideButton from '../../components/ui/buttons/show-hide';
 import DatePickerField from '../../components/ui/date-picker-field';
 import { createCustomer } from '../../lib/api/create-customer';
-import { TOASTER_ID } from '../../lib/constants';
+import { DEFAULT_ADDRESS, TOASTER_ID } from '../../lib/constants';
 import { useUser } from '../../hooks/use-user';
 import { createLink, useNavigate } from '@tanstack/react-router';
 import AddressFieldset from '../../components/ui/address-fieldset';
@@ -78,6 +78,9 @@ export default function RegisterForm() {
 
   const methods = useForm<RegisterSchema>({
     resolver: zodResolver(registerSchema),
+    defaultValues: {
+      addresses: [DEFAULT_ADDRESS, DEFAULT_ADDRESS],
+    },
   });
 
   const {
