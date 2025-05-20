@@ -147,9 +147,7 @@ export default function RegisterForm() {
       setAuthorized(true);
       dismissToast(progressToastId);
 
-      setTimeout(() => {
-        void navigate({ to: '/' });
-      }, 3000);
+      setTimeout(() => void navigate({ to: '/' }), 2000);
     } catch (error) {
       setIsLoading(false);
       dismissToast(progressToastId);
@@ -261,9 +259,9 @@ export default function RegisterForm() {
             height={window.innerHeight}
             recycle={false}
             numberOfPieces={512}
-            gravity={0.2}
+            gravity={0.4}
             initialVelocityY={20}
-            tweenDuration={2000}
+            tweenDuration={1000}
             colors={['#ff49a5', '#e449ff', '#5795ff']}
           />
         )}
