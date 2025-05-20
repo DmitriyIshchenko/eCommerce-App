@@ -127,15 +127,25 @@ export function Header() {
   };
 
   useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth > 600 && isDrawerOpen) {
+        setIsDrawerOpen(false);
+      }
+    };
+    window.addEventListener('resize', handleResize);
+    handleResize();
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, [isDrawerOpen]);
+
+  useEffect(() => {
     if (isDrawerOpen) {
       document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
+      return () => {
+        document.body.style.overflow = '';
+      };
     }
-
-    return () => {
-      document.body.style.overflow = '';
-    };
   }, [isDrawerOpen]);
 
   return (
@@ -171,6 +181,7 @@ export function Header() {
         />
 
         <Drawer
+          modalType="modal"
           type="overlay"
           separator
           open={isDrawerOpen}
