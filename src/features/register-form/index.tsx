@@ -15,8 +15,8 @@ import {
   type ToastIntent,
 } from '@fluentui/react-components';
 import { makeStyles } from '@fluentui/react-components';
-import { useState } from 'react';
-import { FormProvider, useForm } from 'react-hook-form';
+import { useEffect, useState } from 'react';
+import { FormProvider, useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { registerSchema, type RegisterSchema } from '../../lib/schemas/user';
 import Confetti from 'react-confetti';
@@ -25,7 +25,7 @@ import InputField from '../../components/ui/input-field';
 import ShowHideButton from '../../components/ui/buttons/show-hide';
 import DatePickerField from '../../components/ui/date-picker-field';
 import { createCustomer } from '../../lib/api/create-customer';
-import { TOASTER_ID } from '../../lib/constants';
+import { DEFAULT_ADDRESS, TOASTER_ID } from '../../lib/constants';
 import { useUser } from '../../hooks/use-user';
 import { createLink, useNavigate } from '@tanstack/react-router';
 import AddressFieldset from '../../components/ui/address-fieldset';
@@ -78,12 +78,15 @@ export default function RegisterForm() {
 
   const methods = useForm<RegisterSchema>({
     resolver: zodResolver(registerSchema),
+    defaultValues: {
+      addresses: [DEFAULT_ADDRESS, DEFAULT_ADDRESS],
+    },
   });
 
   const {
     handleSubmit,
     setValue,
-    getValues,
+    control,
     formState: { errors },
   } = methods;
 
@@ -108,6 +111,14 @@ export default function RegisterForm() {
         );
     }
   };
+
+  const shippingAddress = useWatch({ control, name: 'addresses.0' });
+
+  useEffect(() => {
+    if (shippingAsBilling) {
+      setValue('addresses.1', shippingAddress, { shouldValidate: true });
+    }
+  }, [shippingAddress, setValue, shippingAsBilling]);
 
   const onSubmit = async (data: RegisterSchema) => {
     try {
@@ -136,9 +147,7 @@ export default function RegisterForm() {
       setAuthorized(true);
       dismissToast(progressToastId);
 
-      setTimeout(() => {
-        void navigate({ to: '/' });
-      }, 3000);
+      setTimeout(() => void navigate({ to: '/' }), 2000);
     } catch (error) {
       setIsLoading(false);
       dismissToast(progressToastId);
@@ -150,13 +159,6 @@ export default function RegisterForm() {
           timeout: 4000,
         });
       }
-    }
-  };
-
-  const syncBilling = () => {
-    if (shippingAsBilling) {
-      const shippingAddress = getValues('addresses.0');
-      setValue('addresses.1', shippingAddress);
     }
   };
 
@@ -216,7 +218,6 @@ export default function RegisterForm() {
           variant="shipping"
           isDefaultAddress={isDefaultShippingAddress}
           setIsDefaultAddress={setIsDefaultShippingAddress}
-          onBlur={syncBilling}
         />
 
         <Checkbox
@@ -224,18 +225,16 @@ export default function RegisterForm() {
           checked={shippingAsBilling}
           onChange={(_, data) => {
             setShippingAsBilling(data.checked);
-            syncBilling();
           }}
           style={{ marginBottom: tokens.spacingVerticalM }}
         />
 
-        {!shippingAsBilling && (
-          <AddressFieldset
-            variant="billing"
-            isDefaultAddress={isDefaultBillingAddress}
-            setIsDefaultAddress={setIsDefaultBillingAddress}
-          />
-        )}
+        <AddressFieldset
+          variant="billing"
+          isDefaultAddress={isDefaultBillingAddress}
+          setIsDefaultAddress={setIsDefaultBillingAddress}
+          disabled={Boolean(shippingAsBilling)}
+        />
 
         <div className={styles.buttonContainer}>
           <Button
@@ -260,9 +259,9 @@ export default function RegisterForm() {
             height={window.innerHeight}
             recycle={false}
             numberOfPieces={512}
-            gravity={0.2}
+            gravity={0.4}
             initialVelocityY={20}
-            tweenDuration={2000}
+            tweenDuration={1000}
             colors={['#ff49a5', '#e449ff', '#5795ff']}
           />
         )}
