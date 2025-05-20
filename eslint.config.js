@@ -24,6 +24,11 @@ export default defineConfig([
       'coverage',
     ],
   },
+  tseslint.configs.recommendedTypeChecked,
+  tseslint.configs.stylisticTypeChecked,
+  pluginReact.configs.flat.recommended,
+  pluginReact.configs.flat['jsx-runtime'],
+  prettierConfig,
   {
     files: ['**/*.{ts,tsx}'],
     plugins: { js, 'react-hooks': reactHooks, 'react-refresh': reactRefresh },
@@ -42,6 +47,7 @@ export default defineConfig([
       'no-console': ['error', { allow: ['error'] }],
       'import/prefer-default-export': ['off'],
       '@typescript-eslint/restrict-template-expressions': ['error', { allowNumber: true }],
+      '@typescript-eslint/only-throw-error': 'off',
     },
     settings: {
       react: {
@@ -49,9 +55,4 @@ export default defineConfig([
       },
     },
   },
-  tseslint.configs.recommendedTypeChecked,
-  tseslint.configs.stylisticTypeChecked,
-  pluginReact.configs.flat.recommended,
-  pluginReact.configs.flat['jsx-runtime'],
-  prettierConfig,
 ]);
