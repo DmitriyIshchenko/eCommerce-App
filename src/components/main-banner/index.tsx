@@ -1,6 +1,6 @@
 import { makeStyles, Title2 } from '@fluentui/react-components';
 
-const useClasses = makeStyles({
+export const useClasses = makeStyles({
   main: {
     minHeight: `calc(100vh - 100px)`,
     width: '100%',
@@ -9,6 +9,7 @@ const useClasses = makeStyles({
     justifyContent: 'center',
     maxWidth: '1440px',
     boxSizing: 'border-box',
+    margin: '0 auto',
   },
 });
 

@@ -67,6 +67,26 @@ export function Header() {
             {' '}
             <CustomLink
               className={classes.menuLink}
+              aria-label="Learn more about our company"
+              to="/about"
+            >
+              About
+            </CustomLink>
+          </li>
+          <li>
+            {' '}
+            <CustomLink
+              className={classes.menuLink}
+              aria-label="Browse our product catalog"
+              to="/catalog"
+            >
+              Catalog
+            </CustomLink>
+          </li>
+          <li>
+            {' '}
+            <CustomLink
+              className={classes.menuLink}
               aria-label="Login to your account"
               to={authorized ? '/' : '/login'}
             >
