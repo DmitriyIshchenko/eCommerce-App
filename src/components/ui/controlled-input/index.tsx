@@ -53,7 +53,7 @@ export default function ControlledInputField<T extends FieldValues>(props: Props
             disabled={disabled}
             {...field}
             value={field.value ?? ''}
-            onChange={(e, data) => {
+            onChange={(_, data) => {
               field.onChange(data.value);
             }}
           />
