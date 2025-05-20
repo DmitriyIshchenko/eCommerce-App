@@ -1,11 +1,29 @@
 import type { LoginSchema } from '../schemas/user';
-import { createClient, getApiRoot } from './client';
+import { createAnonymousClient, createClient, getApiRoot } from './client';
 
 export async function login(data: LoginSchema) {
-  const client = createClient(data);
-  const apiRoot = getApiRoot(client);
+  const anonymousClient = createAnonymousClient();
+  const anonymousApiRoot = getApiRoot(anonymousClient);
 
-  const clientResponse = await apiRoot.me().get().execute();
+  const loginResponse = await anonymousApiRoot
+    .me()
+    .login()
+    .post({
+      body: {
+        email: data.email,
+        password: data.password,
+        activeCartSignInMode: 'MergeWithExistingCustomerCart',
+      },
+    })
+    .execute();
 
-  return clientResponse;
+  if (loginResponse.statusCode === 200) {
+    const customerClient = createClient(data);
+    const customerApiRoot = getApiRoot(customerClient);
+
+    const customerResponse = await customerApiRoot.me().get().execute();
+    return customerResponse;
+  }
+
+  return;
 }

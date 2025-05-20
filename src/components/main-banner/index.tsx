@@ -1,4 +1,4 @@
-import { makeStyles } from '@fluentui/react-components';
+import { makeStyles, Title2 } from '@fluentui/react-components';
 
 const useClasses = makeStyles({
   main: {
@@ -6,6 +6,7 @@ const useClasses = makeStyles({
     width: '100%',
     display: 'flex',
     alignItems: 'center',
+    justifyContent: 'center',
     maxWidth: '1440px',
     boxSizing: 'border-box',
   },
@@ -13,5 +14,10 @@ const useClasses = makeStyles({
 
 export function MainBanner() {
   const classes = useClasses();
-  return <main className={classes.main}></main>;
+
+  return (
+    <main className={classes.main}>
+      <Title2>🐱‍💻 Main Page 🐱‍💻</Title2>
+    </main>
+  );
 }

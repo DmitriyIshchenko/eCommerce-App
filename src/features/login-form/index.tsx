@@ -2,15 +2,17 @@ import { KeyRegular, MailRegular } from '@fluentui/react-icons';
 import {
   Button,
   Link,
+  Spinner,
   Toast,
   ToastBody,
   ToastTitle,
   tokens,
+  useId,
   useToastController,
   type ToastIntent,
 } from '@fluentui/react-components';
 import { makeStyles } from '@fluentui/react-components';
-import { createLink } from '@tanstack/react-router';
+import { createLink, useNavigate } from '@tanstack/react-router';
 import InputField from '../../components/ui/input-field';
 import ShowHideButton from '../../components/ui/buttons/show-hide';
 import { useState } from 'react';
@@ -21,9 +23,15 @@ import { login } from '../../lib/api/login';
 import { useUser } from '../../hooks/use-user';
 import { TOASTER_ID } from '../../lib/constants';
 import Confetti from 'react-confetti';
-import { parseLoginError } from '../../lib/api/parse-login-error';
 
-const useClasses = makeStyles({
+interface notifyOptions {
+  title: string;
+  content: string;
+  intent: ToastIntent | 'progress';
+  timeout: number;
+}
+
+const useStyles = makeStyles({
   buttonContainer: {
     display: 'flex',
     flexWrap: 'wrap',
@@ -39,17 +47,13 @@ const useClasses = makeStyles({
   },
 });
 
-interface notifyOptions {
-  title: string;
-  content: string;
-  intent: ToastIntent;
-  timeout: number;
-}
-
 export default function LoginForm() {
-  const classes = useClasses();
   const CustomLink = createLink(Link);
+  const styles = useStyles();
   const [show, setShow] = useState(false);
+  const { authorized, isLoading, setAuthorized, setIsLoading } = useUser();
+  const progressToastId = useId('progress');
+  const navigate = useNavigate({ from: '/login' });
 
   const methods = useForm<LoginSchema>({
     resolver: zodResolver(loginSchema),
@@ -57,50 +61,65 @@ export default function LoginForm() {
   const {
     handleSubmit,
     formState: { errors },
-    setError,
   } = methods;
 
-  const { authorized, setAuthorized } = useUser();
-
-  const { dispatchToast } = useToastController(TOASTER_ID);
+  const { dispatchToast, dismissToast } = useToastController(TOASTER_ID);
 
   const notify = ({ title, content, intent, timeout }: notifyOptions) => {
-    dispatchToast(
-      <Toast>
-        <ToastTitle>{title}</ToastTitle>
-        <ToastBody>{content}</ToastBody>
-      </Toast>,
-      { intent: intent, timeout: timeout },
-    );
+    switch (intent) {
+      case 'progress':
+        dispatchToast(
+          <Toast>
+            <ToastTitle media={<Spinner size="tiny" />}>{title}</ToastTitle>
+            <ToastBody>{content}</ToastBody>
+          </Toast>,
+          { toastId: progressToastId },
+        );
+        break;
+      default:
+        dispatchToast(
+          <Toast>
+            <ToastTitle>{title}</ToastTitle>
+            <ToastBody>{content}</ToastBody>
+          </Toast>,
+          { intent, timeout },
+        );
+    }
   };
 
   const onSubmit = async (data: LoginSchema) => {
     try {
-      const response = await login(data);
-      setAuthorized(true);
+      setIsLoading(true);
       notify({
-        title: `Hello, ${response.body.firstName}! 😄`,
+        title: 'Loading...',
+        intent: 'progress',
+        content: 'Will take a second!',
+        timeout: -1,
+      });
+
+      const response = await login(data);
+
+      setAuthorized(true);
+
+      notify({
+        title: `Hello, ${response?.body.firstName}! 😄`,
         content: 'You have been successfully logged in',
         intent: 'success',
         timeout: 4000,
       });
-    } catch (error) {
-      const errorType = parseLoginError(error);
 
-      if (errorType === 'invalid_credentials') {
-        const message = 'Invalid login credentials. Please try again.';
-        setError('email', {
-          type: 'manual',
-          message,
-        });
-        setError('password', {
-          type: 'manual',
-          message,
-        });
-      } else {
+      setIsLoading(false);
+      dismissToast(progressToastId);
+
+      setTimeout(() => void navigate({ to: '/' }), 2000);
+    } catch (error) {
+      setIsLoading(false);
+      dismissToast(progressToastId);
+
+      if (error instanceof Error) {
         notify({
           title: 'Oops...',
-          content: 'Something went wrong. Please try again later. 😔',
+          content: `${error.message} Please try again. 😔`,
           intent: 'error',
           timeout: 4000,
         });
@@ -125,15 +144,21 @@ export default function LoginForm() {
           placeholder="••••••••"
           contentBefore={<KeyRegular />}
           contentAfter={
-            <ShowHideButton className={classes.eye} onClick={() => setShow(!show)} show={show} />
+            <ShowHideButton className={styles.eye} onClick={() => setShow(!show)} show={show} />
           }
           message={errors.password?.message}
           name="password"
           type={show ? 'text' : 'password'}
         />
 
-        <div className={classes.buttonContainer}>
-          <Button type="submit" size="large" appearance="primary" shape="circular">
+        <div className={styles.buttonContainer}>
+          <Button
+            type="submit"
+            size="large"
+            appearance="primary"
+            shape="circular"
+            disabled={isLoading || authorized}
+          >
             Login
           </Button>
           <div>
@@ -143,14 +168,14 @@ export default function LoginForm() {
 
         {authorized && (
           <Confetti
-            className={classes.confetti}
+            className={styles.confetti}
             width={window.innerWidth}
             height={window.innerHeight}
             recycle={false}
             numberOfPieces={512}
-            gravity={0.2}
+            gravity={0.4}
             initialVelocityY={20}
-            tweenDuration={2000}
+            tweenDuration={1000}
             colors={['#ff49a5', '#e449ff', '#5795ff']}
           />
         )}
