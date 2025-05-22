@@ -1,5 +1,4 @@
 import {
-	Button,
 	Carousel,
 	type CarouselAnnouncerFunction,
 	CarouselCard,
@@ -14,11 +13,11 @@ import {
 	typographyStyles,
 } from "@fluentui/react-components";
 
+import { Link } from "@tanstack/react-router";
 import img1 from "../../assets/images/18th-century-french-botanical-illustration-tradescantia-rosea-14968130109507.webp";
 import img2 from "../../assets/images/a-general-view-of-the-animal-kingdom-6194567708715.webp";
 import img3 from "../../assets/images/astronomy-101-art-earth-5990881329195.webp";
 import img4 from "../../assets/images/tribute-tree.webp";
-import { Link } from "@tanstack/react-router";
 
 const useClasses = makeStyles({
 	bannerCard: {
@@ -77,7 +76,7 @@ const BannerCard: React.FC<{
 				<div className={classes.title}>{children}</div>
 				<div className={classes.subtext}>{text}</div>
 				<div>
-					<Link to={'/product1'}>Product1</Link>
+					<Link to={"/"}>Product1</Link>
 				</div>
 			</div>
 		</CarouselCard>
@@ -87,7 +86,6 @@ const BannerCard: React.FC<{
 const getAnnouncement: CarouselAnnouncerFunction = (
 	index: number,
 	totalSlides: number,
-	slideGroupList: number[][],
 ) => {
 	return `Carousel slide ${index + 1} of ${totalSlides}`;
 };

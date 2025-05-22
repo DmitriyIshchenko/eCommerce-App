@@ -1,4 +1,4 @@
-import { z, ZodType } from "zod";
+import { z } from "zod";
 import { countries } from "../components/registration-form/country-options";
 
 const MIN_AGE = 13;
@@ -59,16 +59,15 @@ const addressSchema = z
 		}
 	});
 
-
 const dateStringSchema = z.preprocess(
-  (arg) => {
-    if (typeof arg === "string" || arg instanceof Date) {
-      const d = new Date(arg);
-      return Number.isNaN(d.getTime()) ? undefined : d;
-    }
-    return undefined;
-  },
-  z.date({message: "required"})
+	(arg) => {
+		if (typeof arg === "string" || arg instanceof Date) {
+			const d = new Date(arg);
+			return Number.isNaN(d.getTime()) ? undefined : d;
+		}
+		return undefined;
+	},
+	z.date({ message: "required" }),
 );
 
 export const registrationSchema = z.object({
