@@ -1,7 +1,7 @@
 {
   "name": "ecommerce-app",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.1.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -23,6 +23,8 @@
     ]
   },
   "dependencies": {
+    "@commercetools/platform-sdk": "^8.9.0",
+    "@commercetools/sdk-client-v2": "^3.0.0",
     "@fluentui/react-components": "^9.63.0",
     "@fluentui/react-datepicker-compat": "^0.5.6",
     "@fluentui/react-icons": "^2.0.298",
@@ -39,6 +41,7 @@
     "@commitlint/cli": "^19.8.1",
     "@commitlint/config-conventional": "^19.8.1",
     "@eslint/js": "^9.25.1",
+    "@fluentui/react-datepicker-compat": "^0.5.7",
     "@tanstack/react-router-devtools": "^1.119.1",
     "@tanstack/router-plugin": "^1.119.0",
     "@testing-library/jest-dom": "^6.6.3",
