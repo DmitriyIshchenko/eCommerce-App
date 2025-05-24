@@ -1,27 +1,32 @@
-import { StrictMode } from "react";
-import { createRoot } from "react-dom/client";
-import { RouterProvider, createRouter } from "@tanstack/react-router";
-import { FluentProvider, webLightTheme } from "@fluentui/react-components";
-import "./styles/globals.css";
-
-import { routeTree } from "./routeTree.gen";
+import './styles/globals.css';
+import { StrictMode } from 'react';
+import { createRoot } from 'react-dom/client';
+import { RouterProvider, createRouter } from '@tanstack/react-router';
+import { FluentProvider, Toaster } from '@fluentui/react-components';
+import { routeTree } from './routeTree.gen';
+import { customTheme } from './styles/theme';
+import { UserContextProvider } from './components/contexts/user/context-provider';
+import { TOASTER_ID } from './lib/constants';
 
 const router = createRouter({ routeTree });
 
-declare module "@tanstack/react-router" {
+declare module '@tanstack/react-router' {
   interface Register {
     router: typeof router;
   }
 }
 
-const root = document.createElement("div");
-root.id = "root";
+const root = document.createElement('div');
+root.id = 'root';
 document.body.append(root);
 
 createRoot(root).render(
   <StrictMode>
-    <FluentProvider theme={webLightTheme}>
-      <RouterProvider router={router} />
+    <FluentProvider theme={customTheme}>
+      <UserContextProvider>
+        <RouterProvider router={router} />
+        <Toaster toasterId={TOASTER_ID} />
+      </UserContextProvider>
     </FluentProvider>
-  </StrictMode>
+  </StrictMode>,
 );
