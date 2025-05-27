@@ -13,6 +13,7 @@ import { NavigationRegular, DismissRegular } from '@fluentui/react-icons';
 import { createLink, useNavigate } from '@tanstack/react-router';
 import { useUser } from '../../hooks/use-user';
 import { useState, useEffect } from 'react';
+import { CatalogMenu } from '../ui/catalog-menu';
 
 const useClasses = makeStyles({
   header: {
@@ -104,11 +105,6 @@ export function Header() {
       ariaLabel: 'Learn more about our company',
     },
     {
-      name: 'Catalog',
-      to: '/catalog',
-      ariaLabel: 'Browse our product catalog',
-    },
-    {
       name: 'Login',
       to: authorized ? '/' : '/login',
       ariaLabel: 'Login to your account',
@@ -156,6 +152,9 @@ export function Header() {
         </CustomLink>
 
         <ul className={classes.menu}>
+          <li>
+            <CatalogMenu />
+          </li>
           {menuItems.map((item) => (
             <li key={item.name}>
               <CustomLink className={classes.menuLink} aria-label={item.ariaLabel} to={item.to}>
@@ -165,7 +164,7 @@ export function Header() {
           ))}
           {authorized && (
             <li>
-              <Button shape="circular" onClick={handleLogout}>
+              <Button size="large" shape="circular" onClick={handleLogout}>
                 Logout
               </Button>
             </li>
