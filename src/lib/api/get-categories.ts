@@ -32,3 +32,23 @@ export async function getCategoryBySlug(slug: string) {
     throw new Error('no categories found');
   }
 }
+
+export async function getSubcategoriesByParentId(parentId: string) {
+  const anonymousClient = createAnonymousClient();
+  const anonymousApiRoot = getApiRoot(anonymousClient);
+
+  try {
+    const categoriesResponse = await anonymousApiRoot
+      .categories()
+      .get({
+        queryArgs: {
+          where: `parent(id="${parentId}")`,
+        },
+      })
+      .execute();
+
+    return categoriesResponse.body.results;
+  } catch {
+    throw new Error('Failed to get subcategories');
+  }
+}

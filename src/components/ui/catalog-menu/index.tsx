@@ -4,6 +4,7 @@ import {
   MenuItem,
   MenuList,
   MenuPopover,
+  MenuSplitGroup,
   MenuTrigger,
 } from '@fluentui/react-components';
 import { ChevronDownFilled } from '@fluentui/react-icons';
@@ -23,26 +24,69 @@ export function CatalogMenu() {
       .catch(() => setCategories([]));
   }, []);
 
-  const handleNavigate = async (slug: string) => {
+  const handleNavigateCategory = async (slug: string) => {
     await navigate({ to: '/catalog/$category', params: { category: slug } });
   };
 
+  const handleNavigateSubcategory = async (slugCat: string, slugSubCat: string) => {
+    await navigate({
+      to: '/catalog/$category/$subcategory',
+      params: { category: slugCat, subcategory: slugSubCat },
+    });
+  };
+
+  const getSubcategories = (parentId: string) => {
+    return categories.filter((subcat) => subcat.parent?.id === parentId);
+  };
+
+  const renderCategoryMenuItem = (category: Category) => {
+    const subcategories = getSubcategories(category.id);
+    const name = category.name['en-US'];
+    const slug = category.slug['en-US'];
+
+    if (subcategories.length > 0) {
+      return (
+        <Menu>
+          <MenuSplitGroup>
+            <MenuItem onClick={() => void handleNavigateCategory(slug)}>{name}</MenuItem>
+            <MenuTrigger disableButtonEnhancement>
+              <MenuItem aria-label="Open submenu" />
+            </MenuTrigger>
+          </MenuSplitGroup>
+          <MenuPopover>
+            <MenuList>
+              {subcategories.map((subcat) => (
+                <MenuItem
+                  key={subcat.id}
+                  onClick={() => void handleNavigateSubcategory(slug, subcat.slug['en-US'])}
+                >
+                  {subcat.name['en-US']}
+                </MenuItem>
+              ))}
+            </MenuList>
+          </MenuPopover>
+        </Menu>
+      );
+    }
+
+    return (
+      <MenuItem key={category.id} onClick={() => void handleNavigateCategory(slug)}>
+        {name}
+      </MenuItem>
+    );
+  };
+
+  const parentCategories = categories.filter((cat) => !cat.parent);
+
   return (
     <Menu openOnHover>
-      <MenuTrigger>
-        <CustomLink to="/catalog">
+      <MenuTrigger disableButtonEnhancement>
+        <CustomLink to="/catalog/$category" params={{ category: 'all' }}>
           Catalog <ChevronDownFilled />
         </CustomLink>
       </MenuTrigger>
       <MenuPopover>
-        <MenuList>
-          <MenuItem onClick={() => void handleNavigate('all')}>Shop All</MenuItem>
-          {categories.map((category) => (
-            <MenuItem key={category.id} onClick={() => void handleNavigate(category.slug['en-US'])}>
-              {category.name['en-US']}
-            </MenuItem>
-          ))}
-        </MenuList>
+        <MenuList>{parentCategories.map(renderCategoryMenuItem)}</MenuList>
       </MenuPopover>
     </Menu>
   );

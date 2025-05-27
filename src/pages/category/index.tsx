@@ -1,6 +1,4 @@
-import { LargeTitle, makeStyles, Spinner } from '@fluentui/react-components';
-import { getProducts, getProductsByCategoryId } from '../../lib/api/get-products';
-import { useEffect, useState } from 'react';
+import { LargeTitle, makeStyles } from '@fluentui/react-components';
 import type { Category, ProductProjection, TypedMoney } from '@commercetools/platform-sdk';
 import { ProductCard } from '../../components/product-card';
 
@@ -40,27 +38,16 @@ function formatPrice(price?: TypedMoney): string {
   return `$${(price.centAmount / 100).toFixed(2)}`;
 }
 
-export default function CategoryPage({ category }: { category: Category | null }) {
+export default function CategoryPage({
+  products,
+  category,
+}: {
+  products: ProductProjection[] | null;
+  category: Category;
+}) {
   const styles = useStyles();
-  const [loading, setLoading] = useState(false);
-  const [products, setProducts] = useState<ProductProjection[]>([]);
 
-  const title = category?.name['en-US'] ?? 'Products';
-
-  useEffect(() => {
-    setLoading(true);
-    const productsData = category ? getProductsByCategoryId(category.id) : getProducts();
-    productsData
-      .then((data) => {
-        setProducts(data);
-      })
-      .catch(() => {
-        setProducts([]);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  }, [category]);
+  const title = category ? category.name['en-US'] : 'Products';
 
   return (
     <div className={styles.categoryContainer}>
@@ -70,19 +57,15 @@ export default function CategoryPage({ category }: { category: Category | null }
 
       <div className={styles.listContainer}>
         <div className={styles.list}>
-          {loading ? (
-            <Spinner size="large" className={styles.spinner} />
-          ) : (
-            products.map((product) => (
-              <ProductCard
-                key={product.id}
-                value={product.slug?.['en-US']}
-                name={product.name?.['en-US']}
-                price={formatPrice(product.masterVariant.prices?.at(0)?.value)}
-                image={product.masterVariant.images?.at(0)?.url}
-              />
-            ))
-          )}
+          {products?.map((product) => (
+            <ProductCard
+              key={product.id}
+              value={product.slug?.['en-US']}
+              name={product.name?.['en-US']}
+              price={formatPrice(product.masterVariant.prices?.at(0)?.value)}
+              image={product.masterVariant.images?.at(0)?.url}
+            />
+          ))}
         </div>
       </div>
     </div>

@@ -10,16 +10,14 @@ export const Route = createFileRoute('/catalog/')({
 
 function RouteComponent() {
   const categories = Route.useLoaderData();
+  const parentCategories = categories.filter((cat) => !cat.parent?.id);
 
   return (
     <div>
       <Link to="/catalog/$category" params={{ category: 'all' }}>
         Shop All
       </Link>
-      <Link to="/catalog/$category" params={{ category: 'test' }}>
-        TEST
-      </Link>
-      {categories.map((category) => (
+      {parentCategories.map((category) => (
         <Link
           key={category.id}
           to="/catalog/$category"
