@@ -1,26 +1,36 @@
 import {
 	Button,
-	mergeClasses,
 	type ButtonProps,
+	mergeClasses,
 } from "@fluentui/react-components";
-import { useCss } from "./css";
+import { useCustomButtonCss } from "./css";
 
-type Props = Omit<ButtonProps, "appearance" | "as"> &
-	Omit<React.ComponentPropsWithoutRef<"button">, "type"> & {
-		as?: "button";
-		type?: "button" | "submit" | "reset";
-		appearance?: ButtonProps["appearance"] | "tertiary";
-	};
+export type CustomButtonProps = Omit<
+	ButtonProps,
+	"appearance" | "as" | "size"
+> &
+	Omit<React.ComponentPropsWithoutRef<"button">, "type"> &
+	Partial<{
+		as: "button";
+		type: "button" | "submit" | "reset";
+		appearance: "straight" | "inverted" | "subtle";
+	}>;
 
-export default function CustomButton(props: Props) {
-	const css = useCss();
+export default function CustomButton(props: CustomButtonProps) {
+	const css = useCustomButtonCss();
 	const { className, appearance, children, ...rest } = props;
 
 	return (
 		<Button
 			as="button"
-			appearance={appearance === "tertiary" ? "primary" : appearance}
-			className={mergeClasses(className, appearance === "tertiary" && css.tertiary)}
+			appearance={"primary"}
+			size="large"
+			className={mergeClasses(
+				css.base,
+				appearance === "inverted" && css.inverted,
+				appearance === "subtle" && css.subtle,
+				className,
+			)}
 			{...rest}
 		>
 			{children}

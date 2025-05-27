@@ -14,7 +14,7 @@ try {
     const inputPath = path.join(inputDir, file);
     const ext = path.extname(file);
     const baseName = path.basename(file, ext);
-    const outputPath = path.join(outputDir, `${baseName}.webp`);
+    const outputPath = path.join(outputDir, `${baseName}-lqip.webp`);
     try {
       await sharp(inputPath)
         .resize({ width: 128 })

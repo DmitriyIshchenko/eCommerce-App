@@ -4,12 +4,12 @@ import {
 	shorthands,
 	tokens,
 } from "@fluentui/react-components";
-import Link from "./fui";
 import type { ReactNode } from "react";
+import { InternalLink } from "./fui-tanstack";
 
 const useCss = makeStyles({
 	button: {
-		padding: "1rem 2rem",
+		padding: "16px 28px",
 		borderRadius: "2rem",
 		textTransform: "uppercase",
 		display: "flex",
@@ -53,23 +53,32 @@ const useCss = makeStyles({
 		...shorthands.borderColor(tokens.colorNeutralBackground1),
 		":hover": {
 			color: tokens.colorNeutralBackground1,
+			":active": {
+				color: tokens.colorNeutralBackground1,
+			},
 		},
 	},
 	filledStraight: {
 		color: tokens.colorNeutralForeground1,
 		backgroundColor: tokens.colorNeutralBackground1,
+		...shorthands.borderColor(tokens.colorNeutralBackground1),
 		":hover": {
 			color: tokens.colorNeutralForeground1,
+			":active": {
+				color: tokens.colorNeutralForeground1,
+			},
 		},
-		...shorthands.borderWidth("0"),
 	},
 	filledInverted: {
 		color: tokens.colorNeutralBackground1,
 		backgroundColor: tokens.colorNeutralForeground1,
+		...shorthands.borderColor(tokens.colorNeutralForeground1),
 		":hover": {
 			color: tokens.colorNeutralBackground1,
+			":active": {
+				color: tokens.colorNeutralBackground1,
+			},
 		},
-		...shorthands.borderWidth("0"),
 	},
 });
 
@@ -78,30 +87,31 @@ export default function ButtonLink({
 	text,
 	icon,
 	appearance = "outline",
-	color = "straight",
+	inverted = false,
 }: {
 	to: string;
 	text: string;
 	icon?: ReactNode;
 	appearance?: "outline" | "filled";
-	color?: "straight" | "inverted";
+	inverted?: boolean;
 }) {
 	const css = useCss();
 	return (
-		<Link
+		<InternalLink
 			to={to}
 			className={mergeClasses(
 				css.button,
 				css.outline,
-				appearance === "filled" && color === "straight" && css.filledStraight,
-				appearance === "filled" && color === "inverted" && css.filledInverted,
+				appearance === "filled" && !inverted && css.filledStraight,
+				appearance === "filled" && inverted && css.filledInverted,
 				appearance === "outline" && css.outline,
-				appearance === "outline" && color === "straight" && css.outlineStraight,
-				appearance === "outline" && color === "inverted" && css.outlineInverted,
+				appearance === "outline" && !inverted && css.outlineStraight,
+				appearance === "outline" && inverted && css.outlineInverted,
 			)}
+			appearance="muted"
 		>
-			<p style={{ margin: 0 }}>{text}</p>
+			<p style={{ margin: 0, padding: 2 }}>{text}</p>
 			<div className={css.icon}>{icon}</div>
-		</Link>
+		</InternalLink>
 	);
 }

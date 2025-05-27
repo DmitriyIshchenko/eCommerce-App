@@ -6,5 +6,5 @@ export const Route = createFileRoute('/')({
 });
 
 function RouteComponent() {
-  return <MainBanner />;
+  return <MainBanner/>;
 }

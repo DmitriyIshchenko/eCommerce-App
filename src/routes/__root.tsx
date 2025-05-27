@@ -1,4 +1,4 @@
-import { Spinner, Toaster } from "@fluentui/react-components";
+import { makeStaticStyles, Spinner, Toaster } from "@fluentui/react-components";
 import { Outlet, createRootRoute } from "@tanstack/react-router";
 import { UserContextProvider } from "../components/contexts/user/context-provider";
 import useDebounceLoading from "../hooks/use-debounce-loading";
@@ -10,8 +10,18 @@ export const Route = createRootRoute({
 	component: RootComponent,
 });
 
+const useStaticCss = makeStaticStyles({
+	body: {
+		margin: "0",
+	},
+	".container": {
+		maxWidth: "1440px"
+	}
+});
+
 function RootComponent() {
 	const isLoading = useDebounceLoading();
+	useStaticCss();
 	return (
 		<div style={{ position: "relative" }}>
 			<UserContextProvider>
