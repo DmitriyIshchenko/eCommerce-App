@@ -1,19 +1,29 @@
 import {
   Link,
+  makeStyles,
   Menu,
   MenuItem,
   MenuList,
   MenuPopover,
   MenuSplitGroup,
   MenuTrigger,
+  tokens,
 } from '@fluentui/react-components';
 import { ChevronDownFilled } from '@fluentui/react-icons';
 import { createLink, useNavigate } from '@tanstack/react-router';
 import { useEffect, useState } from 'react';
-import { getCategories } from '../../../lib/api/get-categories';
+import { getCategories } from '../../lib/api/get-categories';
 import type { Category } from '@commercetools/platform-sdk';
 
+const useStyles = makeStyles({
+  link: {
+    color: tokens.colorNeutralForeground1,
+    fontSize: '1.2rem',
+  },
+});
+
 export function CatalogMenu() {
+  const styles = useStyles();
   const CustomLink = createLink(Link);
   const navigate = useNavigate();
   const [categories, setCategories] = useState<Category[]>([]);
@@ -46,7 +56,7 @@ export function CatalogMenu() {
 
     if (subcategories.length > 0) {
       return (
-        <Menu key={category.id}>
+        <Menu openOnHover={false} key={category.id}>
           <MenuSplitGroup>
             <MenuItem onClick={() => void handleNavigateCategory(slug)}>{name}</MenuItem>
             <MenuTrigger disableButtonEnhancement>
@@ -79,12 +89,19 @@ export function CatalogMenu() {
   const parentCategories = categories.filter((cat) => !cat.parent);
 
   return (
-    <Menu openOnHover>
-      <MenuTrigger disableButtonEnhancement>
-        <CustomLink to="/catalog/$category" params={{ category: 'all' }}>
-          Catalog <ChevronDownFilled />
-        </CustomLink>
-      </MenuTrigger>
+    <Menu>
+      <MenuSplitGroup>
+        <MenuItem>
+          <CustomLink className={styles.link} to="/catalog/$category" params={{ category: 'all' }}>
+            Catalog
+          </CustomLink>
+        </MenuItem>
+        <MenuTrigger disableButtonEnhancement>
+          <MenuItem>
+            <ChevronDownFilled />
+          </MenuItem>
+        </MenuTrigger>
+      </MenuSplitGroup>
       <MenuPopover>
         <MenuList>{parentCategories.map(renderCategoryMenuItem)}</MenuList>
       </MenuPopover>

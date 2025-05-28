@@ -1,6 +1,16 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { getCategories } from '../../lib/api/get-categories';
-import { Spinner } from '@fluentui/react-components';
+import { makeStyles, Spinner } from '@fluentui/react-components';
+
+const useStyles = makeStyles({
+  container: {
+    minHeight: '35vh',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});
 
 export const Route = createFileRoute('/catalog/')({
   loader: getCategories,
@@ -9,11 +19,12 @@ export const Route = createFileRoute('/catalog/')({
 });
 
 function RouteComponent() {
+  const styles = useStyles();
   const categories = Route.useLoaderData();
   const parentCategories = categories.filter((cat) => !cat.parent?.id);
 
   return (
-    <div>
+    <div className={styles.container}>
       <Link to="/catalog/$category" params={{ category: 'all' }}>
         Shop All
       </Link>

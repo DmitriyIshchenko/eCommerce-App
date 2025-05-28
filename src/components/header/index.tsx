@@ -13,7 +13,7 @@ import { NavigationRegular, DismissRegular } from '@fluentui/react-icons';
 import { createLink, useNavigate } from '@tanstack/react-router';
 import { useUser } from '../../hooks/use-user';
 import { useState, useEffect } from 'react';
-import { CatalogMenu } from '../ui/catalog-menu';
+import { CatalogMenu } from '../catalog-menu';
 
 const useClasses = makeStyles({
   header: {
