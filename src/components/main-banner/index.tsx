@@ -25,7 +25,7 @@ import MinMaxDoubleSlider from "../ui/sliders/min-max-double";
 import LargeSwatchPicker from "../ui/swatch-picker";
 import StyledTooltip from "../ui/tooltips/styled";
 
-export const useClasses = makeStyles({
+export const useMainClasses = makeStyles({
 	main: {
 		minHeight: "calc(100vh - 100px)",
 		width: "100%",
@@ -72,7 +72,7 @@ export const useClasses = makeStyles({
 });
 
 export function MainBanner() {
-	const classes = useClasses();
+	const classes = useMainClasses();
 
 	const [open, setOpen] = useState(false);
 

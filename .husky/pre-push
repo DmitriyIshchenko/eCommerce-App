@@ -1,6 +1,0 @@
-#!/bin/sh
-. "$(dirname "$0")/_/husky.sh"
-
-# validate branch name before push
-
-npx validate-branch-name -r '^(main|develop|(feature|bugfix|hotfix|chore|build|refactor|docs|test|style|perf|release)\/(RSS-ECOMM-\w_.+/)?.+)'

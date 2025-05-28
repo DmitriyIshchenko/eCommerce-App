@@ -14,9 +14,12 @@ import { Route as rootRoute } from './routes/__root'
 import { Route as RegistrationImport } from './routes/registration'
 import { Route as RegisterImport } from './routes/register'
 import { Route as LoginImport } from './routes/login'
-import { Route as CatalogImport } from './routes/catalog'
 import { Route as AboutImport } from './routes/about'
+import { Route as CatalogRouteImport } from './routes/catalog/route'
 import { Route as IndexImport } from './routes/index'
+import { Route as CatalogIndexImport } from './routes/catalog/index'
+import { Route as CatalogCategoryIndexImport } from './routes/catalog/$category/index'
+import { Route as CatalogCategorySubcategoryImport } from './routes/catalog/$category/$subcategory'
 
 // Create/Update Routes
 
@@ -38,15 +41,15 @@ const LoginRoute = LoginImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const CatalogRoute = CatalogImport.update({
-  id: '/catalog',
-  path: '/catalog',
-  getParentRoute: () => rootRoute,
-} as any)
-
 const AboutRoute = AboutImport.update({
   id: '/about',
   path: '/about',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const CatalogRouteRoute = CatalogRouteImport.update({
+  id: '/catalog',
+  path: '/catalog',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -55,6 +58,26 @@ const IndexRoute = IndexImport.update({
   path: '/',
   getParentRoute: () => rootRoute,
 } as any)
+
+const CatalogIndexRoute = CatalogIndexImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => CatalogRouteRoute,
+} as any)
+
+const CatalogCategoryIndexRoute = CatalogCategoryIndexImport.update({
+  id: '/$category/',
+  path: '/$category/',
+  getParentRoute: () => CatalogRouteRoute,
+} as any)
+
+const CatalogCategorySubcategoryRoute = CatalogCategorySubcategoryImport.update(
+  {
+    id: '/$category/$subcategory',
+    path: '/$category/$subcategory',
+    getParentRoute: () => CatalogRouteRoute,
+  } as any,
+)
 
 // Populate the FileRoutesByPath interface
 
@@ -67,18 +90,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexImport
       parentRoute: typeof rootRoute
     }
+    '/catalog': {
+      id: '/catalog'
+      path: '/catalog'
+      fullPath: '/catalog'
+      preLoaderRoute: typeof CatalogRouteImport
+      parentRoute: typeof rootRoute
+    }
     '/about': {
       id: '/about'
       path: '/about'
       fullPath: '/about'
       preLoaderRoute: typeof AboutImport
-      parentRoute: typeof rootRoute
-    }
-    '/catalog': {
-      id: '/catalog'
-      path: '/catalog'
-      fullPath: '/catalog'
-      preLoaderRoute: typeof CatalogImport
       parentRoute: typeof rootRoute
     }
     '/login': {
@@ -102,65 +125,124 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RegistrationImport
       parentRoute: typeof rootRoute
     }
+    '/catalog/': {
+      id: '/catalog/'
+      path: '/'
+      fullPath: '/catalog/'
+      preLoaderRoute: typeof CatalogIndexImport
+      parentRoute: typeof CatalogRouteImport
+    }
+    '/catalog/$category/$subcategory': {
+      id: '/catalog/$category/$subcategory'
+      path: '/$category/$subcategory'
+      fullPath: '/catalog/$category/$subcategory'
+      preLoaderRoute: typeof CatalogCategorySubcategoryImport
+      parentRoute: typeof CatalogRouteImport
+    }
+    '/catalog/$category/': {
+      id: '/catalog/$category/'
+      path: '/$category'
+      fullPath: '/catalog/$category'
+      preLoaderRoute: typeof CatalogCategoryIndexImport
+      parentRoute: typeof CatalogRouteImport
+    }
   }
 }
 
 // Create and export the route tree
 
+interface CatalogRouteRouteChildren {
+  CatalogIndexRoute: typeof CatalogIndexRoute
+  CatalogCategorySubcategoryRoute: typeof CatalogCategorySubcategoryRoute
+  CatalogCategoryIndexRoute: typeof CatalogCategoryIndexRoute
+}
+
+const CatalogRouteRouteChildren: CatalogRouteRouteChildren = {
+  CatalogIndexRoute: CatalogIndexRoute,
+  CatalogCategorySubcategoryRoute: CatalogCategorySubcategoryRoute,
+  CatalogCategoryIndexRoute: CatalogCategoryIndexRoute,
+}
+
+const CatalogRouteRouteWithChildren = CatalogRouteRoute._addFileChildren(
+  CatalogRouteRouteChildren,
+)
+
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/catalog': typeof CatalogRouteRouteWithChildren
   '/about': typeof AboutRoute
-  '/catalog': typeof CatalogRoute
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
   '/registration': typeof RegistrationRoute
+  '/catalog/': typeof CatalogIndexRoute
+  '/catalog/$category/$subcategory': typeof CatalogCategorySubcategoryRoute
+  '/catalog/$category': typeof CatalogCategoryIndexRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/catalog': typeof CatalogRoute
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
   '/registration': typeof RegistrationRoute
+  '/catalog': typeof CatalogIndexRoute
+  '/catalog/$category/$subcategory': typeof CatalogCategorySubcategoryRoute
+  '/catalog/$category': typeof CatalogCategoryIndexRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
+  '/catalog': typeof CatalogRouteRouteWithChildren
   '/about': typeof AboutRoute
-  '/catalog': typeof CatalogRoute
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
   '/registration': typeof RegistrationRoute
+  '/catalog/': typeof CatalogIndexRoute
+  '/catalog/$category/$subcategory': typeof CatalogCategorySubcategoryRoute
+  '/catalog/$category/': typeof CatalogCategoryIndexRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/about'
     | '/catalog'
+    | '/about'
     | '/login'
     | '/register'
     | '/registration'
+    | '/catalog/'
+    | '/catalog/$category/$subcategory'
+    | '/catalog/$category'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about' | '/catalog' | '/login' | '/register' | '/registration'
+  to:
+    | '/'
+    | '/about'
+    | '/login'
+    | '/register'
+    | '/registration'
+    | '/catalog'
+    | '/catalog/$category/$subcategory'
+    | '/catalog/$category'
   id:
     | '__root__'
     | '/'
-    | '/about'
     | '/catalog'
+    | '/about'
     | '/login'
     | '/register'
     | '/registration'
+    | '/catalog/'
+    | '/catalog/$category/$subcategory'
+    | '/catalog/$category/'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  CatalogRouteRoute: typeof CatalogRouteRouteWithChildren
   AboutRoute: typeof AboutRoute
-  CatalogRoute: typeof CatalogRoute
   LoginRoute: typeof LoginRoute
   RegisterRoute: typeof RegisterRoute
   RegistrationRoute: typeof RegistrationRoute
@@ -168,8 +250,8 @@ export interface RootRouteChildren {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  CatalogRouteRoute: CatalogRouteRouteWithChildren,
   AboutRoute: AboutRoute,
-  CatalogRoute: CatalogRoute,
   LoginRoute: LoginRoute,
   RegisterRoute: RegisterRoute,
   RegistrationRoute: RegistrationRoute,
@@ -186,8 +268,8 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
-        "/about",
         "/catalog",
+        "/about",
         "/login",
         "/register",
         "/registration"
@@ -196,11 +278,16 @@ export const routeTree = rootRoute
     "/": {
       "filePath": "index.tsx"
     },
+    "/catalog": {
+      "filePath": "catalog/route.tsx",
+      "children": [
+        "/catalog/",
+        "/catalog/$category/$subcategory",
+        "/catalog/$category/"
+      ]
+    },
     "/about": {
       "filePath": "about.tsx"
-    },
-    "/catalog": {
-      "filePath": "catalog.tsx"
     },
     "/login": {
       "filePath": "login.tsx"
@@ -210,6 +297,18 @@ export const routeTree = rootRoute
     },
     "/registration": {
       "filePath": "registration.tsx"
+    },
+    "/catalog/": {
+      "filePath": "catalog/index.tsx",
+      "parent": "/catalog"
+    },
+    "/catalog/$category/$subcategory": {
+      "filePath": "catalog/$category/$subcategory.tsx",
+      "parent": "/catalog"
+    },
+    "/catalog/$category/": {
+      "filePath": "catalog/$category/index.tsx",
+      "parent": "/catalog"
     }
   }
 }

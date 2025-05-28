@@ -94,7 +94,7 @@ export function Header() {
 		},
 		{
 			name: "Catalog",
-			to: "/catalog",
+			to: "/catalog/all",
 			ariaLabel: "Browse our product catalog",
 		},
 		{

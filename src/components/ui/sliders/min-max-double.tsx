@@ -30,7 +30,7 @@ const useStyles = makeStyles({
 				"--fui-Slider__thumb--color": tokens.colorPaletteRoyalBlueForeground2,
 			},
 		},
-		width: "100%",
+		width: "100px",
 		gridTemplateColumns: "0 1fr 0",
 		"> div:nth-child(2)": {
 			marginLeft: "-3px",
@@ -55,7 +55,7 @@ const useStyles = makeStyles({
 				"--fui-Slider__thumb--color": tokens.colorPaletteRoyalBlueForeground2,
 			},
 		},
-		width: "100%",
+		width: "100px",
 		gridTemplateColumns: "0 1fr 0",
 		"> div:nth-child(2)": {
 			marginRight: "-3px",
@@ -104,7 +104,7 @@ export default function MinMaxDoubleSlider({
 	return (
 		<fieldset className={styles.fieldset}>
 			<legend style={{ padding: "0 4px" }}>Price</legend>
-			<div style={{ display: "flex", flexDirection: "column" }}>
+			<div style={{ display: "flex", flexDirection: "column", width: 244 }}>
 				<div style={{ display: "flex", gap: 20, padding: 5 }}>
 					<SpinButton
 						value={minValue}

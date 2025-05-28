@@ -15,6 +15,7 @@ const useCss = makeStyles({
 		fontSize: tokens.fontSizeBase400,
 		textDecoration: "none",
 		userSelect: "none",
+		display: "inline-block",
 	},
 	stick: {
 		"::after": {
@@ -102,28 +103,28 @@ export const ExternalLink = forwardRef<HTMLAnchorElement, StyledLinkProps>(
 		const css = useCss();
 
 		return (
-			<FluentLink
-				{...props}
-				ref={ref}
-				as="a"
-				appearance="default"
-				disabled={disabled}
-				className={mergeClasses(
-					css.base,
-					appearance === "straight" && css.straight,
-					appearance === "straight" && css.stick,
-					appearance === "inverted" && css.inverted,
-					appearance === "inverted" && css.stick,
-					appearance === "muted" && css.muted,
-					asBlock && css.block,
-					accent && css.accent,
-					notInteractive && css.notInteractive,
-					disabled && css.disabled,
-					props.className
-				)}
-			>
-				{props.children}
-			</FluentLink>
+				<FluentLink
+					{...props}
+					ref={ref}
+					as="a"
+					appearance="default"
+					disabled={disabled}
+					className={mergeClasses(
+						css.base,
+						appearance === "straight" && css.straight,
+						appearance === "straight" && css.stick,
+						appearance === "inverted" && css.inverted,
+						appearance === "inverted" && css.stick,
+						appearance === "muted" && css.muted,
+						asBlock && css.block,
+						accent && css.accent,
+						notInteractive && css.notInteractive,
+						disabled && css.disabled,
+						props.className
+					)}
+				>
+					{props.children}
+				</FluentLink>
 		);
 	},
 );
