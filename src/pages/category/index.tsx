@@ -34,20 +34,41 @@ const useStyles = makeStyles({
 });
 
 function formatPrice(price?: TypedMoney): string {
-  if (!price) return '';
-  return `$${(price.centAmount / 100).toFixed(2)}`;
+  if (!price?.centAmount) return '';
+  const formattedPrice = new Intl.NumberFormat('es-US', {
+    style: 'currency',
+    currency: price.currencyCode,
+  }).format(price.centAmount / 100);
+  return formattedPrice;
+}
+
+function getTitle(category: Category, subcategory?: Category) {
+  const defaultTitle = 'Products';
+
+  if (!category) {
+    return defaultTitle;
+  }
+
+  const categoryTitle = category.name['en-US'];
+  if (!subcategory) {
+    return categoryTitle;
+  }
+
+  const subcategoryTitle = subcategory.name['en-US'];
+  return categoryTitle + ' - ' + subcategoryTitle;
 }
 
 export default function CategoryPage({
   products,
   category,
+  subcategory,
 }: {
   products: ProductProjection[] | null;
   category: Category;
+  subcategory?: Category;
 }) {
   const styles = useStyles();
-
-  const title = category ? category.name['en-US'] : 'Products';
+  const title = getTitle(category, subcategory);
 
   return (
     <div className={styles.categoryContainer}>
@@ -62,7 +83,9 @@ export default function CategoryPage({
               key={product.id}
               value={product.slug?.['en-US']}
               name={product.name?.['en-US']}
+              description={product.description?.['en-US']}
               price={formatPrice(product.masterVariant.prices?.at(0)?.value)}
+              discount={formatPrice(product.masterVariant.prices?.at(0)?.discounted?.value)}
               image={product.masterVariant.images?.at(0)?.url}
             />
           ))}

@@ -46,7 +46,7 @@ export function CatalogMenu() {
 
     if (subcategories.length > 0) {
       return (
-        <Menu>
+        <Menu key={category.id}>
           <MenuSplitGroup>
             <MenuItem onClick={() => void handleNavigateCategory(slug)}>{name}</MenuItem>
             <MenuTrigger disableButtonEnhancement>

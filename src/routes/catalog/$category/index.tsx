@@ -19,7 +19,18 @@ export const Route = createFileRoute('/catalog/$category/')({
     return { products, category };
   },
   component: RouteComponent,
-  pendingComponent: () => <Spinner size="large" style={{ padding: '54px 0' }} />,
+  pendingComponent: () => (
+    <div
+      style={{
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+    >
+      <Spinner size="large" />
+    </div>
+  ),
   errorComponent: () => <ErrorPage />,
 });
 

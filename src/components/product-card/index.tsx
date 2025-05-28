@@ -2,6 +2,7 @@ import {
   Body1,
   Button,
   Caption1,
+  Caption1Strong,
   Card,
   CardHeader,
   CardPreview,
@@ -42,7 +43,23 @@ export function ProductCard(props: ProductCardProps) {
             <b>{props.name}</b>
           </Body1>
         }
-        description={<Caption1>{props.price}</Caption1>}
+        description={
+          <div>
+            <Caption1>{props.description?.slice(0, 70) + '...'}</Caption1>
+            {props.discount ? (
+              <div>
+                <Caption1 strikethrough style={{ marginRight: '5px' }}>
+                  {props.price}
+                </Caption1>
+                <Caption1Strong>{props.discount}</Caption1Strong>
+              </div>
+            ) : (
+              <div>
+                <Caption1Strong>{props.price}</Caption1Strong>
+              </div>
+            )}
+          </div>
+        }
         action={
           <Button
             size="large"
