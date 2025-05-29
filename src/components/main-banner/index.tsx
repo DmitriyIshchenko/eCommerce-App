@@ -8,21 +8,21 @@ import {
 	tokens,
 } from "@fluentui/react-components";
 import { ArrowRightFilled, DismissRegular } from "@fluentui/react-icons";
-import { useLocation, useNavigate, useSearch } from "@tanstack/react-router";
+import { useLocation, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import debounce from "../../lib/utils/debounce";
-import Cart from "../cart";
 import CustomButton from "../ui/buttons/custom";
 import FilterButton from "../ui/buttons/filter";
 import { CardExample } from "../ui/cards";
+import Cart from "../ui/cart";
 import DeliveryCarIcon from "../ui/icons/delivery-car";
 import DispatchClock from "../ui/icons/dispatch-clock";
 import StoreIcon from "../ui/icons/store";
+import RangeInputField from "../ui/input-field/range";
 import ButtonLink from "../ui/links/button";
 import { InternalLink } from "../ui/links/fui-tanstack";
 import Pagination from "../ui/pagination";
-import MinMaxDoubleSlider from "../ui/sliders/min-max-double";
-import LargeSwatchPicker from "../ui/swatch-picker";
+import LargeSwatchPicker from "../ui/swatch-picker/large";
 import StyledTooltip from "../ui/tooltips/styled";
 
 export const useMainClasses = makeStyles({
@@ -80,8 +80,6 @@ export function MainBanner() {
 
 	const { search } = useLocation();
 
-	const s = useSearch({ from: "/" });
-
 	const handleMinMaxChange = (min: number, max: number) => {
 		void navigate({
 			search: {
@@ -123,7 +121,7 @@ export function MainBanner() {
 				/>
 				<Cart
 					goods={cartQ}
-					size={40}
+					size={120}
 					to="/cart"
 					loading={cartLoading}
 					tooltipPositioning={"before"}
@@ -162,9 +160,7 @@ export function MainBanner() {
 						</DrawerHeader>
 
 						<DrawerBody>
-							<MinMaxDoubleSlider
-								onChange={debounce(handleMinMaxChange, 200)}
-							/>
+							<RangeInputField onChange={debounce(handleMinMaxChange, 200)} />
 							<div style={{ marginTop: 20 }}>
 								<Label>Colors</Label>
 							</div>

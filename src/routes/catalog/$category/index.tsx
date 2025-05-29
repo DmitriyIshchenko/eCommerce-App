@@ -1,18 +1,20 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-export const Route = createFileRoute('/catalog/$category/')({
+export const Route = createFileRoute("/catalog/$category/")({
 	component: RouteComponent,
 	validateSearch: (search) =>
 		search as {
-			page: number;
+			page?: number;
 		},
 	loaderDeps: ({ search: { page } }) => ({
 		page,
 	}),
-	loader: ({ deps: { page },  params: { category} }) =>
-		[...Array(190).keys()]
+	loader: ({ deps: { page }, params: { category } }) => {
+		const cards = [...Array(190).keys()]
 			.map((i) => ({ category, card: i + 1 }))
-			.slice((page - 1) * 10, page * 10),
+			.slice(((page ?? 1) - 1) * 10, (page ?? 1) * 10);
+			return cards;
+	},
 });
 
 function RouteComponent() {

@@ -18,8 +18,7 @@ try {
     try {
       await sharp(inputPath)
         .resize({ width: 128 })
-        .blur(1)
-        .webp({quality: 80})
+        .webp({quality: 90})
         .toFile(outputPath);
     } catch (e) {
       if (e instanceof Error) console.error(`Error in file ${file}:`, e.message);

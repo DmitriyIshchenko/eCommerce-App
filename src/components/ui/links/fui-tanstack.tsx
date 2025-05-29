@@ -57,6 +57,7 @@ const useCss = makeStyles({
 	},
 	accent: {
 		fontWeight: tokens.fontWeightMedium,
+		color: tokens.colorNeutralForeground1,
 	},
 	notInteractive: {
 		pointerEvents: "none",

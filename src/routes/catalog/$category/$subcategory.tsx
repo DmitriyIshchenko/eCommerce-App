@@ -1,26 +1,25 @@
-import { createFileRoute, useLocation } from "@tanstack/react-router";
-import { InternalLink } from "../../../components/ui/links/fui-tanstack";
+import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/catalog/$category/$subcategory")({
 	component: RouteComponent,
 	validateSearch: (search) =>
 		search as {
-			page: number;
-			minPrice: number;
+			page?: number;
+			"min-price"?: number;
 		},
-	loaderDeps: ({ search: { page, minPrice } }) => ({
-		page,
+	loaderDeps: ({ search }) => ({
+		page: search.page,
+		"min-price": search["min-price"],
 	}),
-	loader: ({ deps: { page }, params: { category, subcategory, minPrice } }) =>
+	loader: ({ deps, params: { category, subcategory } }) =>
 		[...Array(190).keys()]
-			.map((i) => ({ category, subcategory, card: i + 1, minPrice }))
-			.slice((page - 1) * 10, page * 10),
+			.map((i) => ({ category, subcategory, card: i + 1, "min-price": deps["min-price"] }))
+			.slice(((deps.page ?? 1) - 1) * 10, (deps.page ?? 1) * 10),
 });
 
 function RouteComponent() {
 	const d = Route.useLoaderData();
-	const {pathname} = useLocation();
-	const links = pathname.split("/").slice(1);
+
 	return (
 		<div
 			style={{
@@ -44,7 +43,7 @@ function RouteComponent() {
 					<div>Category {v.category}</div>
 					<div>Subcategory {v.subcategory}</div>
 					<div>Card № {v.card}</div>
-					<div>min price {v.minPrice}</div>
+					<div>min price {v["min-price"]}</div>
 				</div>
 			))}
 		</div>

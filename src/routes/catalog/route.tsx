@@ -22,12 +22,26 @@ import {
 	useNavigate,
 } from "@tanstack/react-router";
 import { useState } from "react";
+import canvasLqip from "../../assets/images/material-canvas-lqip.webp";
+import canvas from "../../assets/images/material-canvas.png";
+import gicleeLqip from "../../assets/images/material-giclee-lqip.webp";
+import giclee from "../../assets/images/material-giclee.webp";
+import photoragLqip from "../../assets/images/material-photorag-lqip.webp";
+import photorag from "../../assets/images/material-photorag.webp";
+import CustomBreadcrumb, {
+	type Link,
+} from "../../components/ui/breadcrumbs/custom";
 import CustomButton from "../../components/ui/buttons/custom";
 import FilterButton from "../../components/ui/buttons/filter";
+import RangeInputField from "../../components/ui/input-field/range";
 import Pagination from "../../components/ui/pagination";
-import MinMaxDoubleSlider from "../../components/ui/sliders/min-max-double";
-import LargeSwatchPicker from "../../components/ui/swatch-picker";
+import ImageSwatchPicker from "../../components/ui/swatch-picker/image";
+import LargeSwatchPicker from "../../components/ui/swatch-picker/large";
+import DismissWithInteractionTags, {
+	type TagProps,
+} from "../../components/ui/tags/dismiss-with-interaction";
 import StyledTooltip from "../../components/ui/tooltips/styled";
+import { kebabCaseToPascalSpacedString } from "../../lib/utils/camel-case-to-pascale-spaced-string";
 import debounce from "../../lib/utils/debounce";
 
 type CustomItem = HeadlessFlatTreeItemProps & { content: string };
@@ -62,19 +76,37 @@ function RouteComponent() {
 	const navigate = useNavigate();
 
 	const { search, pathname } = useLocation();
-	console.log(pathname);
+	const links: Link[] = pathname
+		.split("/")
+		.slice(1)
+		.reduce((a: Link[], v) => {
+			const current: Link = {
+				text: kebabCaseToPascalSpacedString(v),
+				to: a.length ? `${a.at(-1)?.to}/${v}` : `/${v}`,
+			};
+			// biome-ignore lint/performance/noAccumulatingSpread: <explanation>
+			return [...a, current];
+		}, []);
 
 	const handleMinMaxChange = (min: number, max: number) => {
+		setTags([
+			...tags.filter((t) => t.value !== "1"),
+			{ value: "1", children: `$${min} - $${max}` },
+		]);
 		void navigate({
 			search: {
 				...search,
-				minPrice: min,
-				maxPrice: max,
+				"min-price": min,
+				"max-price": max,
 				page: 1,
 			},
 		});
 	};
 	const handleColorChange = (color: string) => {
+		setTags([
+			...tags.filter((t) => t.value !== "2"),
+			{ value: "2", children: `${color}` },
+		]);
 		void navigate({
 			search: {
 				...search,
@@ -83,21 +115,58 @@ function RouteComponent() {
 			},
 		});
 	};
+	const handleMaterialChange = (material: string) => {
+		setTags([
+			...tags.filter((t) => t.value !== "3"),
+			{ value: "3", children: `${material}` },
+		]);
+		void navigate({
+			search: {
+				...search,
+				material,
+				page: 1,
+			},
+		});
+	};
 	const colors = [
 		{ color: "#FF1921", value: "red", "aria-label": "red" },
 		{ color: "#FF7A00", value: "orange", "aria-label": "orange" },
-		{ color: "#90D057", value: "lightGreen", "aria-label": "light green" },
+		{ color: "#90D057", value: "light-green", "aria-label": "light green" },
 	];
+	const images = [
+		{
+			swatchSrc: canvasLqip,
+			value: "canvas",
+			label: "canvas",
+			fullImageSrc: canvas,
+		},
+		{
+			swatchSrc: gicleeLqip,
+			value: "giclee",
+			label: "giclee",
+			fullImageSrc: giclee,
+		},
+		{
+			swatchSrc: photoragLqip,
+			value: "photorag",
+			label: "photorag",
+			fullImageSrc: photorag,
+		},
+	];
+
 	const flatTree = useHeadlessFlatTree_unstable(items, {
-		defaultOpenItems: ["all", "first", "second", "third"],
+		defaultOpenItems: ["first", "second", "third"],
 		selectionMode: "single",
 	});
 	const restoreFocusTargetAttributes = useRestoreFocusTarget();
 	const restoreFocusSourceAttributes = useRestoreFocusSource();
 	const [category, setCategory] = useState("all");
 
+	const [tags, setTags] = useState<TagProps[]>([]);
+
 	return (
 		<main style={{ padding: 20 }}>
+			<CustomBreadcrumb links={links} />
 			<div style={{ minHeight: "calc(100vh - 344px)" }}>
 				<Outlet />
 			</div>
@@ -117,6 +186,7 @@ function RouteComponent() {
 					position="end"
 					{...restoreFocusSourceAttributes}
 					onOpenChange={(_, { open }) => setOpen(open)}
+					modalType="modal"
 				>
 					<DrawerHeader>
 						<DrawerHeaderTitle
@@ -136,8 +206,27 @@ function RouteComponent() {
 						>
 							Filters
 						</DrawerHeaderTitle>
+						<div style={{minHeight: 24}}>
+							<DismissWithInteractionTags tags={tags} />
+						</div>
+						<CustomButton
+							style={{ width: "fit-content" }}
+							onClick={() => {
+								setTags([]);
+								void navigate({
+									search: {
+										page: 1,
+									},
+								});
+							}}
+							disabled={tags.length === 0}
+							shape="circular"
+							size="small"
+						>
+							RESET ALL
+						</CustomButton>
 					</DrawerHeader>
-					<DrawerBody>
+					<DrawerBody style={{ paddingRight: 15, scrollbarGutter: "stable" }}>
 						<FlatTree
 							{...flatTree.getTreeProps()}
 							aria-label="Selection"
@@ -179,11 +268,18 @@ function RouteComponent() {
 								);
 							})}
 						</FlatTree>
-						<MinMaxDoubleSlider onChange={debounce(handleMinMaxChange, 200)} />
+						<RangeInputField onChange={debounce(handleMinMaxChange, 200)} />
 						<div style={{ marginTop: 20 }}>
 							<Label>Colors</Label>
 						</div>
 						<LargeSwatchPicker colors={colors} onChange={handleColorChange} />
+						<div style={{ marginTop: 20 }}>
+							<Label>Materials</Label>
+						</div>
+						<ImageSwatchPicker
+							images={images}
+							onChange={handleMaterialChange}
+						/>
 					</DrawerBody>
 				</Drawer>
 			</div>

@@ -4,19 +4,27 @@ import {
 	DrawerBody,
 	DrawerHeader,
 	DrawerHeaderTitle,
+	Switch,
 	makeStyles,
 	mergeClasses,
 	tokens,
 } from "@fluentui/react-components";
-import { DismissRegular, NavigationRegular } from "@fluentui/react-icons";
+import {
+	DismissRegular,
+	NavigationRegular,
+	WeatherMoonRegular,
+	WeatherSunnyRegular,
+} from "@fluentui/react-icons";
 import { createLink, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useUser } from "../../hooks/use-user";
 import { styleConstants } from "../../lib/style-constants";
-import Cart from "../cart";
+import { useThemeContext } from "../contexts/theme/context";
 import BurgerButton from "../ui/buttons/burger";
 import SearchButton from "../ui/buttons/search";
+import Cart from "../ui/cart";
 import { InternalLink } from "../ui/links/fui-tanstack";
+import useMatchMediaQuery from "../../hooks/use-match-media";
 
 const useClasses = makeStyles({
 	header: {
@@ -115,18 +123,10 @@ export function Header() {
 		void navigate({ to: "/login" });
 	};
 
+	const matchMedia = useMatchMediaQuery("(min-width: 640px)");
 	useEffect(() => {
-		const handleResize = () => {
-			if (window.innerWidth > 600 && isDrawerOpen) {
-				setIsDrawerOpen(false);
-			}
-		};
-		window.addEventListener("resize", handleResize);
-		handleResize();
-		return () => {
-			window.removeEventListener("resize", handleResize);
-		};
-	}, [isDrawerOpen]);
+		if (matchMedia) setIsDrawerOpen(false);
+	}, [matchMedia])
 
 	useEffect(() => {
 		if (isDrawerOpen) {
@@ -136,6 +136,8 @@ export function Header() {
 			};
 		}
 	}, [isDrawerOpen]);
+
+	const { mode, setMode } = useThemeContext();
 
 	return (
 		<header className={mergeClasses(classes.header, "container")}>
@@ -163,6 +165,28 @@ export function Header() {
 				</ul>
 				<BurgerButton tooltipPositioning={"before"} />
 				<SearchButton tooltipPositioning={"before"} />
+				<Switch
+					onChange={(_, d) => {
+						setMode(d.checked ? "dark" : "light");
+					}}
+					checked={mode === "dark"}
+					indicator={
+						<div
+							style={{
+								display: "flex",
+								alignItems: "center",
+								padding: 1.5,
+								fontSize: 16,
+							}}
+						>
+							{mode === "dark" ? (
+								<WeatherMoonRegular />
+							) : (
+								<WeatherSunnyRegular />
+							)}
+						</div>
+					}
+				/>
 				<Cart
 					goods={99}
 					size={30}

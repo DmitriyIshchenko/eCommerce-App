@@ -11,8 +11,9 @@ interface Props extends Partial<TooltipProps> {
 
 const useCss = makeStyles({
 	tooltip: {
-		paddingBottom: tokens.spacingHorizontalXS,
+		paddingBottom: tokens.spacingVerticalXS,
 		borderRadius: tokens.borderRadiusCircular,
+		fontSize: tokens.fontSizeBase400
 	},
 });
 
@@ -23,8 +24,8 @@ export default function StyledTooltip(props: Props) {
 			{...props}
 			content={{ children: props.text, className: css.tooltip }}
 			relationship="label"
-			showDelay={100}
-			hideDelay={100}
+			showDelay={90}
+			hideDelay={90}
 		>
 			{props.children}
 		</Tooltip>

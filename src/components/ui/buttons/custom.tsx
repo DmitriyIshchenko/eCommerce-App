@@ -5,10 +5,7 @@ import {
 } from "@fluentui/react-components";
 import { useCustomButtonCss } from "./css";
 
-export type CustomButtonProps = Omit<
-	ButtonProps,
-	"appearance" | "as" | "size"
-> &
+export type CustomButtonProps = Omit<ButtonProps, "appearance" | "as"> &
 	Omit<React.ComponentPropsWithoutRef<"button">, "type"> &
 	Partial<{
 		as: "button";
@@ -18,13 +15,13 @@ export type CustomButtonProps = Omit<
 
 export default function CustomButton(props: CustomButtonProps) {
 	const css = useCustomButtonCss();
-	const { className, appearance, children, ...rest } = props;
+	const { className, appearance, children, size = "large", ...rest } = props;
 
 	return (
 		<Button
 			as="button"
 			appearance={"primary"}
-			size="large"
+			size={size}
 			className={mergeClasses(
 				css.base,
 				appearance === "inverted" && css.inverted,
