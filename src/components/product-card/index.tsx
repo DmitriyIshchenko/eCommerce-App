@@ -1,16 +1,16 @@
 import {
-  Body1,
+  Body1Strong,
   Button,
   Caption1,
-  Caption1Strong,
   Card,
   CardHeader,
   CardPreview,
+  InfoLabel,
   makeStyles,
 } from '@fluentui/react-components';
 import type { ProductCardProps } from '../../lib/types';
-import { ShoppingBagAddRegular } from '@fluentui/react-icons';
 import { useNavigate } from '@tanstack/react-router';
+import BagCartIcon from '../ui/icons/bag-cart';
 
 const useStyles = makeStyles({
   card: {
@@ -33,29 +33,29 @@ export function ProductCard(props: ProductCardProps) {
   };
 
   return (
-    <Card className={styles.card} onClick={() => void onActionCardClick()} focusMode="off">
+    <Card className={styles.card} onClick={() => void onActionCardClick()} focusMode="no-tab">
       <CardPreview>
         <img src={props.image} alt={props.value} />
       </CardPreview>
       <CardHeader
         header={
-          <Body1>
-            <b>{props.name}</b>
-          </Body1>
+          <div onClick={(e) => e.stopPropagation()}>
+            <Body1Strong>{props.name}</Body1Strong>
+            <InfoLabel info={props.description} />
+          </div>
         }
         description={
           <div>
-            <Caption1>{props.description?.slice(0, 70) + '...'}</Caption1>
             {props.discount ? (
               <div>
                 <Caption1 strikethrough style={{ marginRight: '5px' }}>
                   {props.price}
                 </Caption1>
-                <Caption1Strong>{props.discount}</Caption1Strong>
+                <Caption1>{props.discount}</Caption1>
               </div>
             ) : (
               <div>
-                <Caption1Strong>{props.price}</Caption1Strong>
+                <Caption1>{props.price}</Caption1>
               </div>
             )}
           </div>
@@ -64,7 +64,7 @@ export function ProductCard(props: ProductCardProps) {
           <Button
             size="large"
             appearance="transparent"
-            icon={<ShoppingBagAddRegular />}
+            icon={<BagCartIcon strokeWidth={0.8} />}
             aria-label="Cart"
             onClick={onButtonClick}
           />

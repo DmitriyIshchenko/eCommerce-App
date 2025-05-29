@@ -39,5 +39,6 @@ export const Route = createFileRoute('/catalog/$category/$subcategory')({
 
 function RouteComponent() {
   const { products, category, subcategory } = Route.useLoaderData();
+
   return <CategoryPage products={products} category={category} subcategory={subcategory} />;
 }

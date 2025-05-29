@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
-import { getCategories } from '../../lib/api/get-categories';
 import { makeStyles, Spinner } from '@fluentui/react-components';
+import { Route as RootRoute } from '../__root';
 
 const useStyles = makeStyles({
   container: {
@@ -13,14 +13,14 @@ const useStyles = makeStyles({
 });
 
 export const Route = createFileRoute('/catalog/')({
-  loader: getCategories,
+  // loader: getCategories,
   component: RouteComponent,
   pendingComponent: () => <Spinner />,
 });
 
 function RouteComponent() {
   const styles = useStyles();
-  const categories = Route.useLoaderData();
+  const categories = RootRoute.useLoaderData();
   const parentCategories = categories.filter((cat) => !cat.parent?.id);
 
   return (

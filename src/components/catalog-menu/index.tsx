@@ -11,9 +11,8 @@ import {
 } from '@fluentui/react-components';
 import { ChevronDownFilled } from '@fluentui/react-icons';
 import { createLink, useNavigate } from '@tanstack/react-router';
-import { useEffect, useState } from 'react';
-import { getCategories } from '../../lib/api/get-categories';
 import type { Category } from '@commercetools/platform-sdk';
+import { Route } from '../../routes/__root';
 
 const useStyles = makeStyles({
   link: {
@@ -26,13 +25,7 @@ export function CatalogMenu() {
   const styles = useStyles();
   const CustomLink = createLink(Link);
   const navigate = useNavigate();
-  const [categories, setCategories] = useState<Category[]>([]);
-
-  useEffect(() => {
-    getCategories()
-      .then((data) => setCategories(data))
-      .catch(() => setCategories([]));
-  }, []);
+  const categories = Route.useLoaderData();
 
   const handleNavigateCategory = async (slug: string) => {
     await navigate({ to: '/catalog/$category', params: { category: slug } });
@@ -51,16 +44,17 @@ export function CatalogMenu() {
 
   const renderCategoryMenuItem = (category: Category) => {
     const subcategories = getSubcategories(category.id);
+    const id = category.id;
     const name = category.name['en-US'];
     const slug = category.slug['en-US'];
 
     if (subcategories.length > 0) {
       return (
-        <Menu openOnHover={false} key={category.id}>
+        <Menu openOnHover={false} closeOnScroll key={id}>
           <MenuSplitGroup>
             <MenuItem onClick={() => void handleNavigateCategory(slug)}>{name}</MenuItem>
             <MenuTrigger disableButtonEnhancement>
-              <MenuItem aria-label="Open submenu" />
+              <MenuItem />
             </MenuTrigger>
           </MenuSplitGroup>
           <MenuPopover>
@@ -89,21 +83,25 @@ export function CatalogMenu() {
   const parentCategories = categories.filter((cat) => !cat.parent);
 
   return (
-    <Menu>
+    <Menu closeOnScroll>
       <MenuSplitGroup>
         <MenuItem>
           <CustomLink className={styles.link} to="/catalog/$category" params={{ category: 'all' }}>
             Catalog
           </CustomLink>
         </MenuItem>
+
         <MenuTrigger disableButtonEnhancement>
-          <MenuItem>
+          <MenuItem aria-label="Open menu">
             <ChevronDownFilled />
           </MenuItem>
         </MenuTrigger>
       </MenuSplitGroup>
+
       <MenuPopover>
-        <MenuList>{parentCategories.map(renderCategoryMenuItem)}</MenuList>
+        <MenuList aria-label="Catalog categories">
+          {parentCategories.map(renderCategoryMenuItem)}
+        </MenuList>
       </MenuPopover>
     </Menu>
   );

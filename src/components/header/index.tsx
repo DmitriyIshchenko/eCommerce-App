@@ -14,6 +14,7 @@ import { createLink, useNavigate } from '@tanstack/react-router';
 import { useUser } from '../../hooks/use-user';
 import { useState, useEffect } from 'react';
 import { CatalogMenu } from '../catalog-menu';
+import { CatalogTree } from '../catalog-tree';
 
 const useClasses = makeStyles({
   header: {
@@ -205,6 +206,9 @@ export function Header() {
 
           <DrawerBody>
             <ul className={classes.drawerMenu}>
+              <li>
+                <CatalogTree />
+              </li>
               {menuItems.map((item) => (
                 <li key={item.name}>
                   <CustomLink

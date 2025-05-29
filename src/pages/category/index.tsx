@@ -73,7 +73,9 @@ export default function CategoryPage({
   return (
     <div className={styles.categoryContainer}>
       <div className={styles.titleContainer}>
-        <LargeTitle as="h1">{title}</LargeTitle>
+        <LargeTitle align="center" as="h1">
+          {title}
+        </LargeTitle>
       </div>
 
       <div className={styles.listContainer}>
