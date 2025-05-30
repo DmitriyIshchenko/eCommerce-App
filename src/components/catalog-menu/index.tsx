@@ -1,5 +1,4 @@
 import {
-  Link,
   makeStyles,
   Menu,
   MenuItem,
@@ -10,9 +9,10 @@ import {
   tokens,
 } from '@fluentui/react-components';
 import { ChevronDownFilled } from '@fluentui/react-icons';
-import { createLink, useNavigate } from '@tanstack/react-router';
+import { useNavigate } from '@tanstack/react-router';
 import type { Category } from '@commercetools/platform-sdk';
 import { Route } from '../../routes/__root';
+import { InternalLink } from '../ui/links/fui-tanstack';
 
 const useStyles = makeStyles({
   link: {
@@ -23,7 +23,6 @@ const useStyles = makeStyles({
 
 export function CatalogMenu() {
   const styles = useStyles();
-  const CustomLink = createLink(Link);
   const navigate = useNavigate();
   const categories = Route.useLoaderData();
 
@@ -86,9 +85,13 @@ export function CatalogMenu() {
     <Menu closeOnScroll>
       <MenuSplitGroup>
         <MenuItem>
-          <CustomLink className={styles.link} to="/catalog/$category" params={{ category: 'all' }}>
+          <InternalLink
+            className={styles.link}
+            to="/catalog/$category"
+            params={{ category: 'all' }}
+          >
             Catalog
-          </CustomLink>
+          </InternalLink>
         </MenuItem>
 
         <MenuTrigger disableButtonEnhancement>

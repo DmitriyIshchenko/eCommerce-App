@@ -1,3 +1,5 @@
+import type { ToPathOption } from '@tanstack/react-router';
+
 export interface ProductCardProps {
   value: string;
   name: string;
@@ -5,4 +7,9 @@ export interface ProductCardProps {
   price: string;
   discount?: string;
   image?: string;
+}
+
+export interface Link {
+  to: ToPathOption;
+  text: string;
 }

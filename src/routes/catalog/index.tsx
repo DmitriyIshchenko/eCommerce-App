@@ -13,7 +13,6 @@ const useStyles = makeStyles({
 });
 
 export const Route = createFileRoute('/catalog/')({
-  // loader: getCategories,
   component: RouteComponent,
   pendingComponent: () => <Spinner />,
 });

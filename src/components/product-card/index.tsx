@@ -41,7 +41,7 @@ export function ProductCard(props: ProductCardProps) {
         header={
           <div onClick={(e) => e.stopPropagation()}>
             <Body1Strong>{props.name}</Body1Strong>
-            <InfoLabel info={props.description} />
+            <InfoLabel info={`${props.description?.slice(0, 200)}...`} />
           </div>
         }
         description={
