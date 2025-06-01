@@ -1,6 +1,7 @@
 import { LargeTitle, makeStyles } from '@fluentui/react-components';
-import type { Category, ProductProjection, TypedMoney } from '@commercetools/platform-sdk';
+import type { Category, ProductProjection } from '@commercetools/platform-sdk';
 import { ProductCard } from '../../components/product-card';
+import formatPrice from '../../lib/utils/format-price';
 
 const useStyles = makeStyles({
   titleContainer: {
@@ -25,22 +26,13 @@ const useStyles = makeStyles({
     justifyContent: 'center',
   },
   list: {
-    display: 'flex',
-    flexWrap: 'wrap',
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fill, minmax(310px, 1fr))',
   },
   spinner: {
     paddingBottom: '54px',
   },
 });
-
-function formatPrice(price?: TypedMoney): string {
-  if (!price?.centAmount) return '';
-  const formattedPrice = new Intl.NumberFormat('es-US', {
-    style: 'currency',
-    currency: price.currencyCode,
-  }).format(price.centAmount / 100);
-  return formattedPrice;
-}
 
 function getTitle(category: Category, subcategory?: Category) {
   const defaultTitle = 'Products';

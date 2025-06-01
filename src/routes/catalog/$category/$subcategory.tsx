@@ -2,18 +2,24 @@ import { Spinner } from '@fluentui/react-components';
 import { createFileRoute } from '@tanstack/react-router';
 import ErrorPage from '../../../pages/error-page';
 import { getCategoryBySlug } from '../../../lib/api/get-categories';
-import { getProductsByCategoryId } from '../../../lib/api/get-products';
+import { getProductsBySearch } from '../../../lib/api/get-products';
 import CategoryPage from '../../../pages/category';
+import { productSearchSchema } from '../../../lib/schemas/products-search';
 
 export const Route = createFileRoute('/catalog/$category/$subcategory')({
-  loader: async ({ params }) => {
+  validateSearch: (search) => productSearchSchema.parse(search),
+
+  loaderDeps: ({ search: { q } }) => ({ q }),
+
+  loader: async ({ deps, params }) => {
     const slugCat = params.category;
     const slugSubcat = params.subcategory;
+    const q = deps.q;
 
     const category = await getCategoryBySlug(slugCat);
     const subcategory = await getCategoryBySlug(slugSubcat);
 
-    const products = await getProductsByCategoryId(subcategory.id);
+    const products = (await getProductsBySearch(q, subcategory.id)).body.results;
 
     if (!products) {
       throw new Error('Products not found');
@@ -21,7 +27,9 @@ export const Route = createFileRoute('/catalog/$category/$subcategory')({
 
     return { products, category, subcategory };
   },
+
   component: RouteComponent,
+
   pendingComponent: () => (
     <div
       style={{
@@ -34,6 +42,7 @@ export const Route = createFileRoute('/catalog/$category/$subcategory')({
       <Spinner size="large" />
     </div>
   ),
+
   errorComponent: () => <ErrorPage />,
 });
 

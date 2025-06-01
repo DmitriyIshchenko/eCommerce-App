@@ -1,46 +1,41 @@
 import {
   Body1Strong,
-  Button,
   Caption1,
   Card,
   CardHeader,
-  CardPreview,
-  InfoLabel,
   makeStyles,
+  tokens,
 } from '@fluentui/react-components';
 import type { ProductCardProps } from '../../lib/types';
 import { useNavigate } from '@tanstack/react-router';
-import BagCartIcon from '../ui/icons/bag-cart';
 
 const useStyles = makeStyles({
   card: {
-    width: '100%',
-    borderRadius: 0,
+    padding: `${tokens.spacingVerticalXXXL} ${tokens.spacingHorizontalL}`,
   },
 });
 
-export function ProductCard(props: ProductCardProps) {
+export function MiniProductCard(props: ProductCardProps) {
   const styles = useStyles();
   const navigate = useNavigate();
 
   const onActionCardClick = async () => {
-    await navigate({ to: `products/${props.value}` });
-  };
-
-  const onButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    event.stopPropagation();
+    await navigate({ to: `/` });
   };
 
   return (
-    <Card className={styles.card} onClick={() => void onActionCardClick()} focusMode="no-tab">
-      <CardPreview>
-        <img src={props.image} alt={props.value} />
-      </CardPreview>
+    <Card
+      className={styles.card}
+      onClick={() => void onActionCardClick()}
+      focusMode="no-tab"
+      size="small"
+      role="listitem"
+    >
       <CardHeader
+        image={<img src={props.image} alt={props.value} style={{ width: '50px' }} />}
         header={
-          <div onClick={(e) => e.stopPropagation()}>
+          <div>
             <Body1Strong>{props.name}</Body1Strong>
-            <InfoLabel info={`${props.description?.slice(0, 200)}...`} />
           </div>
         }
         description={
@@ -58,15 +53,6 @@ export function ProductCard(props: ProductCardProps) {
               </div>
             )}
           </div>
-        }
-        action={
-          <Button
-            size="large"
-            appearance="transparent"
-            icon={<BagCartIcon strokeWidth={0.8} />}
-            aria-label="Cart"
-            onClick={onButtonClick}
-          />
         }
       />
     </Card>

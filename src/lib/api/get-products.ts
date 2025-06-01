@@ -45,3 +45,48 @@ export async function getProductsByCategoryId(categoryId: string) {
     throw new Error('Products not found');
   }
 }
+
+export function getProductsByText(search: string) {
+  const anonymousClient = createAnonymousClient();
+  const anonymousApiRoot = getApiRoot(anonymousClient);
+
+  try {
+    const productsResponse = anonymousApiRoot
+      .productProjections()
+      .search()
+      .get({
+        queryArgs: {
+          'text.en-us': `${search}`,
+          fuzzy: true,
+        },
+      })
+      .execute();
+
+    return productsResponse;
+  } catch {
+    throw new Error('Products not found');
+  }
+}
+
+export function getProductsBySearch(search: string, categoryId?: string) {
+  const anonymousClient = createAnonymousClient();
+  const anonymousApiRoot = getApiRoot(anonymousClient);
+
+  try {
+    const productsResponse = anonymousApiRoot
+      .productProjections()
+      .search()
+      .get({
+        queryArgs: {
+          'text.en-us': `${search}`,
+          fuzzy: true,
+          'filter.query': [`categories.id:"${categoryId}"`],
+        },
+      })
+      .execute();
+
+    return productsResponse;
+  } catch {
+    throw new Error('Products not found');
+  }
+}

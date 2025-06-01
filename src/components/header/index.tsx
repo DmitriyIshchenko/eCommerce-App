@@ -9,12 +9,15 @@ import {
   DrawerHeader,
   DrawerHeaderTitle,
 } from '@fluentui/react-components';
-import { NavigationRegular, DismissRegular } from '@fluentui/react-icons';
+import { DismissRegular } from '@fluentui/react-icons';
 import { createLink, useNavigate } from '@tanstack/react-router';
 import { useUser } from '../../hooks/use-user';
 import { useState, useEffect } from 'react';
 import { CatalogMenu } from '../catalog-menu';
 import { CatalogTree } from '../catalog-tree';
+import SearchButton from '../ui/buttons/search';
+import BurgerButton from '../ui/buttons/burger';
+import SearchDrawer from '../search-drawer';
 
 const useClasses = makeStyles({
   header: {
@@ -54,7 +57,8 @@ const useClasses = makeStyles({
     listStyle: 'none',
     fontSize: '1.2rem',
     textDecoration: 'none',
-    '@media (max-width: 600px)': {
+    marginRight: tokens.spacingHorizontalMNudge,
+    '@media (max-width: 768px)': {
       display: 'none',
     },
   },
@@ -68,8 +72,8 @@ const useClasses = makeStyles({
   },
   burgerButton: {
     display: 'none',
-    '@media (max-width: 600px)': {
-      display: 'block',
+    '@media (max-width: 768px)': {
+      display: 'flex',
     },
   },
   drawerMenu: {
@@ -98,6 +102,7 @@ export function Header() {
   const { authorized, setAuthorized } = useUser();
   const navigate = useNavigate();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [isSearchDrawerOpen, setIsSearchDrawerOpen] = useState(false);
 
   const menuItems = [
     {
@@ -125,7 +130,7 @@ export function Header() {
 
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth > 600 && isDrawerOpen) {
+      if (window.innerWidth > 768 && isDrawerOpen) {
         setIsDrawerOpen(false);
       }
     };
@@ -152,33 +157,37 @@ export function Header() {
           <LargeTitle className={classes.title}>Celestia Art</LargeTitle>
         </CustomLink>
 
-        <ul className={classes.menu}>
-          <li>
-            <CatalogMenu />
-          </li>
-          {menuItems.map((item) => (
-            <li key={item.name}>
-              <CustomLink className={classes.menuLink} aria-label={item.ariaLabel} to={item.to}>
-                {item.name}
-              </CustomLink>
-            </li>
-          ))}
-          {authorized && (
+        <div style={{ display: 'flex' }}>
+          <ul className={classes.menu}>
             <li>
-              <Button size="large" shape="circular" onClick={handleLogout}>
-                Logout
-              </Button>
+              <CatalogMenu />
             </li>
-          )}
-        </ul>
+            {menuItems.map((item) => (
+              <li key={item.name}>
+                <CustomLink className={classes.menuLink} aria-label={item.ariaLabel} to={item.to}>
+                  {item.name}
+                </CustomLink>
+              </li>
+            ))}
+            {authorized && (
+              <li>
+                <Button size="large" shape="circular" onClick={handleLogout}>
+                  Logout
+                </Button>
+              </li>
+            )}
+          </ul>
 
-        <Button
-          className={classes.burgerButton}
-          appearance="transparent"
-          icon={<NavigationRegular />}
-          onClick={() => setIsDrawerOpen(true)}
-          aria-label="Open navigation menu"
-        />
+          <div style={{ display: 'flex' }}>
+            <SearchButton onClick={() => setIsSearchDrawerOpen(true)} />
+
+            <BurgerButton
+              className={classes.burgerButton}
+              onClick={() => setIsDrawerOpen(true)}
+              aria-label="Open navigation menu"
+            />
+          </div>
+        </div>
 
         <Drawer
           modalType="modal"
@@ -231,6 +240,8 @@ export function Header() {
             </ul>
           </DrawerBody>
         </Drawer>
+
+        <SearchDrawer open={isSearchDrawerOpen} onOpenChange={setIsSearchDrawerOpen} />
       </div>
     </header>
   );
