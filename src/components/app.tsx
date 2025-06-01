@@ -2,6 +2,7 @@ import {
 	FluentProvider,
 	type Theme,
 	Toaster,
+	makeStaticStyles,
 } from "@fluentui/react-components";
 import { RouterProvider, createRouter } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
@@ -19,26 +20,45 @@ declare module "@tanstack/react-router" {
 	}
 }
 
+const useStaticCss = makeStaticStyles({
+	body: {
+		margin: "0",
+		backgroundColor: "var(--body-bg)"
+	},
+	".container": {
+		maxWidth: "1440px",
+	},
+});
+
 function App() {
 	const { mode } = useThemeContext();
 	const [currentTheme, setCurrentTheme] = useState<Theme | null>(null);
+	useStaticCss();
 
 	useEffect(() => {
 		async function loadTheme() {
 			try {
 				if (mode === "light") {
-					const themeModule = await import("../lib/theme/light.ts");
+					const themeModule = await import("./theme/light.ts");
 					setCurrentTheme(themeModule.lightTheme);
+					document.body.style.setProperty(
+						"--body-bg",
+						themeModule.lightTheme.colorNeutralBackground1,
+					);
 				}
 				if (mode === "dark") {
-					const themeModule = await import("../lib/theme/darks.ts");
+					const themeModule = await import("./theme/darks.ts");
 					setCurrentTheme(themeModule.darkTheme);
+					document.body.style.setProperty(
+						"--body-bg",
+						themeModule.darkTheme.colorNeutralBackground1,
+					);
 				}
 			} catch (e) {
 				console.error(e);
 			}
 		}
-		loadTheme();
+		void loadTheme();
 	}, [mode]);
 
 	return (

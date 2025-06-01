@@ -11,20 +11,77 @@ import {
 } from "@fluentui/react-components";
 import {
 	DismissRegular,
-	NavigationRegular,
 	WeatherMoonRegular,
 	WeatherSunnyRegular,
 } from "@fluentui/react-icons";
-import { createLink, useNavigate } from "@tanstack/react-router";
+import {
+	createLink,
+	useLocation,
+	useNavigate,
+	useRouteContext,
+} from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import useMatchMediaQuery from "../../hooks/use-match-media";
 import { useUser } from "../../hooks/use-user";
+import type { Category } from "../../lib/schemas/product";
 import { styleConstants } from "../../lib/style-constants";
 import { useThemeContext } from "../contexts/theme/context";
 import BurgerButton from "../ui/buttons/burger";
+import CustomButton from "../ui/buttons/custom";
 import SearchButton from "../ui/buttons/search";
 import Cart from "../ui/cart";
 import { InternalLink } from "../ui/links/fui-tanstack";
-import useMatchMediaQuery from "../../hooks/use-match-media";
+import SplitLinkMenu, { type MenuItemUnion } from "../ui/menu/split-link";
+import StyledTooltip from "../ui/tooltips/styled";
+
+function adaptCategoriesToSplitLinkMenuItemProp(
+	categories: Category[],
+	base: string,
+): MenuItemUnion[] {
+	const byId = new Map(categories.map((cat) => [cat.id, cat]));
+
+	const getAncestorChain = (category: Category): Category[] => {
+		return category.ancestors
+			.map((a) => byId.get(a.id))
+			.filter((c): c is Category => Boolean(c));
+	};
+
+	const buildMenuItem = (category: Category): MenuItemUnion => {
+		const children = categories
+			.filter((c) => c.parent?.id === category.id)
+			.map(buildMenuItem);
+
+		const ancestors = getAncestorChain(category);
+		const root = ancestors[0] ?? category;
+
+		const params: Record<string, string> = {
+			category: root.name,
+		};
+
+		if (children.length > 0) {
+			return {
+				type: "parent",
+				name: category.name,
+				to: base,
+				params,
+				children,
+			};
+		}
+		const splatParts = [
+			...ancestors.slice(1).map((a) => a.name),
+			category.name,
+		];
+		params._splat = splatParts.join("/");
+		return {
+			type: "child",
+			name: category.name,
+			to: base,
+			params,
+		};
+	};
+
+	return categories.filter((cat) => !cat.parent).map(buildMenuItem);
+}
 
 const useClasses = makeStyles({
 	header: {
@@ -93,6 +150,14 @@ export function Header() {
 	const { authorized, setAuthorized } = useUser();
 	const navigate = useNavigate();
 	const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+	const { pathname } = useLocation();
+	const { categories } = useRouteContext({
+		from: "__root__",
+	});
+	const catalogMenuItems = adaptCategoriesToSplitLinkMenuItemProp(
+		categories,
+		"/catalog/$category/$",
+	);
 
 	const menuItems = [
 		{
@@ -102,7 +167,7 @@ export function Header() {
 		},
 		{
 			name: "Catalog",
-			to: "/catalog/all",
+			to: "/catalog",
 			ariaLabel: "Browse our product catalog",
 		},
 		{
@@ -126,7 +191,7 @@ export function Header() {
 	const matchMedia = useMatchMediaQuery("(min-width: 640px)");
 	useEffect(() => {
 		if (matchMedia) setIsDrawerOpen(false);
-	}, [matchMedia])
+	}, [matchMedia]);
 
 	useEffect(() => {
 		if (isDrawerOpen) {
@@ -150,11 +215,20 @@ export function Header() {
 								to={item.to}
 								appearance="straight"
 								inline
+								active={item.to === pathname.split("/").slice(0, 2).join("/")}
 							>
 								{item.name}
 							</InternalLink>
 						</li>
 					))}
+					<InternalLink
+						to="/catalog/$category/$"
+						params={{ category: "first", _splat: "first/second" }}
+						appearance="straight"
+						inline
+					>
+						Test
+					</InternalLink>
 					{authorized && (
 						<li>
 							<Button shape="circular" onClick={handleLogout}>
@@ -163,7 +237,6 @@ export function Header() {
 						</li>
 					)}
 				</ul>
-				<BurgerButton tooltipPositioning={"before"} />
 				<SearchButton tooltipPositioning={"before"} />
 				<Switch
 					onChange={(_, d) => {
@@ -194,14 +267,16 @@ export function Header() {
 					loading
 					tooltipPositioning={"before"}
 				/>
-				<Button
-					className={classes.burgerButton}
-					appearance="transparent"
-					icon={<NavigationRegular />}
+				<BurgerButton
+					tooltipPositioning={"before"}
 					onClick={() => setIsDrawerOpen(true)}
-					aria-label="Open navigation menu"
 				/>
-
+				<SplitLinkMenu
+					name="Catalog"
+					to="/catalog"
+					items={catalogMenuItems}
+					active={pathname.split("/").slice(0, 2).join("/") === "/catalog"}
+				/>
 				<Drawer
 					modalType="modal"
 					type="overlay"
@@ -214,12 +289,17 @@ export function Header() {
 					<DrawerHeader>
 						<DrawerHeaderTitle
 							action={
-								<Button
-									appearance="subtle"
-									aria-label="Close"
-									icon={<DismissRegular />}
-									onClick={() => setIsDrawerOpen(false)}
-								/>
+								<StyledTooltip text="Close" positioning={"before"}>
+									<div>
+										<CustomButton
+											appearance="subtle"
+											aria-label="Close"
+											shape="circular"
+											icon={<DismissRegular />}
+											onClick={() => setIsDrawerOpen(false)}
+										/>
+									</div>
+								</StyledTooltip>
 							}
 						>
 							Menu

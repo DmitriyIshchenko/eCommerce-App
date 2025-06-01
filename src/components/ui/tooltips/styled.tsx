@@ -11,9 +11,10 @@ interface Props extends Partial<TooltipProps> {
 
 const useCss = makeStyles({
 	tooltip: {
-		paddingBottom: tokens.spacingVerticalXS,
+		paddingBottom: tokens.spacingVerticalS,
+		paddingTop: tokens.spacingVerticalS,
 		borderRadius: tokens.borderRadiusCircular,
-		fontSize: tokens.fontSizeBase400
+		fontSize: tokens.fontSizeBase300
 	},
 });
 

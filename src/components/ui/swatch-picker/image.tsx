@@ -13,16 +13,18 @@ const useStyles = makeStyles({
 		height: "200px",
 		backgroundSize: "contain",
 		backgroundRepeat: "no-repeat",
-		margin: "20px 0",
+		margin: "4px 0",
 	},
 	swatch: {
-		width: "88px",
+		width: "100px",
 		height: "88px",
 	},
 });
 
 export default function ImageSwatchPicker({
 	images,
+	value,
+	image,
 	onChange,
 }: {
 	images: {
@@ -32,24 +34,21 @@ export default function ImageSwatchPicker({
 		fullImageSrc: string;
 	}[];
 	onChange?: (value: string) => void;
+	value?: string;
+	image?: string;
 }) {
-	const [selectedValue, setSelectedValue] = useState(images[0].value);
-	const [selectedImage, setSelectedImage] = useState(images[0].fullImageSrc);
 	const styles = useStyles();
 	if (!images.length) return;
 	const handleSelect: SwatchPickerOnSelectEventHandler = (_, data) => {
-		setSelectedValue(data.selectedValue);
-		const image =
-			images.find((img) => img.value === data.selectedValue) ?? images[0];
-		setSelectedImage(image.fullImageSrc);
-		if (onChange) onChange(data.selectedValue);
+		const v = data.selectedValue === value ? null : data.selectedValue;
+		if (onChange) onChange(v);
 	};
 
 	return (
 		<>
 			<SwatchPicker
 				aria-label="SwatchPicker with images"
-				selectedValue={selectedValue}
+				selectedValue={value ?? undefined}
 				onSelectionChange={handleSelect}
 			>
 				{images.map((image) => (
@@ -66,9 +65,13 @@ export default function ImageSwatchPicker({
 			<div
 				className={styles.example}
 				style={{
-					backgroundImage: `url(${selectedImage})`,
+					backgroundImage: `url(${image})`,
+					textAlign: "end",
+					paddingRight: "4px",
 				}}
-			/>
+			>
+				{value}
+			</div>
 		</>
 	);
 }

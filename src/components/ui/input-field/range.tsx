@@ -18,7 +18,7 @@ const useStyles = makeStyles({
 });
 
 export default function RangeInputField({
-	defaultValues = [0, 100],
+	values = [0, 100],
 	step = 1,
 	min = 0,
 	max = 100,
@@ -28,12 +28,11 @@ export default function RangeInputField({
 	min?: number;
 	max?: number;
 	onChange?: (min: number, max: number) => void;
-	defaultValues?: number[];
+	values?: number[];
 	step?: number;
 	prefix?: string;
 }) {
 	const styles = useStyles();
-	const [values, setValues] = useState(defaultValues);
 	const minValue = Math.min(...values);
 	const maxValue = Math.max(...values);
 
@@ -49,7 +48,6 @@ export default function RangeInputField({
 						displayValue={`${prefix ?? ""}${minValue}`}
 						onChange={(_, d) => {
 							const value = d.value ?? min;
-							setValues([value, maxValue]);
 							if (onChange) onChange(value, maxValue);
 						}}
 						className={styles.spin}
@@ -62,7 +60,6 @@ export default function RangeInputField({
 						displayValue={`${prefix ?? ""}${maxValue}`}
 						onChange={(_, d) => {
 							const value = d.value ?? min;
-							setValues([minValue, value]);
 							if (onChange) onChange(minValue, value);
 						}}
 						className={styles.spin}
@@ -76,7 +73,6 @@ export default function RangeInputField({
 						min={min}
 						max={max}
 						onChange={(values) => {
-							setValues(values);
 							if (onChange) onChange(Math.min(...values), Math.max(...values));
 						}}
 						allowOverlap

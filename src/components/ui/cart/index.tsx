@@ -19,8 +19,8 @@ export default function Cart({
 }) {
 	return (
 		<StyledTooltip text="Cart" positioning={tooltipPositioning}>
-			<div style={{ padding: 5 }}>
-				<InternalLink to={to}>
+			<div>
+				<InternalLink to={to} style={{ display: "flex", padding: 5 }}>
 					<div
 						style={{
 							display: "grid",

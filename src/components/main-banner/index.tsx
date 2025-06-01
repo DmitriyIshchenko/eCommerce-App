@@ -173,7 +173,13 @@ export function MainBanner() {
 			<DispatchClock width={48} height={48} strokeWidth={0.6} />
 			<StoreIcon width={48} height={48} strokeWidth={0.35} />
 			<div
-				style={{ display: "flex", gap: 4, padding: 4, alignItems: "center" }}
+				style={{
+					flexWrap: "wrap",
+					display: "flex",
+					gap: 4,
+					padding: 4,
+					alignItems: "center",
+				}}
 			>
 				<ButtonLink
 					to="/"
@@ -196,9 +202,10 @@ export function MainBanner() {
 				style={{
 					display: "flex",
 					gap: 4,
-					background: "black",
+					background: tokens.colorStrokeFocus2,
 					padding: 4,
 					alignItems: "center",
+					flexWrap: "wrap",
 				}}
 			>
 				<ButtonLink
@@ -220,63 +227,34 @@ export function MainBanner() {
 			<InternalLink to="/" appearance="muted">
 				muted link
 			</InternalLink>
-			<div style={{ color: "white" }} className={classes.colorStrokeFocus2}>
-				colorStrokeFocus2
-			</div>
-			<div
-				style={{ color: "white" }}
-				className={classes.colorNeutralForeground1}
-			>
-				colorNeutralForeground1
-			</div>
-			<div
-				style={{ color: "white" }}
-				className={classes.colorNeutralForeground3Hover}
-			>
-				colorNeutralForeground3Hover
-			</div>
-			<div
-				style={{ color: "white" }}
-				className={classes.colorNeutralStrokeAccessibleHover}
-			>
-				colorNeutralStrokeAccessibleHover
-			</div>
-			<div
-				style={{ color: "white" }}
-				className={classes.colorNeutralForeground4}
-			>
-				colorNeutralForeground4
-			</div>
-			<div
-				style={{ color: "white" }}
-				className={classes.colorNeutralStroke1Pressed}
-			>
-				colorNeutralStroke1Pressed
-			</div>
-			<div
-				style={{ color: "white" }}
-				className={classes.colorNeutralStroke1Hover}
-			>
-				colorNeutralStroke1Hover
-			</div>
-			<div style={{ color: "white" }} className={classes.colorNeutralStroke1}>
-				colorNeutralStroke1
-			</div>
-
-			<div style={{ color: "white" }} className={classes.colorNeutralStencil1}>
-				colorNeutralStencil1
-			</div>
-			<div
-				style={{ color: "white" }}
-				className={classes.colorPaletteRoyalBlueForeground2}
-			>
-				colorPaletteRoyalBlueForeground2
-			</div>
-			<div
-				style={{ color: "white" }}
-				className={classes.colorPaletteRoyalBlueBorderActive}
-			>
-				colorPaletteRoyalBlueBorderActive
+			<div style={{ color: tokens.colorStrokeFocus1 }}>
+				<div className={classes.colorStrokeFocus2}>colorStrokeFocus2</div>
+				<div className={classes.colorNeutralForeground1}>
+					colorNeutralForeground1
+				</div>
+				<div className={classes.colorNeutralForeground3Hover}>
+					colorNeutralForeground3Hover
+				</div>
+				<div className={classes.colorNeutralStrokeAccessibleHover}>
+					colorNeutralStrokeAccessibleHover
+				</div>
+				<div className={classes.colorNeutralForeground4}>
+					colorNeutralForeground4
+				</div>
+				<div className={classes.colorNeutralStroke1Pressed}>
+					colorNeutralStroke1Pressed
+				</div>
+				<div className={classes.colorNeutralStroke1Hover}>
+					colorNeutralStroke1Hover
+				</div>
+				<div className={classes.colorNeutralStroke1}>colorNeutralStroke1</div>
+				<div className={classes.colorNeutralStencil1}>colorNeutralStencil1</div>
+				<div className={classes.colorPaletteRoyalBlueForeground2}>
+					colorPaletteRoyalBlueForeground2
+				</div>
+				<div className={classes.colorPaletteRoyalBlueBorderActive}>
+					colorPaletteRoyalBlueBorderActive
+				</div>
 			</div>
 		</div>
 	);

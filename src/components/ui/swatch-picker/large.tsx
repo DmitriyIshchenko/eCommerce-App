@@ -1,20 +1,24 @@
 import { ColorSwatch, SwatchPicker } from "@fluentui/react-components";
+import { useState } from "react";
 import StyledTooltip from "../tooltips/styled";
 
 export default function LargeSwatchPicker({
 	colors,
 	onChange,
+	value,
 }: {
 	colors: { color: string; value: string; "aria-label": string }[];
-	onChange?: (value: string) => void;
+	onChange?: (value: string | null) => void;
+	value?: string;
 }) {
 	return (
 		<SwatchPicker
 			aria-label="SwatchPicker large size"
 			size="large"
-			defaultSelectedValue={colors[0].value}
+			selectedValue={value}
 			onSelectionChange={(_, d) => {
-				if (onChange) onChange(d.selectedValue);
+				const v = d.selectedValue === value ? null : d.selectedValue;
+				if (onChange) onChange(v);
 			}}
 		>
 			{colors.map((color) => {

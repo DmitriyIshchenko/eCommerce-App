@@ -16,9 +16,17 @@ const useCss = makeStyles({
 		textDecoration: "none",
 		userSelect: "none",
 		display: "inline-block",
+		"[data-fui-focus-visible]": {
+			textDecoration: "none",
+			"::after": {
+				width: "100%",
+				height: "2px",
+			}
+		},
 	},
 	stick: {
 		"::after": {
+			marginTop: "1px",
 			height: "1px",
 			display: "block",
 			content: '""',
@@ -77,6 +85,12 @@ const useCss = makeStyles({
 	disabled: {
 		opacity: 0.5,
 	},
+	active: {
+		pointerEvents: "none",
+		fontWeight: tokens.fontWeightMedium,
+		color: tokens.colorNeutralForeground1,
+		"::after": { width: "100%", height: "1px" },
+	},
 });
 
 type StyledLinkProps = Omit<FluentLinkProps, "appearance" | "as"> &
@@ -87,6 +101,7 @@ type StyledLinkProps = Omit<FluentLinkProps, "appearance" | "as"> &
 		accent: boolean;
 		asBlock: boolean;
 		notInteractive: boolean;
+		active: boolean;
 	}>;
 
 export const ExternalLink = forwardRef<HTMLAnchorElement, StyledLinkProps>(
@@ -94,6 +109,7 @@ export const ExternalLink = forwardRef<HTMLAnchorElement, StyledLinkProps>(
 		{
 			appearance = "straight",
 			accent,
+			active,
 			asBlock,
 			notInteractive,
 			disabled,
@@ -104,28 +120,30 @@ export const ExternalLink = forwardRef<HTMLAnchorElement, StyledLinkProps>(
 		const css = useCss();
 
 		return (
-				<FluentLink
-					{...props}
-					ref={ref}
-					as="a"
-					appearance="default"
-					disabled={disabled}
-					className={mergeClasses(
-						css.base,
-						appearance === "straight" && css.straight,
-						appearance === "straight" && css.stick,
-						appearance === "inverted" && css.inverted,
-						appearance === "inverted" && css.stick,
-						appearance === "muted" && css.muted,
-						asBlock && css.block,
-						accent && css.accent,
-						notInteractive && css.notInteractive,
-						disabled && css.disabled,
-						props.className
-					)}
-				>
-					{props.children}
-				</FluentLink>
+			<FluentLink
+				{...props}
+				ref={ref}
+				as="a"
+				appearance="default"
+				disabled={disabled}
+				aria-current={active ? "page" : undefined}
+				className={mergeClasses(
+					css.base,
+					appearance === "straight" && css.straight,
+					appearance === "straight" && css.stick,
+					appearance === "inverted" && css.inverted,
+					appearance === "inverted" && css.stick,
+					appearance === "muted" && css.muted,
+					asBlock && css.block,
+					accent && css.accent,
+					notInteractive && css.notInteractive,
+					disabled && css.disabled,
+					active && css.active,
+					props.className,
+				)}
+			>
+				{props.children}
+			</FluentLink>
 		);
 	},
 );
