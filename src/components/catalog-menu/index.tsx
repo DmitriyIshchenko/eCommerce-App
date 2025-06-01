@@ -27,13 +27,14 @@ export function CatalogMenu() {
   const categories = Route.useLoaderData();
 
   const handleNavigateCategory = async (slug: string) => {
-    await navigate({ to: '/catalog/$category', params: { category: slug } });
+    await navigate({ to: '/catalog/$category', params: { category: slug }, search: { q: '' } });
   };
 
   const handleNavigateSubcategory = async (slugCat: string, slugSubCat: string) => {
     await navigate({
       to: '/catalog/$category/$subcategory',
       params: { category: slugCat, subcategory: slugSubCat },
+      search: { q: '' },
     });
   };
 
@@ -89,6 +90,7 @@ export function CatalogMenu() {
             className={styles.link}
             to="/catalog/$category"
             params={{ category: 'all' }}
+            search={{ q: '' }}
           >
             Catalog
           </InternalLink>

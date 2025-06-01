@@ -76,6 +76,7 @@ export function CatalogTree() {
           category,
           subcategory,
         },
+        search: { q: '' },
       });
     } else {
       void navigate({
@@ -83,6 +84,7 @@ export function CatalogTree() {
         params: {
           category,
         },
+        search: { q: '' },
       });
     }
   };

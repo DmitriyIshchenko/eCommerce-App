@@ -24,7 +24,7 @@ function RouteComponent() {
 
   return (
     <div className={styles.container}>
-      <Link to="/catalog/$category" params={{ category: 'all' }}>
+      <Link to="/catalog/$category" params={{ category: 'all' }} search={{ q: '' }}>
         Shop All
       </Link>
       {parentCategories.map((category) => (
@@ -32,6 +32,7 @@ function RouteComponent() {
           key={category.id}
           to="/catalog/$category"
           params={{ category: `${category.slug['en-US']}` }}
+          search={{ q: '' }}
         >
           {category.name['en-US']}
         </Link>
