@@ -10,14 +10,16 @@ import {
   DrawerHeaderTitle,
 } from '@fluentui/react-components';
 import { DismissRegular } from '@fluentui/react-icons';
-import { createLink, useNavigate } from '@tanstack/react-router';
+import { createLink, useLocation, useNavigate, useRouteContext } from '@tanstack/react-router';
 import { useUser } from '../../hooks/use-user';
 import { useState, useEffect } from 'react';
-import { CatalogMenu } from '../catalog-menu';
-import { CatalogTree } from '../catalog-tree';
 import SearchButton from '../ui/buttons/search';
 import BurgerButton from '../ui/buttons/burger';
-import SearchDrawer from '../search-drawer';
+import SplitLinkMenu from '../ui/menu/split-link';
+import adaptCategoriesToSplitLinkMenuItemProp from '../../lib/utils/adapt-categories';
+import { InternalLink } from '../ui/links/fui-tanstack';
+import { CatalogTree } from '../../features/catalog-tree';
+import SearchDrawer from '../../features/search-drawer';
 
 const useClasses = makeStyles({
   header: {
@@ -104,6 +106,15 @@ export function Header() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isSearchDrawerOpen, setIsSearchDrawerOpen] = useState(false);
 
+  const { pathname } = useLocation();
+  const { categories } = useRouteContext({
+    from: '__root__',
+  });
+  const catalogMenuItems = adaptCategoriesToSplitLinkMenuItemProp(
+    categories,
+    '/catalog/$category/$',
+  );
+
   const menuItems = [
     {
       name: 'About',
@@ -160,13 +171,24 @@ export function Header() {
         <div style={{ display: 'flex' }}>
           <ul className={classes.menu}>
             <li>
-              <CatalogMenu />
+              <SplitLinkMenu
+                name="Catalog"
+                to="/catalog"
+                items={catalogMenuItems}
+                active={pathname.split('/').slice(0, 2).join('/') === '/catalog'}
+              />
             </li>
             {menuItems.map((item) => (
               <li key={item.name}>
-                <CustomLink className={classes.menuLink} aria-label={item.ariaLabel} to={item.to}>
+                <InternalLink
+                  aria-label={item.ariaLabel}
+                  to={item.to}
+                  appearance="straight"
+                  inline
+                  active={item.to === pathname.split('/').slice(0, 2).join('/')}
+                >
                   {item.name}
-                </CustomLink>
+                </InternalLink>
               </li>
             ))}
             {authorized && (

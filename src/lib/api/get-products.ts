@@ -68,19 +68,45 @@ export function getProductsByText(search: string) {
   }
 }
 
-export function getProductsBySearch(search: string, categoryId?: string) {
+export function getProductsBySearch(
+  q?: string,
+  color?: string,
+  material?: string,
+  minPrice?: number,
+  maxPrice?: number,
+  categoryId?: string,
+) {
   const anonymousClient = createAnonymousClient();
   const anonymousApiRoot = getApiRoot(anonymousClient);
 
   try {
+    const filters: string[] = [];
+
+    if (categoryId) {
+      filters.push(`categories.id:"${categoryId}"`);
+    }
+
+    if (color) {
+      filters.push(`variants.attributes.color:"${color}"`);
+    }
+
+    if (material) {
+      filters.push(`variants.attributes.material.key:"${material}"`);
+    }
+
+    if (minPrice !== undefined && maxPrice !== undefined) {
+      filters.push(`variants.price.centAmount:range (${minPrice * 100} to ${maxPrice * 100})`);
+    }
+
     const productsResponse = anonymousApiRoot
       .productProjections()
       .search()
       .get({
         queryArgs: {
-          'text.en-us': `${search}`,
+          ...(q && { 'text.en-us': `${q}` }),
           fuzzy: true,
-          'filter.query': [`categories.id:"${categoryId}"`],
+          limit: 60,
+          ...(filters.length > 0 && { 'filter.query': filters }),
         },
       })
       .execute();

@@ -22,6 +22,7 @@ export default function CustomButton(props: CustomButtonProps) {
         css.base,
         appearance === 'inverted' && css.inverted,
         appearance === 'subtle' && css.subtle,
+        size === 'small' && css.small,
         className,
       )}
       {...rest}

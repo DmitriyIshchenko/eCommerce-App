@@ -6,11 +6,9 @@ import {
   TreeItemLayout,
   useHeadlessFlatTree_unstable,
   type HeadlessFlatTreeItemProps,
-  type TreeCheckedChangeData,
 } from '@fluentui/react-components';
-import { useNavigate } from '@tanstack/react-router';
+import { useNavigate, useRouteContext } from '@tanstack/react-router';
 import { useMemo, useState } from 'react';
-import { Route } from '../../routes/__root';
 
 type CustomItem = HeadlessFlatTreeItemProps & { content: string };
 
@@ -28,32 +26,32 @@ const useStyles = makeStyles({
 
 export function CatalogTree() {
   const styles = useStyles();
+  const { categories } = useRouteContext({
+    from: '__root__',
+  });
 
   const navigate = useNavigate();
 
   const [category, setCategory] = useState('');
-  const categories = Route.useLoaderData();
 
   const items: CustomItem[] = useMemo(() => {
     const root: CustomItem = {
-      value: 'all',
+      value: '',
       content: 'Catalog',
     };
     const mappedCategories: CustomItem[] = categories.map((category) => {
       const name = category.name['en-US'];
       const slug = category.slug['en-US'];
-      const parentId = category.parent?.id;
+      const parent = category.parent?.id
+        ? categories.find((cat) => cat.id === category.parent?.id)
+        : null;
 
-      const value = parentId
-        ? `${categories.find((cat) => cat.id === parentId)?.slug['en-US']}/${slug}`
-        : slug;
+      const value = parent ? `${parent.slug['en-US']}/${slug}` : slug;
 
       const item = {
         value,
         content: name,
-        parentValue: parentId
-          ? categories.find((cat) => cat.id === parentId)?.slug['en-US']
-          : 'all',
+        parentValue: parent ? parent.slug['en-US'] : '',
       };
 
       return item;
@@ -61,40 +59,30 @@ export function CatalogTree() {
     return [root, ...mappedCategories];
   }, [categories]);
 
+  const handleCategoryChange = (id: string) => {
+    setCategory(id);
+    const [category, subcategory] = id.split('/');
+    void navigate({
+      to: '/catalog/$category/$',
+      params: {
+        category: category,
+        _splat: subcategory,
+      },
+    });
+  };
+
   const flatTree = useHeadlessFlatTree_unstable(items, {
-    defaultOpenItems: ['all'],
     selectionMode: 'single',
   });
-
-  const handleCheckedChange = (_: React.ChangeEvent<HTMLElement>, data: TreeCheckedChangeData) => {
-    setCategory(String(data.value));
-    const [category, subcategory] = String(data.value).split('/');
-    if (subcategory) {
-      void navigate({
-        to: '/catalog/$category/$subcategory',
-        params: {
-          category,
-          subcategory,
-        },
-        search: { q: '' },
-      });
-    } else {
-      void navigate({
-        to: '/catalog/$category',
-        params: {
-          category,
-        },
-        search: { q: '' },
-      });
-    }
-  };
 
   return (
     <FlatTree
       {...flatTree.getTreeProps()}
       aria-label="Selection"
       checkedItems={[category]}
-      onCheckedChange={handleCheckedChange}
+      onCheckedChange={(_, d) => {
+        handleCategoryChange(String(d.value));
+      }}
     >
       {Array.from(flatTree.items(), (flatTreeItem) => {
         const { content, ...treeItemProps } = flatTreeItem.getTreeItemProps();

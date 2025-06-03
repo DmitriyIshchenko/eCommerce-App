@@ -8,8 +8,16 @@ import { customTheme } from './styles/theme';
 import { UserContextProvider } from './components/contexts/user/context-provider';
 import { TOASTER_ID } from './lib/constants';
 import { LoadingContextProvider } from './components/contexts/loading/context-provider';
+import type { Category } from '@commercetools/platform-sdk';
 
-const router = createRouter({ routeTree });
+interface RouterContext {
+  categories: Category[];
+}
+
+const router = createRouter({
+  routeTree,
+  context: {} as RouterContext,
+});
 
 declare module '@tanstack/react-router' {
   interface Register {

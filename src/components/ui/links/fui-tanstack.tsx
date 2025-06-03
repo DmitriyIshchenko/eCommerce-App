@@ -16,9 +16,17 @@ const useCss = makeStyles({
     textDecoration: 'none',
     userSelect: 'none',
     display: 'inline-block',
+    '[data-fui-focus-visible]': {
+      textDecoration: 'none',
+      '::after': {
+        width: '100%',
+        height: '2px',
+      },
+    },
   },
   stick: {
     '::after': {
+      marginTop: '1px',
       height: '1px',
       display: 'block',
       content: '""',
@@ -77,6 +85,12 @@ const useCss = makeStyles({
   disabled: {
     opacity: 0.5,
   },
+  active: {
+    pointerEvents: 'none',
+    fontWeight: tokens.fontWeightMedium,
+    color: tokens.colorNeutralForeground1,
+    '::after': { width: '100%', height: '1px' },
+  },
 });
 
 type StyledLinkProps = Omit<FluentLinkProps, 'appearance' | 'as'> &
@@ -87,10 +101,14 @@ type StyledLinkProps = Omit<FluentLinkProps, 'appearance' | 'as'> &
     accent: boolean;
     asBlock: boolean;
     notInteractive: boolean;
+    active: boolean;
   }>;
 
 export const ExternalLink = forwardRef<HTMLAnchorElement, StyledLinkProps>(
-  ({ appearance = 'straight', accent, asBlock, notInteractive, disabled, ...props }, ref) => {
+  (
+    { appearance = 'straight', accent, active, asBlock, notInteractive, disabled, ...props },
+    ref,
+  ) => {
     const css = useCss();
 
     return (
@@ -100,6 +118,7 @@ export const ExternalLink = forwardRef<HTMLAnchorElement, StyledLinkProps>(
         as="a"
         appearance="default"
         disabled={disabled}
+        aria-current={active ? 'page' : undefined}
         className={mergeClasses(
           css.base,
           appearance === 'straight' && css.straight,
@@ -111,6 +130,7 @@ export const ExternalLink = forwardRef<HTMLAnchorElement, StyledLinkProps>(
           accent && css.accent,
           notInteractive && css.notInteractive,
           disabled && css.disabled,
+          active && css.active,
           props.className,
         )}
       >

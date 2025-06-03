@@ -1,6 +1,7 @@
-import { createFileRoute, Link } from '@tanstack/react-router';
+import { createFileRoute } from '@tanstack/react-router';
 import { makeStyles, Spinner } from '@fluentui/react-components';
 import { Route as RootRoute } from '../__root';
+import { InternalLink } from '../../components/ui/links/fui-tanstack';
 
 const useStyles = makeStyles({
   container: {
@@ -19,23 +20,23 @@ export const Route = createFileRoute('/catalog/')({
 
 function RouteComponent() {
   const styles = useStyles();
-  const categories = RootRoute.useLoaderData();
+  const { categories } = RootRoute.useRouteContext();
   const parentCategories = categories.filter((cat) => !cat.parent?.id);
 
   return (
     <div className={styles.container}>
-      <Link to="/catalog/$category" params={{ category: 'all' }} search={{ q: '' }}>
+      <InternalLink to="/catalog/$category/$" params={{ category: 'all' }} search>
         Shop All
-      </Link>
+      </InternalLink>
       {parentCategories.map((category) => (
-        <Link
+        <InternalLink
           key={category.id}
-          to="/catalog/$category"
+          to="/catalog/$category/$"
           params={{ category: `${category.slug['en-US']}` }}
-          search={{ q: '' }}
+          search
         >
           {category.name['en-US']}
-        </Link>
+        </InternalLink>
       ))}
     </div>
   );

@@ -47,14 +47,13 @@ export function ProductCard(props: ProductCardProps) {
           <div>
             {props.discount ? (
               <div>
-                <Caption1 strikethrough style={{ marginRight: '5px' }}>
-                  {props.price}
-                </Caption1>
-                <Caption1>{props.discount}</Caption1>
+                <Caption1>From </Caption1>
+                <Caption1 style={{ marginRight: '5px' }}>{props.discount}</Caption1>
+                <Caption1 strikethrough>{props.price}</Caption1>
               </div>
             ) : (
               <div>
-                <Caption1>{props.price}</Caption1>
+                <Caption1>From {props.price}</Caption1>
               </div>
             )}
           </div>

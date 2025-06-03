@@ -1,5 +1,5 @@
 import { LargeTitle, makeStyles } from '@fluentui/react-components';
-import type { Category, ProductProjection } from '@commercetools/platform-sdk';
+import type { ProductProjection } from '@commercetools/platform-sdk';
 import { ProductCard } from '../../components/product-card';
 import formatPrice from '../../lib/utils/format-price';
 
@@ -34,33 +34,33 @@ const useStyles = makeStyles({
   },
 });
 
-function getTitle(category: Category, subcategory?: Category) {
+function getTitle(categoryName: string, subcategoryName?: string) {
   const defaultTitle = 'Products';
 
-  if (!category) {
+  if (categoryName === 'All') {
     return defaultTitle;
   }
 
-  const categoryTitle = category.name['en-US'];
-  if (!subcategory) {
+  const categoryTitle = categoryName;
+  if (!subcategoryName) {
     return categoryTitle;
   }
 
-  const subcategoryTitle = subcategory.name['en-US'];
+  const subcategoryTitle = subcategoryName;
   return categoryTitle + ' - ' + subcategoryTitle;
 }
 
 export default function CategoryPage({
   products,
-  category,
-  subcategory,
+  categoryName,
+  subcategoryName,
 }: {
   products: ProductProjection[] | null;
-  category: Category;
-  subcategory?: Category;
+  categoryName: string;
+  subcategoryName?: string;
 }) {
   const styles = useStyles();
-  const title = getTitle(category, subcategory);
+  const title = getTitle(categoryName, subcategoryName);
 
   return (
     <div className={styles.categoryContainer}>

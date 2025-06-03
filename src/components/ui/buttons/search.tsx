@@ -1,6 +1,6 @@
 import { Button, type TooltipProps, makeStyles, tokens } from '@fluentui/react-components';
 import SearchIcon from '../icons/search';
-import StyledTooltip from '../tooltips';
+import StyledTooltip from '../tooltips/styled';
 import type { CustomButtonProps } from './custom';
 
 const useCss = makeStyles({

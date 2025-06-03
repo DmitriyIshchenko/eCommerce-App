@@ -6,7 +6,7 @@ import {
   tokens,
 } from '@fluentui/react-components';
 import BurgerIcon from '../icons/burger';
-import StyledTooltip from '../tooltips';
+import StyledTooltip from '../tooltips/styled';
 import type { CustomButtonProps } from './custom';
 
 const useCss = makeStyles({

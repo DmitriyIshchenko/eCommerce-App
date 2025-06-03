@@ -13,12 +13,12 @@ import {
 import { DismissRegular } from '@fluentui/react-icons';
 import { useState, type ChangeEvent } from 'react';
 import type { ProductProjection } from '@commercetools/platform-sdk';
-import { MiniProductCard } from '../mini-product-card';
+import { MiniProductCard } from '../../components/mini-product-card';
 import formatPrice from '../../lib/utils/format-price';
-import { useMatchRoute } from '@tanstack/react-router';
 import { getProductsByText } from '../../lib/api/get-products';
-import { Route as CategoryRoute } from '../../routes/catalog/$category';
-import { Route as SubcategoryRoute } from '../../routes/catalog/$category/$subcategory';
+import type { ProductSearchSchema } from '../../lib/schemas/products-search';
+import { Route } from '../../routes/catalog/$category.$';
+import { useMatchRoute } from '@tanstack/react-router';
 
 const useStyles = makeStyles({
   header: {
@@ -41,23 +41,20 @@ interface SearchDrawerProps {
   onOpenChange: (open: boolean) => void;
 }
 
+const DRAWER_TITLE = 'Search';
+const DRAWER_SUBTITLE = 'ALL PRODUCTS';
+
 export default function SearchDrawer({ open, onOpenChange }: SearchDrawerProps) {
   const styles = useStyles();
   const [value, setValue] = useState('');
 
   const matchRoute = useMatchRoute();
 
-  const navigateFromCategory = CategoryRoute.useNavigate();
-  const navigateFromSubcategory = SubcategoryRoute.useNavigate();
+  const navigateFromCategory = Route.useNavigate();
 
-  const isCategory = matchRoute({ to: '/catalog/$category' });
-  const isSubcategory = matchRoute({ to: '/catalog/$category/$subcategory' });
+  const isCategory = matchRoute({ to: '/catalog/$category/$' });
 
-  const navigate = isCategory
-    ? navigateFromCategory
-    : isSubcategory
-      ? navigateFromSubcategory
-      : null;
+  const navigate = isCategory && navigateFromCategory;
 
   const [products, setProducts] = useState<ProductProjection[]>([]);
 
@@ -67,7 +64,7 @@ export default function SearchDrawer({ open, onOpenChange }: SearchDrawerProps) 
 
     if (navigate) {
       void navigate({
-        search: (prev) => ({
+        search: (prev: ProductSearchSchema) => ({
           ...prev,
           q: searchText,
         }),
@@ -102,7 +99,7 @@ export default function SearchDrawer({ open, onOpenChange }: SearchDrawerProps) 
             />
           }
         >
-          Search
+          {DRAWER_TITLE}
         </DrawerHeaderTitle>
       </DrawerHeader>
 
@@ -120,7 +117,7 @@ export default function SearchDrawer({ open, onOpenChange }: SearchDrawerProps) 
           {value && products.length > 0 && (
             <div>
               <div className={styles.container}>
-                <Body2>ALL PRODUCTS</Body2>
+                <Body2>{DRAWER_SUBTITLE}</Body2>
               </div>
               {products.map((product) => (
                 <MiniProductCard
