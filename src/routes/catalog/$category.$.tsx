@@ -100,7 +100,7 @@ export const Route = createFileRoute('/catalog/$category/$')({
     params: { category, _splat },
     context: { categories },
   }) => {
-    const categorySlug = _splat ?? category;
+    const categorySlug = _splat && _splat.length > 0 ? _splat : category;
     const categoryResponse = await getCategoryBySlug(categorySlug);
     const categoryId = categoryResponse ? categoryResponse.id : undefined;
 
