@@ -7,8 +7,17 @@ import { routeTree } from './routeTree.gen';
 import { customTheme } from './styles/theme';
 import { UserContextProvider } from './components/contexts/user/context-provider';
 import { TOASTER_ID } from './lib/constants';
+import { LoadingContextProvider } from './components/contexts/loading/context-provider';
+import type { Category } from '@commercetools/platform-sdk';
 
-const router = createRouter({ routeTree });
+interface RouterContext {
+  categories: Category[];
+}
+
+const router = createRouter({
+  routeTree,
+  context: {} as RouterContext,
+});
 
 declare module '@tanstack/react-router' {
   interface Register {
@@ -24,8 +33,10 @@ createRoot(root).render(
   <StrictMode>
     <FluentProvider theme={customTheme}>
       <UserContextProvider>
-        <RouterProvider router={router} />
-        <Toaster toasterId={TOASTER_ID} />
+        <LoadingContextProvider>
+          <RouterProvider router={router} />
+          <Toaster toasterId={TOASTER_ID} />
+        </LoadingContextProvider>
       </UserContextProvider>
     </FluentProvider>
   </StrictMode>,

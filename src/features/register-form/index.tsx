@@ -29,6 +29,7 @@ import { DEFAULT_ADDRESS, TOASTER_ID } from '../../lib/constants';
 import { useUser } from '../../hooks/use-user';
 import { createLink, useNavigate } from '@tanstack/react-router';
 import AddressFieldset from '../../components/ui/address-fieldset';
+import { useLoading } from '../../hooks/use-loading';
 
 interface NotifyOptions {
   title: string;
@@ -69,7 +70,8 @@ export default function RegisterForm() {
     useState<CheckboxProps['checked']>(false);
   const [shippingAsBilling, setShippingAsBilling] = useState<CheckboxProps['checked']>(false);
 
-  const { isLoading, setIsLoading, authorized, setAuthorized } = useUser();
+  const { authorized, setAuthorized } = useUser();
+  const { loading, setLoading } = useLoading();
   const progressToastId = useId('progress');
 
   const CustomLink = createLink(Link);
@@ -122,7 +124,7 @@ export default function RegisterForm() {
 
   const onSubmit = async (data: RegisterSchema) => {
     try {
-      setIsLoading(true);
+      setLoading(true);
       notify({
         title: 'Creating an account for you...',
         intent: 'progress',
@@ -143,13 +145,13 @@ export default function RegisterForm() {
         timeout: 4000,
       });
 
-      setIsLoading(false);
+      setLoading(false);
       setAuthorized(true);
       dismissToast(progressToastId);
 
       setTimeout(() => void navigate({ to: '/' }), 2000);
     } catch (error) {
-      setIsLoading(false);
+      setLoading(false);
       dismissToast(progressToastId);
       if (error instanceof Error) {
         notify({
@@ -242,7 +244,7 @@ export default function RegisterForm() {
             size="large"
             appearance="primary"
             shape="circular"
-            disabled={isLoading}
+            disabled={loading}
           >
             Submit
           </Button>

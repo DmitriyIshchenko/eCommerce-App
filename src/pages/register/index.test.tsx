@@ -9,6 +9,7 @@ import { beforeEach, describe, expect, test } from 'vitest';
 import { render, waitFor, screen } from '@testing-library/react';
 import RegisterPage from '.';
 import { UserContextProvider } from '../../components/contexts/user/context-provider';
+import { LoadingContextProvider } from '../../components/contexts/loading/context-provider';
 
 describe('Ensure that page exists', () => {
   let titleElement: HTMLHeadingElement;
@@ -19,9 +20,11 @@ describe('Ensure that page exists', () => {
       path: '/',
       component: () => (
         <UserContextProvider>
-          <div data-testid="is-rendered">
-            <RegisterPage />
-          </div>
+          <LoadingContextProvider>
+            <div data-testid="is-rendered">
+              <RegisterPage />
+            </div>
+          </LoadingContextProvider>
         </UserContextProvider>
       ),
     });
