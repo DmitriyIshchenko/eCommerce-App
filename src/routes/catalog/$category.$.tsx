@@ -18,7 +18,7 @@ import {
 } from '@fluentui/react-components';
 import CategoryPage from '../../pages/category';
 import FilterButton from '../../components/ui/buttons/filter';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import StyledTooltip from '../../components/ui/tooltips/styled';
 import CustomButton from '../../components/ui/buttons/custom';
 import { CheckmarkFilled, DismissFilled, DismissRegular } from '@fluentui/react-icons';
@@ -100,7 +100,7 @@ export const Route = createFileRoute('/catalog/$category/$')({
     params: { category, _splat },
     context: { categories },
   }) => {
-    const categorySlug = _splat ?? category;
+    const categorySlug = _splat && _splat.length > 0 ? _splat : category;
     const categoryResponse = await getCategoryBySlug(categorySlug);
     const categoryId = categoryResponse ? categoryResponse.id : undefined;
 
@@ -132,9 +132,17 @@ function RouteComponent() {
   const search = Route.useSearch();
 
   const productsSearchFilter = productSearchSchema.parse(search);
-  const initialFilter: Filter = { ...productsSearchFilter };
+  const initialFilter: Filter = {
+    ...productsSearchFilter,
+  };
 
   const [filter, setFilter] = useState<Filter>(initialFilter);
+
+  useEffect(() => {
+    if (search.q !== undefined) {
+      setFilter((prev) => ({ ...prev, q: search.q }));
+    }
+  }, [search.q]);
 
   const navigate = Route.useNavigate();
 
@@ -165,11 +173,14 @@ function RouteComponent() {
   };
 
   const handleDismissFilter = (name: string, value: string | number) => {
-    if (name === 'color' && typeof value === 'string') handleColorChange(value);
-    if (name === 'material' && typeof value == 'string') handleMaterialChange(value);
+    if (name === 'color' && typeof value === 'string') {
+      setFilter((prev) => ({ ...prev, color: undefined }));
+    }
+    if (name === 'material' && typeof value == 'string') {
+      setFilter((prev) => ({ ...prev, material: undefined }));
+    }
     if (name === 'price') {
-      const { ...newFilter } = filter;
-      setFilter(newFilter);
+      setFilter((prev) => ({ ...prev, minPrice: undefined, maxPrice: undefined }));
     }
   };
 

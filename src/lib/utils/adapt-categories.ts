@@ -26,7 +26,10 @@ export default function adaptCategoriesToSplitLinkMenuItemProp(
         type: 'parent',
         name: category.name['en-US'],
         to: base,
-        params,
+        params: {
+          category: root.slug['en-US'],
+          _splat: undefined,
+        },
         children,
       };
     }

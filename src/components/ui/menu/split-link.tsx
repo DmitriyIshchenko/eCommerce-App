@@ -27,7 +27,7 @@ const useStyles = makeStyles({
 interface ItemBase {
   name: string;
   to: string;
-  params: Record<string, string>;
+  params: Record<string, string | undefined>;
 }
 
 interface ChildItem extends ItemBase {
