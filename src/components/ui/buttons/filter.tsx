@@ -44,7 +44,7 @@ export default function FilterButton(
 ) {
   const css = useCss();
   return (
-    <StyledTooltip text="Filter">
+    <StyledTooltip text="Filter and Sort">
       <div>
         <CustomButton
           {...props}
