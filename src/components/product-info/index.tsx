@@ -1,12 +1,13 @@
 import { Image, makeStyles, Select, Text, useId } from '@fluentui/react-components';
 import type { ProductInfoProps } from '../../lib/types';
+import { ProductCarousel } from '../carousel';
 
 const useStyles = makeStyles({
   productContainer: {
     display: 'flex',
     gap: '1rem',
-    padding: '0 40px',
-    '@media (max-width: 768px)': {
+    padding: '0 40px 40px',
+    '@media (max-width: 950px)': {
       display: 'flex',
       flexDirection: 'column',
     },
@@ -16,8 +17,11 @@ const useStyles = makeStyles({
     alignItems: 'center',
     boxSizing: 'border-box',
     maxWidth: '50%',
-    '@media (max-width: 768px)': {
+    '@media (max-width: 950px)': {
       maxWidth: '100%',
+    },
+    '@media (max-width: 1100px)': {
+      maxWidth: '60%',
     },
   },
   img: {
@@ -30,7 +34,7 @@ const useStyles = makeStyles({
     flexDirection: 'column',
     gap: '2rem',
     padding: '5rem 0',
-    '@media (max-width: 768px)': {
+    '@media (max-width: 950px)': {
       maxWidth: '100%',
     },
   },
@@ -62,7 +66,11 @@ export function ProductInfo(props: ProductInfoProps | null) {
   return (
     <div className={styles.productContainer}>
       <div className={styles.productImg}>
-        <Image className={styles.img} src={props?.image} />
+        {props?.images && props?.images.length > 1 ? (
+          <ProductCarousel images={props.images} />
+        ) : (
+          <Image className={styles.img} src={props?.image} />
+        )}
       </div>
       <div className={styles.productInfo}>
         <Text as="h2" className={styles.productTitle}>
