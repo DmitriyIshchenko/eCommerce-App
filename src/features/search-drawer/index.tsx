@@ -121,6 +121,7 @@ export default function SearchDrawer({ open, onOpenChange }: SearchDrawerProps) 
               </div>
               {products.map((product) => (
                 <MiniProductCard
+                  onClick={() => onOpenChange(false)}
                   key={product.slug['en-US']}
                   value={product.slug['en-US']}
                   name={product.name['en-US']}
