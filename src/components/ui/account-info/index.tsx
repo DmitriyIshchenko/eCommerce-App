@@ -1,5 +1,4 @@
 import { useUser } from '../../../hooks/use-user';
-import { DEFAULT_ADDRESS } from '../../../lib/constants';
 import AddressBox from '../address-box';
 import LabelBox from '../label-box';
 import { Label, makeStyles, tokens } from '@fluentui/react-components';
@@ -26,13 +25,13 @@ export default function AccountInfo() {
 
   if (!customer) return;
 
-  const shippingAddress =
-    customer.addresses.find((address) => address.id === customer.defaultShippingAddressId) ??
-    DEFAULT_ADDRESS;
+  const defaultShippingAddress = customer.addresses.find(
+    (address) => address.id === customer.defaultShippingAddressId,
+  );
 
-  const billingAddress =
-    customer.addresses.find((address) => address.id === customer.defaultBillingAddressId) ??
-    DEFAULT_ADDRESS;
+  const defaultBillingAddress = customer.addresses.find(
+    (address) => address.id === customer.defaultBillingAddressId,
+  );
 
   const regularAddresses = customer.addresses.filter(
     (address) =>
@@ -51,8 +50,12 @@ export default function AccountInfo() {
         <LabelBox size="large" title="Date of birth" content={customer.dateOfBirth} />
       </div>
 
-      <AddressBox title="Shipping Address" address={shippingAddress} />
-      <AddressBox title="Billing Address" address={billingAddress} />
+      {defaultShippingAddress && (
+        <AddressBox title="Default Shipping Address" address={defaultShippingAddress} />
+      )}
+      {defaultBillingAddress && (
+        <AddressBox title="Default Billing Address" address={defaultBillingAddress} />
+      )}
 
       {regularAddresses.map((address) => (
         <AddressBox key={address.streetName} title="Address" address={address} />
