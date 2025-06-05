@@ -185,6 +185,13 @@ function RouteComponent() {
     }
   }, [search.q]);
 
+  useEffect(() => {
+    setFilter((prev) => ({
+      ...prev,
+      sort: undefined,
+    }));
+  }, [category, _splat]);
+
   const navigate = Route.useNavigate();
 
   const { pathname } = useLocation();
@@ -393,7 +400,11 @@ function RouteComponent() {
                   <Subtitle2>{DRAWER_SUBTITLE_FOR_SORT}</Subtitle2>
                 </div>
                 <div>
-                  <Select size="large" onChange={(_, data) => handleSortChange(data.value)}>
+                  <Select
+                    size="large"
+                    value={filter.sort}
+                    onChange={(_, data) => handleSortChange(data.value)}
+                  >
                     {sortOptions.map((v) => (
                       <option key={v.option} value={v.value}>
                         {v.option}
