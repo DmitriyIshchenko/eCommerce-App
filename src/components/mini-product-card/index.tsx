@@ -6,7 +6,7 @@ import {
   makeStyles,
   tokens,
 } from '@fluentui/react-components';
-import type { ProductCardProps } from '../../lib/types';
+import type { MiniProductCardProps } from '../../lib/types';
 import { useNavigate } from '@tanstack/react-router';
 
 const useStyles = makeStyles({
@@ -15,12 +15,15 @@ const useStyles = makeStyles({
   },
 });
 
-export function MiniProductCard(props: ProductCardProps) {
+export function MiniProductCard(props: MiniProductCardProps) {
   const styles = useStyles();
   const navigate = useNavigate();
 
   const onActionCardClick = async () => {
-    await navigate({ to: `/` });
+    props.onClick?.();
+    if (props.id) {
+      await navigate({ to: `/products/${props.id}`, params: { id: props.id } });
+    }
   };
 
   return (
