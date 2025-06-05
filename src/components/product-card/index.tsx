@@ -24,7 +24,9 @@ export function ProductCard(props: ProductCardProps) {
   const navigate = useNavigate();
 
   const onActionCardClick = async () => {
-    await navigate({ to: `products/${props.value}` });
+    if (props.id) {
+      await navigate({ to: `/products/${props.id}`, params: { id: props.id } });
+    }
   };
 
   const onButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {

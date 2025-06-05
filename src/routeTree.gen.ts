@@ -16,6 +16,7 @@ import { Route as LoginImport } from './routes/login'
 import { Route as AboutImport } from './routes/about'
 import { Route as IndexImport } from './routes/index'
 import { Route as CatalogIndexImport } from './routes/catalog/index'
+import { Route as ProductsIdImport } from './routes/products/$id'
 import { Route as CatalogCategorySplatImport } from './routes/catalog/$category.$'
 
 // Create/Update Routes
@@ -47,6 +48,12 @@ const IndexRoute = IndexImport.update({
 const CatalogIndexRoute = CatalogIndexImport.update({
   id: '/catalog/',
   path: '/catalog/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const ProductsIdRoute = ProductsIdImport.update({
+  id: '/products/$id',
+  path: '/products/$id',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -88,6 +95,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RegisterImport
       parentRoute: typeof rootRoute
     }
+    '/products/$id': {
+      id: '/products/$id'
+      path: '/products/$id'
+      fullPath: '/products/$id'
+      preLoaderRoute: typeof ProductsIdImport
+      parentRoute: typeof rootRoute
+    }
     '/catalog/': {
       id: '/catalog/'
       path: '/catalog'
@@ -112,6 +126,7 @@ export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
+  '/products/$id': typeof ProductsIdRoute
   '/catalog': typeof CatalogIndexRoute
   '/catalog/$category/$': typeof CatalogCategorySplatRoute
 }
@@ -121,6 +136,7 @@ export interface FileRoutesByTo {
   '/about': typeof AboutRoute
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
+  '/products/$id': typeof ProductsIdRoute
   '/catalog': typeof CatalogIndexRoute
   '/catalog/$category/$': typeof CatalogCategorySplatRoute
 }
@@ -131,6 +147,7 @@ export interface FileRoutesById {
   '/about': typeof AboutRoute
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
+  '/products/$id': typeof ProductsIdRoute
   '/catalog/': typeof CatalogIndexRoute
   '/catalog/$category/$': typeof CatalogCategorySplatRoute
 }
@@ -142,6 +159,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/login'
     | '/register'
+    | '/products/$id'
     | '/catalog'
     | '/catalog/$category/$'
   fileRoutesByTo: FileRoutesByTo
@@ -150,6 +168,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/login'
     | '/register'
+    | '/products/$id'
     | '/catalog'
     | '/catalog/$category/$'
   id:
@@ -158,6 +177,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/login'
     | '/register'
+    | '/products/$id'
     | '/catalog/'
     | '/catalog/$category/$'
   fileRoutesById: FileRoutesById
@@ -168,6 +188,7 @@ export interface RootRouteChildren {
   AboutRoute: typeof AboutRoute
   LoginRoute: typeof LoginRoute
   RegisterRoute: typeof RegisterRoute
+  ProductsIdRoute: typeof ProductsIdRoute
   CatalogIndexRoute: typeof CatalogIndexRoute
   CatalogCategorySplatRoute: typeof CatalogCategorySplatRoute
 }
@@ -177,6 +198,7 @@ const rootRouteChildren: RootRouteChildren = {
   AboutRoute: AboutRoute,
   LoginRoute: LoginRoute,
   RegisterRoute: RegisterRoute,
+  ProductsIdRoute: ProductsIdRoute,
   CatalogIndexRoute: CatalogIndexRoute,
   CatalogCategorySplatRoute: CatalogCategorySplatRoute,
 }
@@ -195,6 +217,7 @@ export const routeTree = rootRoute
         "/about",
         "/login",
         "/register",
+        "/products/$id",
         "/catalog/",
         "/catalog/$category/$"
       ]
@@ -210,6 +233,9 @@ export const routeTree = rootRoute
     },
     "/register": {
       "filePath": "register.tsx"
+    },
+    "/products/$id": {
+      "filePath": "products/$id.tsx"
     },
     "/catalog/": {
       "filePath": "catalog/index.tsx"
