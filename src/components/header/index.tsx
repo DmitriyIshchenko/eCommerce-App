@@ -101,7 +101,7 @@ const useClasses = makeStyles({
 export function Header() {
   const CustomLink = createLink(Link);
   const classes = useClasses();
-  const { authorized, setAuthorized } = useUser();
+  const { authorized, logout } = useUser();
   const navigate = useNavigate();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isSearchDrawerOpen, setIsSearchDrawerOpen] = useState(false);
@@ -115,12 +115,13 @@ export function Header() {
     '/catalog/$category/$',
   );
 
-  const menuItems = [
-    {
-      name: 'About',
-      to: '/about',
-      ariaLabel: 'Learn more about our company',
-    },
+  const about = {
+    name: 'About',
+    to: '/about',
+    ariaLabel: 'Learn more about our company',
+  };
+
+  const authMenu = [
     {
       name: 'Login',
       to: authorized ? '/' : '/login',
@@ -133,8 +134,14 @@ export function Header() {
     },
   ];
 
+  const account = {
+    name: 'Account',
+    to: '/account',
+    ariaLabel: 'Customer account',
+  };
+
   const handleLogout = () => {
-    setAuthorized(false);
+    logout();
     setIsDrawerOpen(false);
     void navigate({ to: '/login' });
   };
@@ -178,25 +185,51 @@ export function Header() {
                 active={pathname.split('/').slice(0, 2).join('/') === '/catalog'}
               />
             </li>
-            {menuItems.map((item) => (
-              <li key={item.name}>
-                <InternalLink
-                  aria-label={item.ariaLabel}
-                  to={item.to}
-                  appearance="straight"
-                  inline
-                  active={item.to === pathname.split('/').slice(0, 2).join('/')}
-                >
-                  {item.name}
-                </InternalLink>
-              </li>
-            ))}
+            <li>
+              <InternalLink
+                aria-label={about.ariaLabel}
+                to={about.to}
+                appearance="straight"
+                inline
+                active={about.to === pathname.split('/').slice(0, 2).join('/')}
+              >
+                {about.name}
+              </InternalLink>
+            </li>
+
+            {!authorized &&
+              authMenu.map((item) => (
+                <li key={item.name}>
+                  <InternalLink
+                    aria-label={item.ariaLabel}
+                    to={item.to}
+                    appearance="straight"
+                    inline
+                    active={item.to === pathname.split('/').slice(0, 2).join('/')}
+                  >
+                    {item.name}
+                  </InternalLink>
+                </li>
+              ))}
             {authorized && (
-              <li>
-                <Button size="large" shape="circular" onClick={handleLogout}>
-                  Logout
-                </Button>
-              </li>
+              <>
+                <li key={account.name}>
+                  <InternalLink
+                    aria-label={account.ariaLabel}
+                    to={account.to}
+                    appearance="straight"
+                    inline
+                    active={account.to === pathname.split('/').slice(0, 2).join('/')}
+                  >
+                    {account.name}
+                  </InternalLink>
+                </li>
+                <li>
+                  <Button size="large" shape="circular" onClick={handleLogout}>
+                    Logout
+                  </Button>
+                </li>
+              </>
             )}
           </ul>
 
@@ -240,7 +273,7 @@ export function Header() {
               <li>
                 <CatalogTree />
               </li>
-              {menuItems.map((item) => (
+              {authMenu.map((item) => (
                 <li key={item.name}>
                   <CustomLink
                     className={classes.drawerMenuItem}
