@@ -22,7 +22,10 @@ const useCarouselStyles = makeStyles({
     width: '100%',
     height: 'auto',
     objectFit: 'contain',
+    cursor: 'pointer',
+    margin: '0 auto',
   },
+  navContainer: {},
 });
 
 const getAnnouncement: CarouselAnnouncerFunction = (index: number, totalSlides: number) => {
@@ -31,9 +34,10 @@ const getAnnouncement: CarouselAnnouncerFunction = (index: number, totalSlides: 
 
 interface ProductCarouselProps {
   images?: { url: string }[];
+  onImageClick?: () => void;
 }
 
-export function ProductCarousel({ images = [] }: ProductCarouselProps) {
+export function ProductCarousel({ images = [], onImageClick }: ProductCarouselProps) {
   const classes = useCarouselStyles();
 
   if (images.length === 0) {
@@ -61,19 +65,21 @@ export function ProductCarousel({ images = [] }: ProductCarouselProps) {
                 src={image.url}
                 alt={`Product view ${index + 1}`}
                 fit="contain"
+                onClick={onImageClick}
               />
             </CarouselCard>
           ))}
         </CarouselSlider>
       </CarouselViewport>
       <CarouselNavContainer
+        className={classes.navContainer}
         layout="inline"
         autoplayTooltip={{ content: 'Autoplay', relationship: 'label' }}
         nextTooltip={{ content: 'Next image', relationship: 'label' }}
         prevTooltip={{ content: 'Previous image', relationship: 'label' }}
       >
         <CarouselNav>
-          {(index) => <CarouselNavButton aria-label={`Carousel Nav Button ${index + 1}`} />}
+          {(index) => <CarouselNavButton aria-label={`View image ${index + 1}`} />}
         </CarouselNav>
       </CarouselNavContainer>
     </Carousel>

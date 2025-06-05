@@ -1,6 +1,18 @@
-import { Image, makeStyles, Select, Text, useId } from '@fluentui/react-components';
+import {
+  Button,
+  Image,
+  makeStyles,
+  Select,
+  Text,
+  tokens,
+  useFocusFinders,
+  useId,
+  useModalAttributes,
+} from '@fluentui/react-components';
 import type { ProductInfoProps } from '../../lib/types';
 import { ProductCarousel } from '../carousel';
+import { useEffect, useRef, useState } from 'react';
+import { DismissRegular } from '@fluentui/react-icons';
 
 const useStyles = makeStyles({
   productContainer: {
@@ -27,6 +39,7 @@ const useStyles = makeStyles({
   img: {
     width: '100%',
     margin: '0 auto',
+    cursor: 'pointer',
   },
   productInfo: {
     maxWidth: '50%',
@@ -58,20 +71,89 @@ const useStyles = makeStyles({
   selectBlock: {
     flexGrow: '1',
   },
+  modalOverlay: {
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 1000,
+  },
+  modalContent: {
+    backgroundColor: tokens.colorNeutralBackground1,
+    padding: '20px',
+    borderRadius: tokens.borderRadiusMedium,
+    width: '80%',
+    maxWidth: '900px',
+    maxHeight: '95vh',
+    overflow: 'auto',
+    position: 'relative',
+  },
+  closeButton: {
+    position: 'absolute',
+    top: '10px',
+    right: '10px',
+    zIndex: 1,
+  },
+  modalCarousel: {
+    width: '100%',
+    height: '100%',
+  },
 });
 
 export function ProductInfo(props: ProductInfoProps | null) {
   const styles = useStyles();
   const selectId = useId();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const { triggerAttributes, modalAttributes } = useModalAttributes({
+    legacyTrapFocus: true,
+    trapFocus: true,
+  });
+  const { findFirstFocusable } = useFocusFinders();
+  const triggerRef = useRef<HTMLDivElement>(null);
+  const modalRef = useRef<HTMLDivElement>(null);
+
+  const handleImageClick = () => {
+    if (props?.images && props.images.length > 0) {
+      setIsModalOpen(true);
+    }
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    triggerRef.current?.focus();
+  };
+
+  const onModalKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (e.key === 'Escape') {
+      handleCloseModal();
+    }
+  };
+
+  useEffect(() => {
+    if (isModalOpen && modalRef.current) {
+      document.body.style.overflow = 'hidden';
+      findFirstFocusable(modalRef.current)?.focus();
+    }
+    return () => {
+      document.body.style.overflow = 'auto';
+    };
+  }, [isModalOpen, findFirstFocusable]);
+
   return (
     <div className={styles.productContainer}>
-      <div className={styles.productImg}>
+      <div className={styles.productImg} ref={triggerRef} {...triggerAttributes}>
         {props?.images && props?.images.length > 1 ? (
-          <ProductCarousel images={props.images} />
+          <ProductCarousel images={props.images} onImageClick={handleImageClick} />
         ) : (
-          <Image className={styles.img} src={props?.image} />
+          <Image className={styles.img} src={props?.image} onClick={handleImageClick} />
         )}
       </div>
+
       <div className={styles.productInfo}>
         <Text as="h2" className={styles.productTitle}>
           {props?.name}
@@ -113,6 +195,32 @@ export function ProductInfo(props: ProductInfoProps | null) {
           </div>
         </div>
       </div>
+
+      {isModalOpen && (
+        <div className={styles.modalOverlay} onClick={handleCloseModal}>
+          <div
+            className={styles.modalContent}
+            ref={modalRef}
+            {...modalAttributes}
+            aria-modal="true"
+            role="dialog"
+            aria-label="Product image gallery"
+            onClick={(e) => e.stopPropagation()}
+            onKeyDown={onModalKeyDown}
+          >
+            <Button
+              className={styles.closeButton}
+              appearance="transparent"
+              onClick={handleCloseModal}
+              aria-label="Close gallery"
+              icon={<DismissRegular />}
+            />
+            <div className={styles.modalCarousel}>
+              <ProductCarousel images={props?.images ?? []} />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
