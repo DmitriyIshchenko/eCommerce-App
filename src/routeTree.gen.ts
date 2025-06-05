@@ -17,7 +17,9 @@ import { Route as AboutImport } from './routes/about'
 import { Route as IndexImport } from './routes/index'
 import { Route as CatalogIndexImport } from './routes/catalog/index'
 import { Route as AccountIndexImport } from './routes/account/index'
+import { Route as AccountManageAddressesImport } from './routes/account/manage-addresses'
 import { Route as AccountEditImport } from './routes/account/edit'
+import { Route as AccountChangePasswordImport } from './routes/account/change-password'
 import { Route as CatalogCategorySplatImport } from './routes/catalog/$category.$'
 
 // Create/Update Routes
@@ -58,9 +60,21 @@ const AccountIndexRoute = AccountIndexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const AccountManageAddressesRoute = AccountManageAddressesImport.update({
+  id: '/account/manage-addresses',
+  path: '/account/manage-addresses',
+  getParentRoute: () => rootRoute,
+} as any)
+
 const AccountEditRoute = AccountEditImport.update({
   id: '/account/edit',
   path: '/account/edit',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const AccountChangePasswordRoute = AccountChangePasswordImport.update({
+  id: '/account/change-password',
+  path: '/account/change-password',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -102,11 +116,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RegisterImport
       parentRoute: typeof rootRoute
     }
+    '/account/change-password': {
+      id: '/account/change-password'
+      path: '/account/change-password'
+      fullPath: '/account/change-password'
+      preLoaderRoute: typeof AccountChangePasswordImport
+      parentRoute: typeof rootRoute
+    }
     '/account/edit': {
       id: '/account/edit'
       path: '/account/edit'
       fullPath: '/account/edit'
       preLoaderRoute: typeof AccountEditImport
+      parentRoute: typeof rootRoute
+    }
+    '/account/manage-addresses': {
+      id: '/account/manage-addresses'
+      path: '/account/manage-addresses'
+      fullPath: '/account/manage-addresses'
+      preLoaderRoute: typeof AccountManageAddressesImport
       parentRoute: typeof rootRoute
     }
     '/account/': {
@@ -140,7 +168,9 @@ export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
+  '/account/change-password': typeof AccountChangePasswordRoute
   '/account/edit': typeof AccountEditRoute
+  '/account/manage-addresses': typeof AccountManageAddressesRoute
   '/account': typeof AccountIndexRoute
   '/catalog': typeof CatalogIndexRoute
   '/catalog/$category/$': typeof CatalogCategorySplatRoute
@@ -151,7 +181,9 @@ export interface FileRoutesByTo {
   '/about': typeof AboutRoute
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
+  '/account/change-password': typeof AccountChangePasswordRoute
   '/account/edit': typeof AccountEditRoute
+  '/account/manage-addresses': typeof AccountManageAddressesRoute
   '/account': typeof AccountIndexRoute
   '/catalog': typeof CatalogIndexRoute
   '/catalog/$category/$': typeof CatalogCategorySplatRoute
@@ -163,7 +195,9 @@ export interface FileRoutesById {
   '/about': typeof AboutRoute
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
+  '/account/change-password': typeof AccountChangePasswordRoute
   '/account/edit': typeof AccountEditRoute
+  '/account/manage-addresses': typeof AccountManageAddressesRoute
   '/account/': typeof AccountIndexRoute
   '/catalog/': typeof CatalogIndexRoute
   '/catalog/$category/$': typeof CatalogCategorySplatRoute
@@ -176,7 +210,9 @@ export interface FileRouteTypes {
     | '/about'
     | '/login'
     | '/register'
+    | '/account/change-password'
     | '/account/edit'
+    | '/account/manage-addresses'
     | '/account'
     | '/catalog'
     | '/catalog/$category/$'
@@ -186,7 +222,9 @@ export interface FileRouteTypes {
     | '/about'
     | '/login'
     | '/register'
+    | '/account/change-password'
     | '/account/edit'
+    | '/account/manage-addresses'
     | '/account'
     | '/catalog'
     | '/catalog/$category/$'
@@ -196,7 +234,9 @@ export interface FileRouteTypes {
     | '/about'
     | '/login'
     | '/register'
+    | '/account/change-password'
     | '/account/edit'
+    | '/account/manage-addresses'
     | '/account/'
     | '/catalog/'
     | '/catalog/$category/$'
@@ -208,7 +248,9 @@ export interface RootRouteChildren {
   AboutRoute: typeof AboutRoute
   LoginRoute: typeof LoginRoute
   RegisterRoute: typeof RegisterRoute
+  AccountChangePasswordRoute: typeof AccountChangePasswordRoute
   AccountEditRoute: typeof AccountEditRoute
+  AccountManageAddressesRoute: typeof AccountManageAddressesRoute
   AccountIndexRoute: typeof AccountIndexRoute
   CatalogIndexRoute: typeof CatalogIndexRoute
   CatalogCategorySplatRoute: typeof CatalogCategorySplatRoute
@@ -219,7 +261,9 @@ const rootRouteChildren: RootRouteChildren = {
   AboutRoute: AboutRoute,
   LoginRoute: LoginRoute,
   RegisterRoute: RegisterRoute,
+  AccountChangePasswordRoute: AccountChangePasswordRoute,
   AccountEditRoute: AccountEditRoute,
+  AccountManageAddressesRoute: AccountManageAddressesRoute,
   AccountIndexRoute: AccountIndexRoute,
   CatalogIndexRoute: CatalogIndexRoute,
   CatalogCategorySplatRoute: CatalogCategorySplatRoute,
@@ -239,7 +283,9 @@ export const routeTree = rootRoute
         "/about",
         "/login",
         "/register",
+        "/account/change-password",
         "/account/edit",
+        "/account/manage-addresses",
         "/account/",
         "/catalog/",
         "/catalog/$category/$"
@@ -257,8 +303,14 @@ export const routeTree = rootRoute
     "/register": {
       "filePath": "register.tsx"
     },
+    "/account/change-password": {
+      "filePath": "account/change-password.tsx"
+    },
     "/account/edit": {
       "filePath": "account/edit.tsx"
+    },
+    "/account/manage-addresses": {
+      "filePath": "account/manage-addresses.tsx"
     },
     "/account/": {
       "filePath": "account/index.tsx"
