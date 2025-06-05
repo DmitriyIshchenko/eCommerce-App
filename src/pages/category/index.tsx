@@ -74,6 +74,7 @@ export default function CategoryPage({
         <div className={styles.list}>
           {products?.map((product) => (
             <ProductCard
+              id={product.id}
               key={product.id}
               value={product.slug?.['en-US']}
               name={product.name?.['en-US']}

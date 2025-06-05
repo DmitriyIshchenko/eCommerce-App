@@ -127,6 +127,7 @@ export default function SearchDrawer({ open, onOpenChange }: SearchDrawerProps) 
                   price={formatPrice(product.masterVariant.prices?.at(0)?.value)}
                   discount={formatPrice(product.masterVariant.prices?.at(0)?.discounted?.value)}
                   image={product.masterVariant.images?.at(0)?.url}
+                  id={product.id}
                 />
               ))}
             </div>
