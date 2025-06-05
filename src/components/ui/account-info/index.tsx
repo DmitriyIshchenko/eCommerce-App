@@ -2,7 +2,8 @@ import { useUser } from '../../../hooks/use-user';
 import { DEFAULT_ADDRESS } from '../../../lib/constants';
 import AddressBox from '../address-box';
 import LabelBox from '../label-box';
-import { Button, Label, makeStyles, tokens } from '@fluentui/react-components';
+import { Label, makeStyles, tokens } from '@fluentui/react-components';
+import { InternalLink } from '../links/fui-tanstack';
 
 const useStyles = makeStyles({
   personal: {
@@ -57,9 +58,9 @@ export default function AccountInfo() {
         <AddressBox key={address.streetName} title="Address" address={address} />
       ))}
 
-      <Button>Edit personal info</Button>
-      <Button>Manage addresses</Button>
-      <Button>Change password</Button>
+      <InternalLink to="/account/edit">Edit personal info</InternalLink>
+      <InternalLink to="/account/manage-addresses">Manage addresses</InternalLink>
+      <InternalLink to="/account/change-password">Change password</InternalLink>
     </div>
   );
 }

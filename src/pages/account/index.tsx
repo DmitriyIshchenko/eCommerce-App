@@ -1,5 +1,5 @@
 import { LargeTitle, makeStyles, tokens } from '@fluentui/react-components';
-import AccountInfo from '../../components/ui/account-info';
+import type { ReactNode } from 'react';
 
 const useStyles = makeStyles({
   page: {
@@ -44,7 +44,11 @@ const useStyles = makeStyles({
   },
 });
 
-export default function AccountPage() {
+interface Props {
+  children: ReactNode;
+}
+
+export default function AccountPage({ children }: Props) {
   const styles = useStyles();
 
   return (
@@ -54,9 +58,7 @@ export default function AccountPage() {
           Account
         </LargeTitle>
       </div>
-      <div className={styles.content}>
-        <AccountInfo />
-      </div>
+      <div className={styles.content}>{children}</div>
     </div>
   );
 }
