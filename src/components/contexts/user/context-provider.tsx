@@ -45,8 +45,10 @@ export function UserContextProvider({ children }: { children: ReactNode }) {
 
   const login = async (data: LoginSchema) => {
     const customer = await loginApi(data);
+    if (!customer) return;
 
     setToken(getStoredTokens());
+    setCustomer(customer.body);
     setAuthorized(true);
 
     return customer;
@@ -56,12 +58,15 @@ export function UserContextProvider({ children }: { children: ReactNode }) {
     clearTokens();
     setToken(null);
     setAuthorized(false);
+    setCustomer(null);
   };
 
   const signup = async (data: RegisterSchema, options: AddressOptions) => {
     const customer = await signupApi(data, options);
+    if (!customer) return;
 
     setToken(getStoredTokens());
+    setCustomer(customer.body);
     setAuthorized(true);
 
     return customer;
