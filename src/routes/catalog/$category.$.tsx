@@ -6,12 +6,15 @@ import type { Link } from '../../lib/types';
 import { formatString } from '../../lib/utils/format-string';
 import CustomBreadcrumb from '../../components/ui/breadcrumb';
 import {
+  Body2,
   Drawer,
   DrawerBody,
   DrawerHeader,
   DrawerHeaderTitle,
   Label,
   makeStyles,
+  Select,
+  Subtitle2,
   tokens,
   useRestoreFocusSource,
   useRestoreFocusTarget,
@@ -33,7 +36,9 @@ import giclee from '../../assets/images/material-giclee.webp';
 import photoragLqip from '../../assets/images/material-photorag-lqip.webp';
 import photorag from '../../assets/images/material-photorag.webp';
 
-const DRAWER_TITLE = 'Filters';
+const DRAWER_TITLE = 'Refine results';
+const DRAWER_SUBTITLE_FOR_FILTER = 'FILTER';
+const DRAWER_SUBTITLE_FOR_SORT = 'SORT BY:';
 const DRAWER_SUBTITLE_FOR_COLORS = 'Colors';
 const DRAWER_SUBTITLE_FOR_MATERIALS = 'Materials';
 const APPLY_BUTTON_TEXT = 'Apply';
@@ -85,18 +90,42 @@ const images = [
   },
 ];
 
+const sortOptions = [
+  {
+    option: 'None',
+    value: '',
+  },
+  {
+    option: 'Alphabetically, A-Z',
+    value: 'name.en-us asc',
+  },
+  {
+    option: 'Alphabetically, Z-A',
+    value: 'name.en-us desc',
+  },
+  {
+    option: 'Price, low to high',
+    value: 'price asc',
+  },
+  {
+    option: 'Price, high to low',
+    value: 'price desc',
+  },
+];
+
 export const Route = createFileRoute('/catalog/$category/$')({
   component: RouteComponent,
   validateSearch: productSearchSchema,
-  loaderDeps: ({ search: { q, color, material, maxPrice, minPrice } }) => ({
+  loaderDeps: ({ search: { q, color, material, maxPrice, minPrice, sort } }) => ({
     q,
     color,
     material,
     minPrice,
     maxPrice,
+    sort,
   }),
   loader: async ({
-    deps: { q, color, material, maxPrice, minPrice },
+    deps: { q, color, material, maxPrice, minPrice, sort },
     params: { category, _splat },
     context: { categories },
   }) => {
@@ -105,12 +134,24 @@ export const Route = createFileRoute('/catalog/$category/$')({
     const categoryId = categoryResponse ? categoryResponse.id : undefined;
 
     const filteredProducts = (
-      await getProductsBySearch(q, color, material, minPrice, maxPrice, categoryId)
+      await getProductsBySearch(q, color, material, minPrice, maxPrice, sort, categoryId)
     ).body.results;
 
+    const allProductsCount = (
+      await getProductsBySearch(
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        categoryId,
+      )
+    ).body.count;
+
     const resultResponse = {
-      currentCategoryId: categoryId,
       filteredProducts,
+      allProductsCount,
       categories,
       minPrice: 0,
       maxPrice: 1728,
@@ -127,7 +168,7 @@ function RouteComponent() {
 
   const { category, _splat } = Route.useParams();
 
-  const { filteredProducts, minPrice, maxPrice } = data;
+  const { filteredProducts, allProductsCount, minPrice, maxPrice } = data;
 
   const search = Route.useSearch();
 
@@ -172,6 +213,30 @@ function RouteComponent() {
     setFilter({ ...filter, material });
   };
 
+  const handleSortChange = (sort: string) => {
+    if (!sort) {
+      setFilter((prev) => ({ ...prev, sort: undefined }));
+
+      void navigate({
+        search: (prev: ProductSearchSchema) => ({
+          ...prev,
+          sort: undefined,
+        }),
+      });
+
+      return;
+    }
+
+    setFilter({ ...filter, sort });
+
+    void navigate({
+      search: (prev: ProductSearchSchema) => ({
+        ...prev,
+        sort,
+      }),
+    });
+  };
+
   const handleDismissFilter = (name: string, value: string | number) => {
     if (name === 'color' && typeof value === 'string') {
       setFilter((prev) => ({ ...prev, color: undefined }));
@@ -196,6 +261,10 @@ function RouteComponent() {
       },
       search,
     });
+  };
+
+  const isFiltered = () => {
+    return Object.values(search).some((value) => value !== undefined && value !== '');
   };
 
   const restoreFocusTargetAttributes = useRestoreFocusTarget();
@@ -240,7 +309,20 @@ function RouteComponent() {
                 >
                   {DRAWER_TITLE}
                 </DrawerHeaderTitle>
+
+                <div style={{ padding: '24px 0' }}>
+                  <Body2>
+                    {isFiltered() && `${filteredProducts.length} of `}
+                    {allProductsCount} products
+                  </Body2>
+                </div>
+
+                <div>
+                  <Subtitle2>{DRAWER_SUBTITLE_FOR_FILTER}</Subtitle2>
+                </div>
+
                 <DismissWithInteractionTags tags={filter} onDismiss={handleDismissFilter} />
+
                 <div style={{ display: 'flex', gap: '20px' }}>
                   <CustomButton
                     onClick={() => {
@@ -305,6 +387,19 @@ function RouteComponent() {
                       ariaLabel={v.label}
                     />
                   ))}
+                </div>
+
+                <div style={{ marginTop: 40, marginBottom: 16 }}>
+                  <Subtitle2>{DRAWER_SUBTITLE_FOR_SORT}</Subtitle2>
+                </div>
+                <div>
+                  <Select size="large" onChange={(_, data) => handleSortChange(data.value)}>
+                    {sortOptions.map((v) => (
+                      <option key={v.option} value={v.value}>
+                        {v.option}
+                      </option>
+                    ))}
+                  </Select>
                 </div>
               </DrawerBody>
             </Drawer>

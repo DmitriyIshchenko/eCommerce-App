@@ -74,6 +74,7 @@ export function getProductsBySearch(
   material?: string,
   minPrice?: number,
   maxPrice?: number,
+  sort?: string,
   categoryId?: string,
 ) {
   const anonymousClient = createAnonymousClient();
@@ -104,8 +105,9 @@ export function getProductsBySearch(
       .get({
         queryArgs: {
           ...(q && { 'text.en-us': `${q}` }),
+          sort,
           fuzzy: true,
-          limit: 60,
+          limit: 100,
           ...(filters.length > 0 && { 'filter.query': filters }),
         },
       })

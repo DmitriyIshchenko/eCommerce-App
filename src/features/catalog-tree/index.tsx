@@ -32,7 +32,7 @@ export function CatalogTree() {
 
   const navigate = useNavigate();
 
-  const [category, setCategory] = useState('');
+  const [category, setCategory] = useState('Catalog');
 
   const items: CustomItem[] = useMemo(() => {
     const root: CustomItem = {
