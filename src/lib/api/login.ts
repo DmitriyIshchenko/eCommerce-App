@@ -1,5 +1,5 @@
 import type { LoginSchema } from '../schemas/user';
-import { createAnonymousClient, createClient, getApiRoot } from './client';
+import { createAnonymousClient, createPasswordClient, getApiRoot } from './client';
 
 export async function login(data: LoginSchema) {
   const anonymousClient = createAnonymousClient();
@@ -18,7 +18,7 @@ export async function login(data: LoginSchema) {
     .execute();
 
   if (loginResponse.statusCode === 200) {
-    const customerClient = createClient(data);
+    const customerClient = createPasswordClient(data);
     const customerApiRoot = getApiRoot(customerClient);
 
     const customerResponse = await customerApiRoot.me().get().execute();

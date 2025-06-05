@@ -19,7 +19,6 @@ import { useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { loginSchema, type LoginSchema } from '../../lib/schemas/user';
-import { login } from '../../lib/api/login';
 import { useUser } from '../../hooks/use-user';
 import { TOASTER_ID } from '../../lib/constants';
 import Confetti from 'react-confetti';
@@ -52,7 +51,7 @@ export default function LoginForm() {
   const CustomLink = createLink(Link);
   const styles = useStyles();
   const [show, setShow] = useState(false);
-  const { authorized, setAuthorized } = useUser();
+  const { authorized, login } = useUser();
   const { loading, setLoading } = useLoading();
   const progressToastId = useId('progress');
   const navigate = useNavigate({ from: '/login' });
@@ -100,8 +99,6 @@ export default function LoginForm() {
       });
 
       const response = await login(data);
-
-      setAuthorized(true);
 
       notify({
         title: `Hello, ${response?.body.firstName}! 😄`,
