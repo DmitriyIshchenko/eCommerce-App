@@ -40,7 +40,7 @@ export default function PersonalEditForm() {
       firstName: customer?.firstName,
       lastName: customer?.lastName,
       email: customer?.email,
-      dateOfBirth: new Date(customer!.dateOfBirth!),
+      dateOfBirth: new Date(customer?.dateOfBirth ?? ''),
     },
   });
 
