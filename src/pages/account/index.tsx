@@ -1,4 +1,5 @@
 import { LargeTitle, makeStyles, tokens } from '@fluentui/react-components';
+import AccountInfo from '../../components/ui/account-info';
 
 const useStyles = makeStyles({
   page: {
@@ -53,7 +54,9 @@ export default function AccountPage() {
           Account
         </LargeTitle>
       </div>
-      <div className={styles.content}>content</div>
+      <div className={styles.content}>
+        <AccountInfo />
+      </div>
     </div>
   );
 }
