@@ -273,24 +273,51 @@ export function Header() {
               <li>
                 <CatalogTree />
               </li>
-              {authMenu.map((item) => (
-                <li key={item.name}>
-                  <CustomLink
-                    className={classes.drawerMenuItem}
-                    aria-label={item.ariaLabel}
-                    to={item.to}
-                    onClick={() => setIsDrawerOpen(false)}
-                  >
-                    {item.name}
-                  </CustomLink>
-                </li>
-              ))}
+              <li>
+                <InternalLink
+                  aria-label={about.ariaLabel}
+                  to={about.to}
+                  appearance="straight"
+                  inline
+                  active={about.to === pathname.split('/').slice(0, 2).join('/')}
+                >
+                  {about.name}
+                </InternalLink>
+              </li>
+
+              {!authorized &&
+                authMenu.map((item) => (
+                  <li key={item.name}>
+                    <InternalLink
+                      aria-label={item.ariaLabel}
+                      to={item.to}
+                      appearance="straight"
+                      inline
+                      active={item.to === pathname.split('/').slice(0, 2).join('/')}
+                    >
+                      {item.name}
+                    </InternalLink>
+                  </li>
+                ))}
               {authorized && (
-                <li>
-                  <Button shape="circular" onClick={handleLogout}>
-                    Logout
-                  </Button>
-                </li>
+                <>
+                  <li key={account.name}>
+                    <InternalLink
+                      aria-label={account.ariaLabel}
+                      to={account.to}
+                      appearance="straight"
+                      inline
+                      active={account.to === pathname.split('/').slice(0, 2).join('/')}
+                    >
+                      {account.name}
+                    </InternalLink>
+                  </li>
+                  <li>
+                    <Button size="large" shape="circular" onClick={handleLogout}>
+                      Logout
+                    </Button>
+                  </li>
+                </>
               )}
             </ul>
           </DrawerBody>
