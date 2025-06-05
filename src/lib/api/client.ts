@@ -1,6 +1,7 @@
 import { createApiBuilderFromCtpClient } from '@commercetools/platform-sdk';
-import { ClientBuilder, type Client } from '@commercetools/sdk-client-v2';
+import { ClientBuilder, type Client, type TokenStore } from '@commercetools/sdk-client-v2';
 import type { LoginSchema } from '../schemas/user';
+import { getStoredTokens, storeTokens } from './token-storage';
 
 const projectKey = import.meta.env.VITE_CTP_PROJECT_KEY;
 const clientId = import.meta.env.VITE_CTP_CLIENT_ID;
@@ -36,7 +37,7 @@ export function createAnonymousClient() {
   return client;
 }
 
-export function createClient(data: LoginSchema) {
+export function createPasswordClient(data: LoginSchema) {
   const { email, password } = data;
 
   const options = {
@@ -52,6 +53,24 @@ export function createClient(data: LoginSchema) {
     },
     scopes: scopes,
     httpClient: fetch,
+    tokenCache: {
+      get: () => {
+        const tokens = getStoredTokens();
+
+        return {
+          token: tokens?.access_token ?? '',
+          expirationTime: tokens ? tokens.expiresAt - Date.now() : 0,
+        };
+      },
+      set: (cache: TokenStore) => {
+        storeTokens({
+          access_token: cache.token,
+          expires_in: Math.floor(cache.expirationTime / 1000),
+          token_type: 'Bearer',
+          scope: scopes.join(' '),
+        });
+      },
+    },
   };
 
   const client = new ClientBuilder()
@@ -62,6 +81,17 @@ export function createClient(data: LoginSchema) {
     .build();
 
   return client;
+}
+
+export function createClientWithToken() {
+  const tokens = getStoredTokens();
+  if (!tokens?.access_token) throw new Error('No access token available');
+
+  return new ClientBuilder()
+    .withProjectKey(projectKey)
+    .withExistingTokenFlow(`Bearer ${tokens.access_token}`, { force: true })
+    .withHttpMiddleware(httpMiddlewareOptions)
+    .build();
 }
 
 export function getApiRoot(client: Client) {
