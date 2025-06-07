@@ -38,7 +38,7 @@ export const loginSchema = z.object({
 
 export type LoginSchema = z.infer<typeof loginSchema>;
 
-const personalSchema = loginSchema.extend({
+export const personalSchema = loginSchema.extend({
   firstName: z
     .string()
     .min(1, 'Required field')
@@ -65,7 +65,11 @@ const personalSchema = loginSchema.extend({
   }, `You must be at least ${MIN_AGE} years old`),
 });
 
-const addressSchema = z
+export const personalSchemaNoPassword = personalSchema.omit({ password: true });
+
+export type PersonalSchemaNoPassword = z.infer<typeof personalSchemaNoPassword>;
+
+export const addressSchema = z
   .object({
     streetName: z.string().min(1, 'Required field'),
     city: z

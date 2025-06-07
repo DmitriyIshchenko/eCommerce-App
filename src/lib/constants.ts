@@ -18,5 +18,3 @@ export const DEFAULT_ADDRESS = {
   postalCode: '',
   country: 'BY',
 };
-
-export const AUTHORIZED_KEY = 'isAuthorized';

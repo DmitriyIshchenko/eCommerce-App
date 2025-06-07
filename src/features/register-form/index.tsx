@@ -24,11 +24,11 @@ import Confetti from 'react-confetti';
 import InputField from '../../components/ui/input-field';
 import ShowHideButton from '../../components/ui/buttons/show-hide';
 import DatePickerField from '../../components/ui/date-picker-field';
-import { createCustomer } from '../../lib/api/create-customer';
 import { DEFAULT_ADDRESS, TOASTER_ID } from '../../lib/constants';
 import { useUser } from '../../hooks/use-user';
 import { createLink, useNavigate } from '@tanstack/react-router';
 import AddressFieldset from '../../components/ui/address-fieldset';
+import { useLoading } from '../../hooks/use-loading';
 
 interface NotifyOptions {
   title: string;
@@ -69,7 +69,8 @@ export default function RegisterForm() {
     useState<CheckboxProps['checked']>(false);
   const [shippingAsBilling, setShippingAsBilling] = useState<CheckboxProps['checked']>(false);
 
-  const { isLoading, setIsLoading, authorized, setAuthorized } = useUser();
+  const { authorized, signup } = useUser();
+  const { loading, setLoading } = useLoading();
   const progressToastId = useId('progress');
 
   const CustomLink = createLink(Link);
@@ -122,7 +123,7 @@ export default function RegisterForm() {
 
   const onSubmit = async (data: RegisterSchema) => {
     try {
-      setIsLoading(true);
+      setLoading(true);
       notify({
         title: 'Creating an account for you...',
         intent: 'progress',
@@ -130,26 +131,25 @@ export default function RegisterForm() {
         timeout: -1,
       });
 
-      const response = await createCustomer(data, {
+      const response = await signup(data, {
         isDefaultShippingAddress,
         isDefaultBillingAddress,
         shippingAsBilling,
       });
 
       notify({
-        title: `Hello, ${response.body.customer.firstName}! 😄`,
+        title: `Hello, ${response?.body.firstName}! 😄`,
         content: 'Your account was successfully created!',
         intent: 'success',
         timeout: 4000,
       });
 
-      setIsLoading(false);
-      setAuthorized(true);
+      setLoading(false);
       dismissToast(progressToastId);
 
       setTimeout(() => void navigate({ to: '/' }), 2000);
     } catch (error) {
-      setIsLoading(false);
+      setLoading(false);
       dismissToast(progressToastId);
       if (error instanceof Error) {
         notify({
@@ -242,7 +242,7 @@ export default function RegisterForm() {
             size="large"
             appearance="primary"
             shape="circular"
-            disabled={isLoading}
+            disabled={loading}
           >
             Submit
           </Button>

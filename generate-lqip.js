@@ -27,4 +27,3 @@ try {
 } catch (e) {
   if (e instanceof Error) console.error('Error reading folder:', e.message);
 }
-

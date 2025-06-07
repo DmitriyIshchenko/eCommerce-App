@@ -19,10 +19,10 @@ import { useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { loginSchema, type LoginSchema } from '../../lib/schemas/user';
-import { login } from '../../lib/api/login';
 import { useUser } from '../../hooks/use-user';
 import { TOASTER_ID } from '../../lib/constants';
 import Confetti from 'react-confetti';
+import { useLoading } from '../../hooks/use-loading';
 
 interface notifyOptions {
   title: string;
@@ -51,7 +51,8 @@ export default function LoginForm() {
   const CustomLink = createLink(Link);
   const styles = useStyles();
   const [show, setShow] = useState(false);
-  const { authorized, isLoading, setAuthorized, setIsLoading } = useUser();
+  const { authorized, login } = useUser();
+  const { loading, setLoading } = useLoading();
   const progressToastId = useId('progress');
   const navigate = useNavigate({ from: '/login' });
 
@@ -89,7 +90,7 @@ export default function LoginForm() {
 
   const onSubmit = async (data: LoginSchema) => {
     try {
-      setIsLoading(true);
+      setLoading(true);
       notify({
         title: 'Loading...',
         intent: 'progress',
@@ -99,8 +100,6 @@ export default function LoginForm() {
 
       const response = await login(data);
 
-      setAuthorized(true);
-
       notify({
         title: `Hello, ${response?.body.firstName}! 😄`,
         content: 'You have been successfully logged in',
@@ -108,12 +107,12 @@ export default function LoginForm() {
         timeout: 4000,
       });
 
-      setIsLoading(false);
+      setLoading(false);
       dismissToast(progressToastId);
 
       setTimeout(() => void navigate({ to: '/' }), 2000);
     } catch (error) {
-      setIsLoading(false);
+      setLoading(false);
       dismissToast(progressToastId);
 
       if (error instanceof Error) {
@@ -157,7 +156,7 @@ export default function LoginForm() {
             size="large"
             appearance="primary"
             shape="circular"
-            disabled={isLoading || authorized}
+            disabled={loading || authorized}
           >
             Login
           </Button>

@@ -1,16 +1,14 @@
 import { createFileRoute, redirect } from '@tanstack/react-router';
 import RegisterPage from '../pages/register';
-import { AUTHORIZED_KEY } from '../lib/constants';
+import { isTokenValid } from '../lib/api/token-storage';
 
 export const Route = createFileRoute('/register')({
+  component: RouteComponent,
   beforeLoad: () => {
-    if (localStorage.getItem(AUTHORIZED_KEY)) {
-      throw redirect({
-        to: '/',
-      });
+    if (isTokenValid()) {
+      throw redirect({ to: '/' });
     }
   },
-  component: RouteComponent,
 });
 
 function RouteComponent() {

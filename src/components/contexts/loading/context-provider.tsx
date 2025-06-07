@@ -1,12 +1,10 @@
-import { type ReactNode, useState } from "react";
-import { LoadingProvider } from "./provider";
+import { useState, type ReactNode } from 'react';
+import { LoadingContext } from './context';
 
 export function LoadingContextProvider({ children }: { children: ReactNode }) {
-	const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-	return (
-		<LoadingProvider value={{ loading, setLoading }}>
-			{children}
-		</LoadingProvider>
-	);
+  return (
+    <LoadingContext.Provider value={{ loading, setLoading }}>{children}</LoadingContext.Provider>
+  );
 }

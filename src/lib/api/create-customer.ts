@@ -1,8 +1,8 @@
 import type { CheckboxProps } from '@fluentui/react-components';
 import type { RegisterSchema } from '../schemas/user';
-import { createAnonymousClient, getApiRoot } from './client';
+import { createAnonymousClient, createPasswordClient, getApiRoot } from './client';
 
-type AddressOptions = Record<string, CheckboxProps['checked']>;
+export type AddressOptions = Record<string, CheckboxProps['checked']>;
 
 function createCustomerDraft(data: RegisterSchema, options: AddressOptions) {
   const { isDefaultShippingAddress, isDefaultBillingAddress, shippingAsBilling } = options;
@@ -20,17 +20,20 @@ function createCustomerDraft(data: RegisterSchema, options: AddressOptions) {
   };
 }
 
-export async function createCustomer(data: RegisterSchema, options: AddressOptions) {
-  const client = createAnonymousClient();
-  const apiRoot = getApiRoot(client);
-
-  const response = await apiRoot
+export async function signup(data: RegisterSchema, options: AddressOptions) {
+  const apiRoot = getApiRoot(createAnonymousClient());
+  const signupResponse = await apiRoot
     .me()
     .signup()
-    .post({
-      body: createCustomerDraft(data, options),
-    })
+    .post({ body: createCustomerDraft(data, options) })
     .execute();
 
-  return response;
+  if (signupResponse.statusCode === 201) {
+    const customerClient = createPasswordClient({ email: data.email, password: data.password });
+    const customerApiRoot = getApiRoot(customerClient);
+
+    const customerResponse = await customerApiRoot.me().get().execute();
+
+    return customerResponse;
+  }
 }

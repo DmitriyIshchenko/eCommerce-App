@@ -22,6 +22,7 @@ export default defineConfig([
       '**/*.gen.ts',
       '**/*.setup.ts',
       'coverage',
+      'generate-lqip.js',
     ],
   },
   tseslint.configs.recommendedTypeChecked,
