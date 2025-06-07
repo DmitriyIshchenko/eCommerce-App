@@ -250,7 +250,6 @@ function RouteComponent() {
 			setFilter(newFilter);
 		}
 	};
-
 	const applyFilter = () => {
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		const { category, ...search } = filter;
@@ -269,7 +268,7 @@ function RouteComponent() {
 				category: cat,
 				_splat,
 			},
-			search,
+			search: {...search, page: 1},
 		});
 	};
 
