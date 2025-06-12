@@ -1,6 +1,6 @@
 import { ChevronLeftFilled, ChevronRightFilled } from "@fluentui/react-icons";
-import { InternalLink } from "../links/fui-tanstack";
 import { useLocation } from "@tanstack/react-router";
+import { InternalLink } from "../links/fui-tanstack";
 
 const LENGTH = 7;
 
@@ -8,11 +8,14 @@ export default function Pagination({
 	searchParamName,
 	total,
 }: { searchParamName: string; total: number }) {
-	const {pathname, search} = useLocation();
-	const searchObj: {[searchParamName]?: unknown} = {...search}
-	const currentPage = typeof searchObj[searchParamName] === "number" ? searchObj[searchParamName] : 1;
+	const { pathname, search } = useLocation();
+	const searchObj: { [searchParamName]?: unknown } = { ...search };
+	const currentPage =
+		typeof searchObj[searchParamName] === "number"
+			? searchObj[searchParamName]
+			: 1;
 	if (total < 2) return;
-	
+
 	const head = [1, currentPage > 3 ? "..." : 2].slice(0, total);
 	const tail =
 		total > 5
@@ -30,10 +33,11 @@ export default function Pagination({
 		<div style={{ display: "flex" }}>
 			<InternalLink
 				asBlock
-				to="/"
+				to={pathname}
 				search={{ [searchParamName]: currentPage - 1 }}
 				disabled={currentPage === 1}
 				notInteractive={currentPage === 1}
+				viewTransition={{ types: ["slide-right"] }}
 			>
 				<ChevronLeftFilled />
 			</InternalLink>
@@ -49,6 +53,7 @@ export default function Pagination({
 						...search,
 						[searchParamName]: p,
 					}}
+					viewTransition={{ types: [+p > currentPage ? "slide-left" : "slide-right"] }}
 				>
 					{p}
 				</InternalLink>
@@ -59,6 +64,7 @@ export default function Pagination({
 				search={{ ...search, page: currentPage + 1 }}
 				disabled={currentPage === total}
 				notInteractive={currentPage === total}
+				viewTransition={{ types: ["slide-left"] }}
 			>
 				<ChevronRightFilled />
 			</InternalLink>

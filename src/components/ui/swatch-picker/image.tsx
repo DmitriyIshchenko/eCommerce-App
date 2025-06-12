@@ -4,7 +4,6 @@ import {
 	type SwatchPickerOnSelectEventHandler,
 	makeStyles,
 } from "@fluentui/react-components";
-import { useState } from "react";
 import StyledTooltip from "../tooltips/styled";
 
 const useStyles = makeStyles({
@@ -52,7 +51,7 @@ export default function ImageSwatchPicker({
 				onSelectionChange={handleSelect}
 			>
 				{images.map((image) => (
-					<StyledTooltip key={image.value} text={image.label}>
+					<StyledTooltip key={image.value} contentChildren={image.label}>
 						<ImageSwatch
 							className={styles.swatch}
 							src={image.swatchSrc}

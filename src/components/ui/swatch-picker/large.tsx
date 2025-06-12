@@ -1,5 +1,4 @@
 import { ColorSwatch, SwatchPicker } from "@fluentui/react-components";
-import { useState } from "react";
 import StyledTooltip from "../tooltips/styled";
 
 export default function LargeSwatchPicker({
@@ -23,7 +22,10 @@ export default function LargeSwatchPicker({
 		>
 			{colors.map((color) => {
 				return (
-					<StyledTooltip text={color["aria-label"]} key={color.value}>
+					<StyledTooltip
+						contentChildren={color["aria-label"]}
+						key={color.value}
+					>
 						<ColorSwatch {...color} />
 					</StyledTooltip>
 				);

@@ -1,10 +1,10 @@
 import type { TooltipProps } from "@fluentui/react-components";
 import BagCartIcon from "../icons/bag-cart";
 import { InternalLink } from "../links/fui-tanstack";
-import ScalableSpinner from "../spinners/scalable";
 import StyledTooltip from "../tooltips/styled";
+import CustomSpinner from "../spinners/custom";
 
-export default function Cart({
+export default function CartLink({
 	goods = 0,
 	size = 24,
 	to,
@@ -18,7 +18,7 @@ export default function Cart({
 	tooltipPositioning?: TooltipProps["positioning"];
 }) {
 	return (
-		<StyledTooltip text="Cart" positioning={tooltipPositioning}>
+		<StyledTooltip contentChildren="Cart" positioning={tooltipPositioning}>
 			<div>
 				<InternalLink to={to} style={{ display: "flex", padding: 5 }}>
 					<div
@@ -45,7 +45,7 @@ export default function Cart({
 									fontSize: size / 2.7,
 								}}
 							>
-								{loading ? <ScalableSpinner size={size * 0.4} /> : goods}
+								{loading ? <CustomSpinner /> : goods}
 							</span>
 						)}
 					</div>

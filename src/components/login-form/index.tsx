@@ -14,7 +14,7 @@ import Confetti from "react-confetti";
 import { FormProvider, useForm } from "react-hook-form";
 import { useLoading } from "../../hooks/use-loading";
 import { useUser } from "../../hooks/use-user";
-import { TOASTER_ID } from "../../lib/constants";
+import { TOASTER_ID } from "../../lib/constants/constants";
 import { type LoginSchema, loginSchema } from "../../lib/schemas";
 import { login } from "../../lib/services/login";
 import ShowHideButton from "../ui/buttons/show-hide";

@@ -63,6 +63,13 @@ const useCss = makeStyles({
     },
     ':active': { color: tokens.colorNeutralForeground1 },
   },
+  stickless: {
+    color: tokens.colorNeutralForeground1,
+    ':hover': {
+      color: tokens.colorNeutralForeground3Hover,
+    },
+    ':active': { color: tokens.colorNeutralForeground4 },
+  },
   accent: {
     fontWeight: tokens.fontWeightMedium,
     color: tokens.colorNeutralForeground1,
@@ -96,7 +103,7 @@ const useCss = makeStyles({
 type StyledLinkProps = Omit<FluentLinkProps, 'appearance' | 'as'> &
   Omit<React.ComponentPropsWithoutRef<'a'>, 'type'> &
   Partial<{
-    appearance: 'straight' | 'inverted' | 'muted';
+    appearance: 'straight' | 'inverted' | 'muted' | 'stickless';
     as: 'a';
     accent: boolean;
     asBlock: boolean;
@@ -126,6 +133,7 @@ export const ExternalLink = forwardRef<HTMLAnchorElement, StyledLinkProps>(
           appearance === 'inverted' && css.inverted,
           appearance === 'inverted' && css.stick,
           appearance === 'muted' && css.muted,
+          appearance === "stickless" && css.stickless,
           asBlock && css.block,
           accent && css.accent,
           notInteractive && css.notInteractive,

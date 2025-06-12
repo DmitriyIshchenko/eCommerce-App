@@ -9,6 +9,9 @@ const useCss = makeStyles({
 	spinner: {
 		"> span": {
 			color: tokens.colorPaletteRoyalBlueBorderActive,
+			width: "1em",
+			height: "1em",
+			"--fui-Spinner--strokeWidth": "0.125em"
 		},
 	},
 });

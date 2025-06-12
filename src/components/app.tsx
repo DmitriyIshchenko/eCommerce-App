@@ -6,11 +6,11 @@ import {
 } from "@fluentui/react-components";
 import { RouterProvider, createRouter } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { TOASTER_ID } from "../lib/constants";
 import { routeTree } from "../routeTree.gen";
 import { LoadingContextProvider } from "./contexts/loading/context-provider";
 import { useThemeContext } from "./contexts/theme/context.tsx";
 import { UserContextProvider } from "./contexts/user/context-provider";
+import { TOASTER_ID } from "../lib/constants/constants.ts";
 
 const router = createRouter({ routeTree });
 
@@ -23,7 +23,7 @@ declare module "@tanstack/react-router" {
 const useStaticCss = makeStaticStyles({
 	body: {
 		margin: "0",
-		backgroundColor: "var(--body-bg)"
+		backgroundColor: "var(--body-bg)",
 	},
 	".container": {
 		maxWidth: "1440px",

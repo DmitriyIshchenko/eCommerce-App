@@ -1,422 +1,551 @@
-import { createFileRoute, useLocation } from '@tanstack/react-router';
-import { productSearchSchema, type ProductSearchSchema } from '../../lib/schemas/products-search';
-import { getProductsBySearch } from '../../lib/api/get-products';
-import { getCategoryBySlug } from '../../lib/api/get-categories';
-import type { Link } from '../../lib/types';
-import { formatString } from '../../lib/utils/format-string';
-import CustomBreadcrumb from '../../components/ui/breadcrumb';
 import {
-  Body2,
-  Drawer,
-  DrawerBody,
-  DrawerHeader,
-  DrawerHeaderTitle,
-  Label,
-  makeStyles,
-  Select,
-  Subtitle2,
-  tokens,
-  useRestoreFocusSource,
-  useRestoreFocusTarget,
-} from '@fluentui/react-components';
-import CategoryPage from '../../pages/category';
-import FilterButton from '../../components/ui/buttons/filter';
-import { useEffect, useState } from 'react';
-import StyledTooltip from '../../components/ui/tooltips/styled';
-import CustomButton from '../../components/ui/buttons/custom';
-import { CheckmarkFilled, DismissFilled, DismissRegular } from '@fluentui/react-icons';
-import DismissWithInteractionTags from '../../components/ui/tags/dismiss-with-interaction';
-import RangeInputField from '../../components/ui/input-field/range';
-import SingleSwatchPicker from '../../components/ui/swatch-picker/single';
-import SingleImageSwatchPicker from '../../components/ui/swatch-picker/single-image';
-import canvasLqip from '../../assets/images/material-canvas-lqip.webp';
-import canvas from '../../assets/images/material-canvas.png';
-import gicleeLqip from '../../assets/images/material-giclee-lqip.webp';
-import giclee from '../../assets/images/material-giclee.webp';
-import photoragLqip from '../../assets/images/material-photorag-lqip.webp';
-import photorag from '../../assets/images/material-photorag.webp';
-
-const DRAWER_TITLE = 'Refine results';
-const DRAWER_SUBTITLE_FOR_FILTER = 'FILTER';
-const DRAWER_SUBTITLE_FOR_SORT = 'SORT BY:';
-const DRAWER_SUBTITLE_FOR_COLORS = 'Colors';
-const DRAWER_SUBTITLE_FOR_MATERIALS = 'Materials';
-const APPLY_BUTTON_TEXT = 'Apply';
-const RESET_BUTTON_TEXT = 'Reset';
+	Body2,
+	Combobox,
+	Divider,
+	Drawer,
+	DrawerBody,
+	DrawerHeader,
+	DrawerHeaderTitle,
+	Label,
+	Option,
+	Subtitle2,
+	makeStyles,
+	tokens,
+	useRestoreFocusSource,
+	useRestoreFocusTarget,
+} from "@fluentui/react-components";
+import {
+	CheckmarkFilled,
+	DismissFilled,
+	DismissRegular,
+} from "@fluentui/react-icons";
+import { createFileRoute, useLocation } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
+import CustomBreadcrumb from "../../components/ui/breadcrumb";
+import CustomButton from "../../components/ui/buttons/custom";
+import FilterButton from "../../components/ui/buttons/filter";
+import RangeInputField from "../../components/ui/input-field/range";
+import Pagination from "../../components/ui/pagination";
+import SingleSwatchPicker from "../../components/ui/swatch-picker/single";
+import SingleImageSwatchPicker from "../../components/ui/swatch-picker/single-image";
+import DismissWithInteractionTags from "../../components/ui/tags/dismiss-with-interaction";
+import StyledTooltip from "../../components/ui/tooltips/styled";
+import { getCategoryBySlug } from "../../lib/api/get-categories";
+import {
+	getCategoryProductsFacets,
+	getProductsBySearch,
+} from "../../lib/api/get-products";
+import { sortOptions } from "../../lib/constants/sort-options";
+import {
+	type ProductSearchSchema,
+	productSearchSchema,
+} from "../../lib/schemas/products-search";
+import type { Link } from "../../lib/types";
+import debounce from "../../lib/utils/debounce";
+import { formatString } from "../../lib/utils/format-string";
+import CategoryPage from "../../pages/category";
+import { isStringifyEqual } from "../../lib/utils/isStringifyEqual";
 
 type Filter = ProductSearchSchema;
 
 const useStyles = makeStyles({
-  breadContainer: {
-    width: '100%',
-    padding: `${tokens.spacingVerticalL} ${tokens.spacingHorizontalXL}`,
-    borderBottom: `1px solid ${tokens.colorNeutralStroke1}`,
-  },
-  treeItem: {
-    '& .fui-Radio__indicator::after': {
-      backgroundColor: tokens.colorPaletteRoyalBlueForeground2,
-    },
-  },
+	breadContainer: {
+		width: "100%",
+		padding: `${tokens.spacingVerticalL} ${tokens.spacingHorizontalXL}`,
+		borderBottom: `1px solid ${tokens.colorNeutralStroke1}`,
+	},
+	treeItem: {
+		"& .fui-Radio__indicator::after": {
+			backgroundColor: tokens.colorPaletteRoyalBlueForeground2,
+		},
+	},
 });
 
-const colors = [
-  { color: '#F9F9F9', value: 'Original', 'aria-label': 'Original' },
-  { color: '#F9F9F9', value: 'White', 'aria-label': 'White' },
-  { color: '#FFFFF0', value: 'Ivory', 'aria-label': 'Ivory' },
-  { color: '#E3DAC9', value: 'Natural', 'aria-label': 'Natural' },
-  { color: '#4B4B5A', value: 'Raven', 'aria-label': 'Raven' },
-  { color: '#000080', value: 'Navy', 'aria-label': 'Navy' },
-  { color: '#2C2C2C', value: 'Black', 'aria-label': 'Black' },
-];
+const LIMIT_PER_PAGE = 8;
 
-const images = [
-  {
-    swatchSrc: canvasLqip,
-    value: 'canvas',
-    label: 'canvas',
-    fullImageSrc: canvas,
-  },
-  {
-    swatchSrc: gicleeLqip,
-    value: 'giclee',
-    label: 'giclee',
-    fullImageSrc: giclee,
-  },
-  {
-    swatchSrc: photoragLqip,
-    value: 'photo-rag',
-    label: 'photo-rag',
-    fullImageSrc: photorag,
-  },
-];
+export const Route = createFileRoute("/catalog/$category/$")({
+	component: RouteComponent,
+	validateSearch: productSearchSchema,
+	loaderDeps: ({
+		search: { q, colors, materials, maxPrice, minPrice, sort, page },
+	}) => ({
+		q,
+		colors,
+		materials,
+		minPrice,
+		maxPrice,
+		sort,
+		page,
+	}),
+	loader: async ({
+		deps: { q, colors, materials, maxPrice, minPrice, sort, page },
+		params: { category, _splat },
+		context: { categories },
+	}) => {
+		const categorySlug = _splat && _splat.length > 0 ? _splat : category;
+		const categoryResponse = await getCategoryBySlug(categorySlug);
+		const categoryId = categoryResponse ? categoryResponse.id : undefined;
+		const offset = ((page ?? 1) - 1) * LIMIT_PER_PAGE;
 
-const sortOptions = [
-  {
-    option: 'None',
-    value: '',
-  },
-  {
-    option: 'Alphabetically, A-Z',
-    value: 'name.en-us asc',
-  },
-  {
-    option: 'Alphabetically, Z-A',
-    value: 'name.en-us desc',
-  },
-  {
-    option: 'Price, low to high',
-    value: 'price asc',
-  },
-  {
-    option: 'Price, high to low',
-    value: 'price desc',
-  },
-];
+		const searchedProducts = (
+			await getProductsBySearch(
+				categoryId,
+				q,
+				colors,
+				materials,
+				minPrice,
+				maxPrice,
+				sort,
+				offset,
+				LIMIT_PER_PAGE,
+			)
+		).body;
 
-export const Route = createFileRoute('/catalog/$category/$')({
-  component: RouteComponent,
-  validateSearch: productSearchSchema,
-  loaderDeps: ({ search: { q, color, material, maxPrice, minPrice, sort } }) => ({
-    q,
-    color,
-    material,
-    minPrice,
-    maxPrice,
-    sort,
-  }),
-  loader: async ({
-    deps: { q, color, material, maxPrice, minPrice, sort },
-    params: { category, _splat },
-    context: { categories },
-  }) => {
-    const categorySlug = _splat && _splat.length > 0 ? _splat : category;
-    const categoryResponse = await getCategoryBySlug(categorySlug);
-    const categoryId = categoryResponse ? categoryResponse.id : undefined;
+		const { total, results } = searchedProducts;
 
-    const filteredProducts = (
-      await getProductsBySearch(q, color, material, minPrice, maxPrice, sort, categoryId)
-    ).body.results;
+		const totalPages = Math.ceil(
+			(searchedProducts.total ?? 0) / searchedProducts.limit,
+		);
 
-    const allProductsCount = (
-      await getProductsBySearch(
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        categoryId,
-      )
-    ).body.count;
+		const {
+			categoryColors,
+			categoryMaterials,
+			maxCategoryPrice,
+			minCategoryPrice,
+			total: categoryTotal,
+		} = await getCategoryProductsFacets(categoryId);
 
-    const resultResponse = {
-      filteredProducts,
-      allProductsCount,
-      categories,
-      minPrice: 0,
-      maxPrice: 1728,
-    };
-    return resultResponse;
-  },
+		return {
+			results,
+			minCategoryPrice,
+			maxCategoryPrice,
+			categoryColors,
+			categoryMaterials,
+			categories,
+			totalPages,
+			total,
+			categoryTotal,
+			categoryId,
+		};
+	},
 });
 
 function RouteComponent() {
-  const styles = useStyles();
-  const [open, setOpen] = useState(false);
+	const styles = useStyles();
+	const [open, setOpen] = useState(false);
 
-  const data = Route.useLoaderData();
+	const {
+		results,
+		total,
+		totalPages,
+		maxCategoryPrice,
+		minCategoryPrice,
+		categoryColors,
+		categoryMaterials,
+		categoryTotal,
+		categoryId,
+	} = Route.useLoaderData();
 
-  const { category, _splat } = Route.useParams();
+	const [filteredTotal, setFilteredTotal] = useState(total);
 
-  const { filteredProducts, allProductsCount, minPrice, maxPrice } = data;
+	const { category, _splat } = Route.useParams();
 
-  const search = Route.useSearch();
+	const search = Route.useSearch();
 
-  const productsSearchFilter = productSearchSchema.parse(search);
-  const initialFilter: Filter = {
-    ...productsSearchFilter,
-  };
+	const productsSearchFilter = productSearchSchema.parse(search);
+	const initialFilter: Filter = {
+		...productsSearchFilter,
+	};
 
-  const [filter, setFilter] = useState<Filter>(initialFilter);
 
-  useEffect(() => {
-    if (search.q !== undefined) {
-      setFilter((prev) => ({ ...prev, q: search.q }));
-    }
-  }, [search.q]);
+	const [comboInput, setComboInput] = useState(sortOptions.find(v => v.value === initialFilter.sort)?.option ?? "");
 
-  useEffect(() => {
-    setFilter((prev) => ({
-      ...prev,
-      sort: undefined,
-    }));
-  }, [category, _splat]);
+	const [filter, setFilter] = useState<Filter>(initialFilter);
+	console.log("🚀 ~ RouteComponent ~ initialFilter:", initialFilter)
+	console.log("🚀 ~ RouteComponent ~ filter:", filter)
 
-  const navigate = Route.useNavigate();
+	useEffect(() => {
+		const getUpdatedTotal = async () => {
+			const ft = (
+				await getCategoryProductsFacets(
+					categoryId,
+					undefined,
+					filter.colors,
+					filter.materials,
+					filter.minPrice,
+					filter.maxPrice,
+				)
+			).total;
+			setFilteredTotal(ft);
+		};
+		const debouncedEffect = debounce(getUpdatedTotal, 500);
 
-  const { pathname } = useLocation();
+		try {
+			debouncedEffect();
+		} catch (e) {
+			console.log(e);
+		}
+	}, [filter, categoryId]);
 
-  const categoryName = formatString(category);
-  const subcategoryName = _splat ? formatString(_splat) : undefined;
+	useEffect(() => {
+		if (search.q !== undefined) {
+			setFilter((prev) => ({ ...prev, q: search.q }));
+		}
+	}, [search.q]);
 
-  const pathnames = pathname.split('/').slice(1);
-  const links: Link[] = pathnames.reduce((a: Link[], v) => {
-    const current: Link = {
-      text: formatString(v),
-      to: a.length ? `${a.at(-1)?.to}/${v}` : `/${v}`,
-    };
-    return [...a, current];
-  }, []);
+	useEffect(() => {
+		setFilter((prev) => ({
+			...prev,
+		}));
+	}, [category, _splat]);
 
-  const handleMinMaxChange = (minPrice: number, maxPrice: number) => {
-    setFilter({ ...filter, minPrice, maxPrice });
-  };
+	const navigate = Route.useNavigate();
 
-  const handleColorChange = (color: string) => {
-    setFilter({ ...filter, color });
-  };
+	const { pathname } = useLocation();
 
-  const handleMaterialChange = (material: string) => {
-    setFilter({ ...filter, material });
-  };
+	const categoryName = formatString(category);
+	const subcategoryName = _splat ? formatString(_splat) : undefined;
 
-  const handleSortChange = (sort: string) => {
-    if (!sort) {
-      setFilter((prev) => ({ ...prev, sort: undefined }));
+	const pathnames = pathname.split("/").slice(1);
+	const links: Link[] = pathnames.reduce((a: Link[], v) => {
+		const current: Link = {
+			text: formatString(v),
+			to: a.length ? `${a.at(-1)?.to}/${v}` : `/${v}`,
+		};
+		return [...a, current];
+	}, []);
 
-      void navigate({
-        search: (prev: ProductSearchSchema) => ({
-          ...prev,
-          sort: undefined,
-        }),
-      });
+	const handleMinMaxChange = (minPrice: number, maxPrice: number) => {
+		setFilter({ ...filter, minPrice, maxPrice });
+	};
 
-      return;
-    }
+	const handleColorChange = (color: string) => {
+		const i = filter.colors?.findIndex((v) => v === color);
+		const newColor =
+			typeof i === "number" && i !== -1
+				? filter.colors?.toSpliced(i, 1)
+				: [...(filter?.colors ?? []), color];
+		setFilter({ ...filter, colors: newColor });
+	};
 
-    setFilter({ ...filter, sort });
+	const handleMaterialChange = (material: string) => {
+		const i = filter.materials?.findIndex((v) => v === material);
+		const newMaterial =
+			typeof i === "number" && i !== -1
+				? filter.materials?.toSpliced(i, 1)
+				: [...(filter?.materials ?? []), material];
+		setFilter({ ...filter, materials: newMaterial });
+	};
 
-    void navigate({
-      search: (prev: ProductSearchSchema) => ({
-        ...prev,
-        sort,
-      }),
-    });
-  };
+	const handleSortChange = (sort?: string) => {
+		if (!sort) {
+			setFilter((prev) => ({ ...prev, sort: undefined }));
 
-  const handleDismissFilter = (name: string, value: string | number) => {
-    if (name === 'color' && typeof value === 'string') {
-      setFilter((prev) => ({ ...prev, color: undefined }));
-    }
-    if (name === 'material' && typeof value == 'string') {
-      setFilter((prev) => ({ ...prev, material: undefined }));
-    }
-    if (name === 'price') {
-      setFilter((prev) => ({ ...prev, minPrice: undefined, maxPrice: undefined }));
-    }
-  };
+			void navigate({
+				search: (prev: ProductSearchSchema) => ({
+					...prev,
+					sort: undefined,
+				}),
+			});
 
-  const applyFilter = () => {
-    const { ...search } = filter;
-    setOpen(false);
+			return;
+		}
 
-    void navigate({
-      to: '/catalog/$category/$',
-      params: {
-        category,
-        _splat,
-      },
-      search,
-    });
-  };
+		setFilter({ ...filter, sort });
 
-  const isFiltered = () => {
-    return Object.values(search).some((value) => value !== undefined && value !== '');
-  };
+		void navigate({
+			search: (prev: ProductSearchSchema) => ({
+				...prev,
+				sort,
+			}),
+		});
+	};
 
-  const restoreFocusTargetAttributes = useRestoreFocusTarget();
-  const restoreFocusSourceAttribute = useRestoreFocusSource();
+	const handleDismissFilter = (name: string, value: string | number) => {
+		if (name === "colors" && typeof value === "string") {
+			setFilter((prev) => ({ ...prev, colors: filter.colors?.filter(v => v !== value) }));
+		}
+		if (name === "materials" && typeof value === "string") {
+			setFilter((prev) => ({ ...prev, materials: filter.materials?.filter(v => v !== value) }));
+		}
+		if (name === "price") {
+			setFilter((prev) => ({
+				...prev,
+				minPrice: undefined,
+				maxPrice: undefined,
+			}));
+		}
+	};
 
-  return (
-    <main>
-      <div className={styles.breadContainer}>
-        <CustomBreadcrumb links={links} />
-      </div>
-      <CategoryPage
-        products={filteredProducts}
-        categoryName={categoryName}
-        subcategoryName={subcategoryName}
-      />
-      <div style={{ position: 'fixed', top: 110, right: 20 }}>
-        {pathname !== '/catalog' && (
-          <>
-            <FilterButton onClick={() => setOpen(true)} {...restoreFocusTargetAttributes} />
-            <Drawer
-              separator
-              open={open}
-              position="end"
-              {...restoreFocusSourceAttribute}
-              onOpenChange={(_, { open }) => setOpen(open)}
-            >
-              <DrawerHeader>
-                <DrawerHeaderTitle
-                  action={
-                    <StyledTooltip text="Close" positioning={'before'}>
-                      <div>
-                        <CustomButton
-                          appearance="subtle"
-                          aria-label="Close"
-                          shape="circular"
-                          icon={<DismissRegular />}
-                          onClick={() => setOpen(false)}
-                        />
-                      </div>
-                    </StyledTooltip>
-                  }
-                >
-                  {DRAWER_TITLE}
-                </DrawerHeaderTitle>
+	const applyFilter = () => {
+		const { ...search } = filter;
+		setOpen(false);
+		document.body.style.overflowY = "";
 
-                <div style={{ padding: '24px 0' }}>
-                  <Body2>
-                    {isFiltered() && `${filteredProducts.length} of `}
-                    {allProductsCount} products
-                  </Body2>
-                </div>
+		void navigate({
+			to: "/catalog/$category/$",
+			params: {
+				category,
+				_splat,
+			},
+			search: { ...search, page: 1 },
+		});
+	};
 
-                <div>
-                  <Subtitle2>{DRAWER_SUBTITLE_FOR_FILTER}</Subtitle2>
-                </div>
+	const restoreFocusTargetAttributes = useRestoreFocusTarget();
+	const restoreFocusSourceAttribute = useRestoreFocusSource();
 
-                <DismissWithInteractionTags tags={filter} onDismiss={handleDismissFilter} />
+	const onInput = (ev: React.ChangeEvent<HTMLInputElement>) => {
+		setComboInput(ev.target.value);
+	};
 
-                <div style={{ display: 'flex', gap: '20px' }}>
-                  <CustomButton
-                    onClick={() => {
-                      applyFilter();
-                    }}
-                    shape="circular"
-                    size="medium"
-                    icon={<CheckmarkFilled />}
-                  >
-                    {APPLY_BUTTON_TEXT}
-                  </CustomButton>
-                  <CustomButton
-                    onClick={() => {
-                      setFilter({});
-                    }}
-                    shape="circular"
-                    size="medium"
-                    appearance="inverted"
-                    icon={<DismissFilled />}
-                    disabled={!Object.keys(filter).length}
-                  >
-                    {RESET_BUTTON_TEXT}
-                  </CustomButton>
-                </div>
-              </DrawerHeader>
+	return (
+		<main>
+			<div className={styles.breadContainer}>
+				<CustomBreadcrumb links={links} />
+			</div>
+			<CategoryPage
+				products={results}
+				categoryName={categoryName}
+				subcategoryName={subcategoryName}
+			/>
+			<div style={{ display: "flex", justifyContent: "center", margin: 30 }}>
+				<Pagination total={totalPages} searchParamName="page" />
+			</div>
+			<div style={{ position: "fixed", top: 110, right: 20 }}>
+				{pathname !== "/catalog" && (
+					<>
+						<FilterButton
+							onClick={() => {
+								setOpen(true);
+								document.body.style.overflowY = "clip";
+							}}
+							{...restoreFocusTargetAttributes}
+						/>
+						<Drawer
+							separator
+							open={open}
+							position="end"
+							{...restoreFocusSourceAttribute}
+							onOpenChange={(_, { open }) => {
+								setOpen(open);
+								document.body.style.overflowY = open ? "clip" : "";
+							}}
+							style={{ padding: "5px 0" }}
+						>
+							<DrawerHeader style={{ padding: 0, gap: 0 }}>
+								<DrawerHeaderTitle
+									style={{ padding: "8px 20px", height: 54 }}
+									action={
+										<StyledTooltip
+											contentChildren="Close"
+											positioning={"before"}
+										>
+											<div>
+												<CustomButton
+													appearance="subtle"
+													aria-label="Close"
+													shape="circular"
+													icon={<DismissRegular />}
+													onClick={() => {
+														setOpen(false);
+														document.body.style.overflowY = "";
+													}}
+												/>
+											</div>
+										</StyledTooltip>
+									}
+								>
+									Refine results
+								</DrawerHeaderTitle>
+								<div>
+									<Divider />
+									<div style={{ padding: "16px 20px" }}>
+										<Body2>
+											{`${filteredTotal} of `}
+											{categoryTotal} products
+										</Body2>
+									</div>
+									<Divider />
+								</div>
+								<div
+									style={{
+										display: "flex",
+										flexDirection: "column",
+										gap: 5,
+										padding: "12px 20px",
+										scrollbarGutter: "stable",
+										overflowY: "auto",
+									}}
+								>
+									<Subtitle2>SORT BY:</Subtitle2>
+									<Combobox
+										style={{ borderRadius: 0 }}
+										placeholder="Select a sort"
+										value={comboInput}
+										clearable
+										freeform
+										selectedOptions={filter.sort ? [filter.sort] : []}
+										size="large"
+										onOptionSelect={(_, d) => {
+											handleSortChange(d.optionValue);
+											setComboInput(
+												sortOptions.find((v) => v.value === d.optionValue)
+													?.option ?? "",
+											);
+										}}
+										onInput={onInput}
+									>
+										{sortOptions.map((v) => (
+											<Option
+												text={v.option}
+												key={v.value}
+												value={v.value}
+												style={{
+													minHeight: 38,
+													paddingLeft: 15,
+													borderRadius: 0,
+												}}
+											>
+												<span
+													style={{
+														display: "flex",
+														justifyContent: "space-between",
+														flexGrow: 1,
+														paddingRight: 5,
+														paddingLeft: 5,
+													}}
+												>
+													{v.option} {v.icon}
+												</span>
+											</Option>
+										))}
+									</Combobox>
+								</div>
+								<Divider />
+								<div
+									style={{ display: "flex", flexDirection: "column", gap: 5 }}
+								>
+									<div style={{ padding: "12px 20px 0" }}>
+										<Subtitle2>FILTER</Subtitle2>
+									</div>
+									<div
+										style={{ height: 53, overflowY: "auto", padding: "0 20px" }}
+									>
+										<DismissWithInteractionTags
+											tags={filter}
+											onDismiss={handleDismissFilter}
+										/>
+									</div>
+									<div
+										style={{
+											display: "flex",
+											gap: "20px",
+											padding: "12px 20px",
+										}}
+									>
+										<CustomButton
+											onClick={() => {
+												applyFilter();
+											}}
+											shape="circular"
+											size="medium"
+											icon={<CheckmarkFilled />}
+											disabled={
+												filteredTotal === 0 ||
+												isStringifyEqual(initialFilter, filter)
+											}
+										>
+											Apply
+										</CustomButton>
+										<CustomButton
+											onClick={() => {
+												setFilter({});
+											}}
+											shape="circular"
+											size="medium"
+											appearance="inverted"
+											icon={<DismissFilled />}
+											disabled={!Object.keys(filter).length}
+										>
+											Reset
+										</CustomButton>
+									</div>
+								</div>
+							</DrawerHeader>
 
-              <DrawerBody style={{ paddingRight: 5, paddingLeft: 22, scrollbarGutter: 'stable' }}>
-                <div style={{ marginTop: 20 }}>
-                  <RangeInputField
-                    onChange={handleMinMaxChange}
-                    prefix="$"
-                    min={minPrice}
-                    max={maxPrice}
-                    values={[filter.minPrice ?? minPrice, filter.maxPrice ?? maxPrice]}
-                  />
-                </div>
-
-                <div style={{ marginTop: 20 }}>
-                  <Label>{DRAWER_SUBTITLE_FOR_COLORS}</Label>
-                </div>
-                <div style={{ display: 'flex', gap: 8 }}>
-                  {colors.map((v) => (
-                    <SingleSwatchPicker
-                      value={filter.color}
-                      color={v}
-                      key={v.value}
-                      onChange={handleColorChange}
-                    />
-                  ))}
-                </div>
-
-                <div style={{ marginTop: 20 }}>
-                  <Label>{DRAWER_SUBTITLE_FOR_MATERIALS}</Label>
-                </div>
-                <div style={{ display: 'flex', gap: 8, width: '100%' }}>
-                  {images.map((v) => (
-                    <SingleImageSwatchPicker
-                      key={v.value}
-                      value={filter.material}
-                      image={v}
-                      onChange={handleMaterialChange}
-                      ariaLabel={v.label}
-                    />
-                  ))}
-                </div>
-
-                <div style={{ marginTop: 40, marginBottom: 16 }}>
-                  <Subtitle2>{DRAWER_SUBTITLE_FOR_SORT}</Subtitle2>
-                </div>
-                <div>
-                  <Select
-                    size="large"
-                    value={filter.sort}
-                    onChange={(_, data) => handleSortChange(data.value)}
-                  >
-                    {sortOptions.map((v) => (
-                      <option key={v.option} value={v.value}>
-                        {v.option}
-                      </option>
-                    ))}
-                  </Select>
-                </div>
-              </DrawerBody>
-            </Drawer>
-          </>
-        )}
-      </div>
-    </main>
-  );
+							<DrawerBody
+								style={{
+									padding: "10px 20px",
+									scrollbarGutter: "stable",
+									display: "flex",
+									flexDirection: "column",
+									gap: 20,
+								}}
+							>
+								<div>
+									<RangeInputField
+										onChange={handleMinMaxChange}
+										prefix="$"
+										min={minCategoryPrice}
+										max={maxCategoryPrice}
+										values={[
+											filter.minPrice ?? minCategoryPrice,
+											filter.maxPrice ?? maxCategoryPrice,
+										]}
+									/>
+								</div>
+								<div>
+									<div>
+										<Label>Colors</Label>
+									</div>
+									<div
+										style={{
+											display: "flex",
+											gap: 6.7,
+											flexWrap: "wrap",
+											minHeight: 72,
+											marginTop: 5,
+										}}
+									>
+										{categoryColors.map((v) => (
+											<SingleSwatchPicker
+												value={filter.colors?.find((c) => c === v.value)}
+												color={v}
+												key={v.value}
+												onChange={handleColorChange}
+											/>
+										))}
+									</div>
+								</div>
+								<div>
+									<div>
+										<Label>Materials</Label>
+									</div>
+									<div
+										style={{
+											display: "flex",
+											gap: 8,
+											width: "100%",
+											marginTop: 5,
+										}}
+									>
+										{categoryMaterials.map((v) => (
+											<SingleImageSwatchPicker
+												key={v.value}
+												value={filter.materials?.find((m) => m === v.value)}
+												image={v}
+												onChange={handleMaterialChange}
+												ariaLabel={v.label}
+											/>
+										))}
+									</div>
+								</div>
+							</DrawerBody>
+						</Drawer>
+					</>
+				)}
+			</div>
+		</main>
+	);
 }

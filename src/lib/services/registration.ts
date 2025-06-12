@@ -1,4 +1,4 @@
-import { LOGIN_API_URL, METHODS } from "../constants";
+import { LOGIN_API_URL, METHODS } from "../constants/constants";
 import { type RegistrationSchema, registrationSchema } from "../schemas";
 
 const url = new URL(LOGIN_API_URL);
