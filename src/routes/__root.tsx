@@ -23,6 +23,7 @@ export const Route = createRootRouteWithContext<RouterContext>()({
   },
 
   notFoundComponent: () => <ErrorPage />,
+  errorComponent: () => <ErrorPage />,
 });
 
 function RootComponent() {

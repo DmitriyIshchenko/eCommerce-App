@@ -6,3 +6,5 @@ export const DEFAULT_ADDRESS = {
   postalCode: '',
   country: 'BY',
 };
+
+export const PRODUCTS_LIMIT = 12;

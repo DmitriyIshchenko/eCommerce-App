@@ -1,3 +1,4 @@
+import { PRODUCTS_LIMIT } from '../constants';
 import { createAnonymousClient, getApiRoot } from './client';
 
 export async function getProducts() {
@@ -33,7 +34,7 @@ export async function getProductsByCategoryId(categoryId: string) {
       .get({
         queryArgs: {
           filter: [`categories.id:"${categoryId}"`],
-          limit: 20,
+          limit: 100,
         },
       })
       .execute();
@@ -69,6 +70,7 @@ export function getProductsByText(search: string) {
 }
 
 export function getProductsBySearch(
+  page?: number,
   q?: string,
   color?: string,
   material?: string,
@@ -104,10 +106,12 @@ export function getProductsBySearch(
       .search()
       .get({
         queryArgs: {
+          markMatchingVariants: true,
           ...(q && { 'text.en-us': `${q}` }),
-          sort,
+          sort: sort ?? 'createdAt asc',
           fuzzy: true,
-          limit: 100,
+          limit: PRODUCTS_LIMIT,
+          offset: PRODUCTS_LIMIT * ((page ?? 1) - 1),
           ...(filters.length > 0 && { 'filter.query': filters }),
         },
       })

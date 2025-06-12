@@ -1,6 +1,7 @@
 import z from 'zod';
 
 export const productSearchSchema = z.object({
+  page: z.number().optional(),
   q: z.string().catch('').optional(),
   color: z.string().optional(),
   material: z.string().optional(),

@@ -35,6 +35,8 @@ import gicleeLqip from '../../assets/images/material-giclee-lqip.webp';
 import giclee from '../../assets/images/material-giclee.webp';
 import photoragLqip from '../../assets/images/material-photorag-lqip.webp';
 import photorag from '../../assets/images/material-photorag.webp';
+import Pagination from '../../components/ui/pagination';
+import { PRODUCTS_LIMIT } from '../../lib/constants';
 
 const DRAWER_TITLE = 'Refine results';
 const DRAWER_SUBTITLE_FOR_FILTER = 'FILTER';
@@ -51,6 +53,10 @@ const useStyles = makeStyles({
     width: '100%',
     padding: `${tokens.spacingVerticalL} ${tokens.spacingHorizontalXL}`,
     borderBottom: `1px solid ${tokens.colorNeutralStroke1}`,
+  },
+  paginationContainer: {
+    display: 'flex',
+    justifyContent: 'center',
   },
   treeItem: {
     '& .fui-Radio__indicator::after': {
@@ -116,7 +122,8 @@ const sortOptions = [
 export const Route = createFileRoute('/catalog/$category/$')({
   component: RouteComponent,
   validateSearch: productSearchSchema,
-  loaderDeps: ({ search: { q, color, material, maxPrice, minPrice, sort } }) => ({
+  loaderDeps: ({ search: { page, q, color, material, maxPrice, minPrice, sort } }) => ({
+    page,
     q,
     color,
     material,
@@ -125,7 +132,7 @@ export const Route = createFileRoute('/catalog/$category/$')({
     sort,
   }),
   loader: async ({
-    deps: { q, color, material, maxPrice, minPrice, sort },
+    deps: { page, q, color, material, maxPrice, minPrice, sort },
     params: { category, _splat },
     context: { categories },
   }) => {
@@ -133,9 +140,19 @@ export const Route = createFileRoute('/catalog/$category/$')({
     const categoryResponse = await getCategoryBySlug(categorySlug);
     const categoryId = categoryResponse ? categoryResponse.id : undefined;
 
-    const filteredProducts = (
-      await getProductsBySearch(q, color, material, minPrice, maxPrice, sort, categoryId)
-    ).body.results;
+    const filteredProductsResponse = await getProductsBySearch(
+      page,
+      q,
+      color,
+      material,
+      minPrice,
+      maxPrice,
+      sort,
+      categoryId,
+    );
+
+    const filteredProducts = filteredProductsResponse.body.results;
+    const filteredProductsCount = filteredProductsResponse.body.total ?? 0;
 
     const allProductsCount = (
       await getProductsBySearch(
@@ -145,12 +162,14 @@ export const Route = createFileRoute('/catalog/$category/$')({
         undefined,
         undefined,
         undefined,
+        undefined,
         categoryId,
       )
-    ).body.count;
+    ).body.total;
 
     const resultResponse = {
       filteredProducts,
+      filteredProductsCount,
       allProductsCount,
       categories,
       minPrice: 0,
@@ -168,7 +187,8 @@ function RouteComponent() {
 
   const { category, _splat } = Route.useParams();
 
-  const { filteredProducts, allProductsCount, minPrice, maxPrice } = data;
+  const { filteredProducts, filteredProductsCount, allProductsCount, minPrice, maxPrice } = data;
+  const totalPages = Math.ceil(filteredProductsCount / PRODUCTS_LIMIT);
 
   const search = Route.useSearch();
 
@@ -258,7 +278,6 @@ function RouteComponent() {
 
   const applyFilter = () => {
     const { ...search } = filter;
-    setOpen(false);
 
     void navigate({
       to: '/catalog/$category/$',
@@ -266,12 +285,15 @@ function RouteComponent() {
         category,
         _splat,
       },
-      search,
+      search: { ...search, page: 1 },
     });
   };
 
   const isFiltered = () => {
-    return Object.values(search).some((value) => value !== undefined && value !== '');
+    return Object.entries(search).some(
+      ([key, value]) =>
+        value !== undefined && value !== '' && key !== 'page' && key !== 'q' && key !== 'sort',
+    );
   };
 
   const restoreFocusTargetAttributes = useRestoreFocusTarget();
@@ -287,6 +309,9 @@ function RouteComponent() {
         categoryName={categoryName}
         subcategoryName={subcategoryName}
       />
+      <div className={styles.paginationContainer}>
+        <Pagination total={totalPages} searchParamName="page" />
+      </div>
       <div style={{ position: 'fixed', top: 110, right: 20 }}>
         {pathname !== '/catalog' && (
           <>
@@ -319,7 +344,7 @@ function RouteComponent() {
 
                 <div style={{ padding: '24px 0' }}>
                   <Body2>
-                    {isFiltered() && `${filteredProducts.length} of `}
+                    {isFiltered() && `${filteredProductsCount} of `}
                     {allProductsCount} products
                   </Body2>
                 </div>
