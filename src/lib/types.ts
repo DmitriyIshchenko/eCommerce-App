@@ -8,6 +8,7 @@ export interface ProductCardProps {
   price: string;
   discount?: string;
   image?: string;
+  onCartClick?: (id: string) => void;
 }
 
 export interface ProductInfoProps extends ProductCardProps {

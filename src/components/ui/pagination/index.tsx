@@ -33,7 +33,7 @@ export default function Pagination({
     <div style={{ display: 'flex', padding: `${tokens.spacingVerticalL} 0` }}>
       <InternalLink
         asBlock
-        to="/"
+        to={pathname}
         search={{ [searchParamName]: currentPage - 1 }}
         disabled={currentPage === 1}
         notInteractive={currentPage === 1}

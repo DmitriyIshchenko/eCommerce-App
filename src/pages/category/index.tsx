@@ -1,36 +1,52 @@
-import { LargeTitle, makeStyles } from '@fluentui/react-components';
 import type { ProductProjection } from '@commercetools/platform-sdk';
+import { LargeTitle, makeStyles, tokens } from '@fluentui/react-components';
+import { useState } from 'react';
 import { ProductCard } from '../../components/product-card';
 import formatPrice from '../../lib/utils/format-price';
 
 const useStyles = makeStyles({
-  titleContainer: {
-    width: '100%',
-    minHeight: '35vh',
+  separate: {
     display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: '75px 56px',
+    '@media(max-width: 1024px)': {
+      flexDirection: 'column',
+    },
   },
-  categoryContainer: {
+  wrapper: {
+    viewTransitionName: 'main-content',
+    containerType: 'inline-size',
+  },
+  title: {
     display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
     justifyContent: 'center',
-    margin: '0 auto',
-  },
-  listContainer: {
-    width: '100%',
-    display: 'flex',
     alignItems: 'center',
-    justifyContent: 'center',
+    flexBasis: '50%',
+    boxShadow: tokens.shadow4,
+    maxHeight: '100dvh',
+    position: 'sticky',
+    top: 0,
+    '@media(max-width: 1024px)': {
+      position: 'static',
+      height: '35dvh',
+      flexBasis: 'auto',
+    },
   },
-  list: {
+  head: {
     display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fill, minmax(310px, 1fr))',
+    flexBasis: '50%',
+    gridTemplateColumns: '1fr 1fr',
+    '@media(max-width: 640px)': {
+      gridTemplateColumns: '1fr',
+    },
   },
-  spinner: {
-    paddingBottom: '54px',
+  tail: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(4, 1fr)',
+    '@media(max-width: 1024px)': {
+      gridTemplateColumns: '1fr 1fr',
+    },
+    '@media(max-width: 640px)': {
+      gridTemplateColumns: '1fr',
+    },
   },
 });
 
@@ -47,7 +63,7 @@ function getTitle(categoryName: string, subcategoryName?: string) {
   }
 
   const subcategoryTitle = subcategoryName;
-  return categoryTitle + ' - ' + subcategoryTitle;
+  return `${categoryTitle} - ${subcategoryTitle}`;
 }
 
 export default function CategoryPage({
@@ -62,29 +78,53 @@ export default function CategoryPage({
   const styles = useStyles();
   const title = getTitle(categoryName, subcategoryName);
 
-  return (
-    <div className={styles.categoryContainer}>
-      <div className={styles.titleContainer}>
-        <LargeTitle align="center" as="h1">
-          {title}
-        </LargeTitle>
-      </div>
+  const tempGoodsCache = Object.fromEntries(products?.map((p) => [p.id, 0]) ?? []);
+  const [cache, setCache] = useState(tempGoodsCache);
 
-      <div className={styles.listContainer}>
-        <div className={styles.list}>
-          {products?.map((product) => (
+  const handleCartClick = (id: string) => {
+    const newCache = { ...cache };
+    newCache[id] = -~cache[id];
+    setTimeout(() => setCache(newCache), 2000);
+  };
+
+  return (
+    <div className={styles.wrapper}>
+      <div className={styles.separate}>
+        <div className={styles.title}>
+          <LargeTitle as="h1">{title}</LargeTitle>
+        </div>
+        <div className={styles.head}>
+          {products?.slice(0, 4).map((product) => (
             <ProductCard
               id={product.id}
               key={product.id}
+              onCartClick={handleCartClick}
               value={product.slug?.['en-US']}
               name={product.name?.['en-US']}
               description={product.description?.['en-US']}
               price={formatPrice(product.masterVariant.prices?.at(0)?.value)}
               discount={formatPrice(product.masterVariant.prices?.at(0)?.discounted?.value)}
               image={product.masterVariant.images?.at(0)?.url}
+              // cartGoods={cache[product.id]}
             />
           ))}
         </div>
+      </div>
+      <div className={styles.tail}>
+        {products?.slice(4).map((product) => (
+          <ProductCard
+            id={product.id}
+            key={product.id}
+            onCartClick={handleCartClick}
+            value={product.slug?.['en-US']}
+            name={product.name?.['en-US']}
+            description={product.description?.['en-US']}
+            price={formatPrice(product.masterVariant.prices?.at(0)?.value)}
+            discount={formatPrice(product.masterVariant.prices?.at(0)?.discounted?.value)}
+            image={product.masterVariant.images?.at(0)?.url}
+            // cartGoods={cache[product.id]}
+          />
+        ))}
       </div>
     </div>
   );

@@ -97,7 +97,7 @@ export default function DismissWithInteractionTags({ tags, onDismiss }: DismissT
             >
               {data.value}
             </InteractionTagPrimary>
-            <StyledTooltip text="remove">
+            <StyledTooltip contentChildren="remove">
               <InteractionTagSecondary
                 aria-label="remove"
                 data-name={data.name}
