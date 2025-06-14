@@ -20,12 +20,13 @@ const useStyles = makeStyles({
     position: 'relative',
     width: '100%',
     borderRadius: 0,
-    ':hover': {
-      backgroundColor: tokens.colorNeutralBackground1Hover,
-    },
     gap: '0',
     containerType: 'inline-size',
     padding: '0',
+    overflow: 'hidden',
+    ':hover img': {
+      transform: 'scale(1.08)',
+    },
   },
   info: {
     '> button': {
@@ -72,7 +73,12 @@ export function ProductCard(props: ProductCardProps) {
           backgroundColor: tokens.colorNeutralBackground1,
         }}
       >
-        <Image src={props.image} alt={props.value.split('-').join(' ')} block />
+        <Image
+          style={{ transition: 'transform 0.4s ease-in-out' }}
+          src={props.image}
+          alt={props.value.split('-').join(' ')}
+          block
+        />
       </CardPreview>
       <CardFooter
         style={{
@@ -80,7 +86,6 @@ export function ProductCard(props: ProductCardProps) {
           gridTemplateColumns: '5fr 1fr',
           alignContent: 'space-between',
           padding: '8%',
-          // padding: '15px',
           columnGap: '8%',
         }}
       >
