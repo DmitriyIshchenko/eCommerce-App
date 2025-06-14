@@ -9,11 +9,13 @@ interface RouterContext {
   categories: Category[];
 }
 
+let categories: Category[] | undefined;
+
 export const Route = createRootRouteWithContext<RouterContext>()({
   component: RootComponent,
 
   beforeLoad: async () => {
-    const categories = await getCategories();
+    categories ??= await getCategories();
 
     if (!categories) {
       throw new Error('Categories not found');

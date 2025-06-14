@@ -33,6 +33,7 @@ import SingleImageSwatchPicker from '../../components/ui/swatch-picker/single-im
 import Pagination from '../../components/ui/pagination';
 import { PRODUCTS_LIMIT } from '../../lib/constants';
 import { isStringifyEqual } from '../../lib/utils/isStringifyEqual';
+import { sortOptions } from '../../lib/sort-options';
 
 const DRAWER_TITLE = 'Refine results';
 const DRAWER_SUBTITLE_FOR_FILTER = 'FILTER';
@@ -60,29 +61,6 @@ const useStyles = makeStyles({
     },
   },
 });
-
-const sortOptions = [
-  {
-    option: 'None',
-    value: '',
-  },
-  {
-    option: 'Alphabetically, A-Z',
-    value: 'name.en-us asc',
-  },
-  {
-    option: 'Alphabetically, Z-A',
-    value: 'name.en-us desc',
-  },
-  {
-    option: 'Price, low to high',
-    value: 'price asc',
-  },
-  {
-    option: 'Price, high to low',
-    value: 'price desc',
-  },
-];
 
 export const Route = createFileRoute('/catalog/$category/$')({
   component: RouteComponent,

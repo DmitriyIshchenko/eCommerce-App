@@ -116,7 +116,7 @@ export function getProductsBySearch(
         queryArgs: {
           markMatchingVariants: true,
           ...(q && { 'text.en-us': `${q}` }),
-          sort: sort ?? 'createdAt asc',
+          sort: sort ?? 'name.en-us asc',
           fuzzy: true,
           limit: PRODUCTS_LIMIT,
           offset: PRODUCTS_LIMIT * ((page ?? 1) - 1),
