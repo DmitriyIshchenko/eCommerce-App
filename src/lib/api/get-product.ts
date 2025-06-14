@@ -1,11 +1,10 @@
-import { createAnonymousClient, getApiRoot } from './client';
+import { getApiRootSmart } from './client';
 
 export async function getProductById(productId: string) {
-  const anonymousClient = createAnonymousClient();
-  const anonymousApiRoot = getApiRoot(anonymousClient);
+  const apiRoot = getApiRootSmart();
 
   try {
-    const productResponse = await anonymousApiRoot
+    const productResponse = await apiRoot
       .productProjections()
       .withId({ ID: productId })
       .get()

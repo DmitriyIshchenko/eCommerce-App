@@ -250,14 +250,18 @@ function RouteComponent() {
   };
 
   const handleDismissFilter = (name: string, value: string | number) => {
-    if (name === 'color' && typeof value === 'string') {
-      setFilter((prev) => ({ ...prev, color: undefined }));
+    if (name === 'colors' && typeof value === 'string') {
+      setFilter((prev) => ({ ...prev, colors: filter.colors?.filter((v) => v !== value) }));
     }
-    if (name === 'material' && typeof value == 'string') {
-      setFilter((prev) => ({ ...prev, material: undefined }));
+    if (name === 'materials' && typeof value === 'string') {
+      setFilter((prev) => ({ ...prev, materials: filter.materials?.filter((v) => v !== value) }));
     }
     if (name === 'price') {
-      setFilter((prev) => ({ ...prev, minPrice: undefined, maxPrice: undefined }));
+      setFilter((prev) => ({
+        ...prev,
+        minPrice: undefined,
+        maxPrice: undefined,
+      }));
     }
   };
 
@@ -384,11 +388,11 @@ function RouteComponent() {
                     <Subtitle2>{DRAWER_SUBTITLE_FOR_FILTER}</Subtitle2>
                   </div>
 
-                  <div style={{ height: 53, overflowY: 'auto', padding: '0 20px' }}>
+                  <div style={{ maxHeight: 53, overflowY: 'auto', padding: '0 20px' }}>
                     <DismissWithInteractionTags tags={filter} onDismiss={handleDismissFilter} />
                   </div>
 
-                  <div style={{ display: 'flex', gap: '20px', padding: '12px 20px' }}>
+                  <div style={{ display: 'flex', gap: '20px', padding: '5px 20px 12px' }}>
                     <CustomButton
                       onClick={() => {
                         applyFilter();

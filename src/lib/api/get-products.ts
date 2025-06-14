@@ -1,14 +1,13 @@
 import { allColors, allMaterials, PRODUCTS_LIMIT, type Color, type Material } from '../constants';
 import { capitalizeString } from '../utils/capitalizeString';
-import { createAnonymousClient, getApiRoot } from './client';
+import { getApiRootSmart } from './client';
 import { isRangeFacetResult, isTermFacetResult } from './type-guards/facet';
 
 export async function getProducts() {
-  const anonymousClient = createAnonymousClient();
-  const anonymousApiRoot = getApiRoot(anonymousClient);
+  const apiRoot = getApiRootSmart();
 
   try {
-    const productsResponse = await anonymousApiRoot
+    const productsResponse = await apiRoot
       .productProjections()
       .get({
         queryArgs: {
@@ -26,11 +25,10 @@ export async function getProducts() {
 }
 
 export async function getProductsByCategoryId(categoryId: string) {
-  const anonymousClient = createAnonymousClient();
-  const anonymousApiRoot = getApiRoot(anonymousClient);
+  const apiRoot = getApiRootSmart();
 
   try {
-    const productsResponse = await anonymousApiRoot
+    const productsResponse = await apiRoot
       .productProjections()
       .search()
       .get({
@@ -50,11 +48,10 @@ export async function getProductsByCategoryId(categoryId: string) {
 }
 
 export function getProductsByText(search: string) {
-  const anonymousClient = createAnonymousClient();
-  const anonymousApiRoot = getApiRoot(anonymousClient);
+  const apiRoot = getApiRootSmart();
 
   try {
-    const productsResponse = anonymousApiRoot
+    const productsResponse = apiRoot
       .productProjections()
       .search()
       .get({
@@ -81,8 +78,7 @@ export function getProductsBySearch(
   maxPrice?: number,
   sort?: string,
 ) {
-  const anonymousClient = createAnonymousClient();
-  const anonymousApiRoot = getApiRoot(anonymousClient);
+  const apiRoot = getApiRootSmart();
 
   try {
     const filters: string[] = [];
@@ -113,7 +109,7 @@ export function getProductsBySearch(
       filters.push(`variants.price.centAmount:range (${minPrice * 100} to ${maxPrice * 100})`);
     }
 
-    const productsResponse = anonymousApiRoot
+    const productsResponse = apiRoot
       .productProjections()
       .search()
       .get({

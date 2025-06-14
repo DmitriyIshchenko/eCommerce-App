@@ -91,7 +91,9 @@ export default function CategoryPage({
     <div className={styles.wrapper}>
       <div className={styles.separate}>
         <div className={styles.title}>
-          <LargeTitle as="h1">{title}</LargeTitle>
+          <LargeTitle style={{ padding: '0 20px' }} as="h1">
+            {title}
+          </LargeTitle>
         </div>
         <div className={styles.head}>
           {products?.slice(0, 4).map((product) => (

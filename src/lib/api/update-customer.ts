@@ -15,7 +15,7 @@ export async function updateCustomer(data: PersonalSchemaNoPassword, version: nu
     { action: 'setDateOfBirth', dateOfBirth: dateOfBirth.toISOString().split('T')[0] },
   ];
 
-  const client = createClientWithToken();
+  const client = createClientWithToken('customer');
   const apiRoot = getApiRoot(client);
 
   const customer = await apiRoot

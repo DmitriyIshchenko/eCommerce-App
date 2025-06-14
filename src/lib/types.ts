@@ -23,3 +23,5 @@ export interface Link {
   to: ToPathOption;
   text: string;
 }
+
+export type ClientType = 'customer' | 'anonymous';

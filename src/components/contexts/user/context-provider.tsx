@@ -13,30 +13,39 @@ import type {
 import { login as loginApi } from '../../../lib/api/login';
 import { signup as signupApi, type AddressOptions } from '../../../lib/api/create-customer';
 import { updateCustomer as updateCustomerApi } from '../../../lib/api/update-customer';
+import { createAnonymousClient, getApiRoot } from '../../../lib/api/client';
 
 export function UserContextProvider({ children }: { children: ReactNode }) {
   const [token, setToken] = useState<AuthToken | null>(null);
   const [customer, setCustomer] = useState<Customer | null>(null);
-  const [authorized, setAuthorized] = useState(isTokenValid());
+  const [authorized, setAuthorized] = useState(isTokenValid('customer'));
 
   useEffect(() => {
     const initializeAuth = async () => {
       try {
-        const storedTokens = getStoredTokens();
-        if (!storedTokens) return;
-
-        if (!isTokenValid()) {
-          logout();
+        if (isTokenValid('customer')) {
+          const storedTokens = getStoredTokens('customer');
+          const customerData = await getCurrentCustomer();
+          setCustomer(customerData);
+          setAuthorized(true);
+          setToken(storedTokens);
           return;
         }
 
-        const customerData = await getCurrentCustomer();
-        setCustomer(customerData);
-        setAuthorized(true);
-        setToken(storedTokens);
+        if (!isTokenValid('anonymous')) {
+          const anonApiRoot = getApiRoot(createAnonymousClient());
+          await anonApiRoot.me().get().execute();
+        }
+
+        const anonToken = getStoredTokens('anonymous');
+        if (anonToken) {
+          setToken(anonToken);
+          setAuthorized(false);
+        }
       } catch (error) {
         console.error('Auth initialization failed:', error);
         logout();
+        clearTokens('anonymous');
       }
     };
 
@@ -47,7 +56,9 @@ export function UserContextProvider({ children }: { children: ReactNode }) {
     const customer = await loginApi(data);
     if (!customer) return;
 
-    setToken(getStoredTokens());
+    clearTokens('anonymous');
+
+    setToken(getStoredTokens('customer'));
     setCustomer(customer.body);
     setAuthorized(true);
 
@@ -55,7 +66,7 @@ export function UserContextProvider({ children }: { children: ReactNode }) {
   };
 
   const logout = () => {
-    clearTokens();
+    clearTokens('customer');
     setToken(null);
     setAuthorized(false);
     setCustomer(null);
@@ -65,7 +76,9 @@ export function UserContextProvider({ children }: { children: ReactNode }) {
     const customer = await signupApi(data, options);
     if (!customer) return;
 
-    setToken(getStoredTokens());
+    clearTokens('anonymous');
+
+    setToken(getStoredTokens('customer'));
     setCustomer(customer.body);
     setAuthorized(true);
 
