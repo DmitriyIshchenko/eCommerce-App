@@ -1,5 +1,5 @@
 import { Subtitle1, Title2 } from '@fluentui/react-components';
-import './global.css';
+import '../../styles/globals.css';
 
 export function MainBanner() {
   return (

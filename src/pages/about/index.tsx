@@ -1,5 +1,5 @@
 import { LargeTitle } from '@fluentui/react-components';
-import './global.css';
+import '../../styles/globals.css';
 
 export default function AboutPage() {
   return (
