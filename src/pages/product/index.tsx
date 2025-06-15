@@ -21,6 +21,7 @@ export default function ProductPage(props: { product: ProductProjection } | null
           discount={formatPrice(props.product.masterVariant.prices?.[0]?.discounted?.value)}
           image={props.product.masterVariant.images?.[0]?.url}
           images={images}
+          variants={props.product.variants}
         />
       )}
     </main>

@@ -1,3 +1,4 @@
+import type { ProductVariant } from '@commercetools/platform-sdk';
 import type { ToPathOption } from '@tanstack/react-router';
 
 export interface ProductCardProps {
@@ -12,6 +13,7 @@ export interface ProductCardProps {
 
 export interface ProductInfoProps extends ProductCardProps {
   images?: { url: string }[];
+  variants?: ProductVariant[];
 }
 
 export interface MiniProductCardProps extends ProductCardProps {

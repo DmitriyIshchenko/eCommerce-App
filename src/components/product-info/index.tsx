@@ -3,6 +3,7 @@ import {
   Image,
   makeStyles,
   Select,
+  SpinButton,
   Text,
   tokens,
   useFocusFinders,
@@ -13,6 +14,7 @@ import type { ProductInfoProps } from '../../lib/types';
 import { ProductCarousel } from '../carousel';
 import { useEffect, useRef, useState } from 'react';
 import { DismissRegular } from '@fluentui/react-icons';
+import findProductVariationAttributes from '../../lib/utils/find-product-attributes';
 
 const useStyles = makeStyles({
   productContainer: {
@@ -52,17 +54,17 @@ const useStyles = makeStyles({
     },
   },
   productTitle: {
-    fontSize: '2.5rem',
-    fontWeight: '500',
-    lineHeight: '1',
+    fontSize: tokens.fontSizeHero900,
+    fontWeight: tokens.fontWeightMedium,
+    lineHeight: tokens.lineHeightHero800,
   },
   productSubtitle: {
-    fontSize: '1.3rem',
-    fontWeight: '500',
+    fontSize: tokens.fontSizeBase600,
+    fontWeight: tokens.fontWeightMedium,
   },
   productText: {
-    fontSize: '1rem',
-    lineHeight: '1.5',
+    fontSize: tokens.fontSizeBase400,
+    lineHeight: tokens.lineHeightBase500,
   },
   selectContainer: {
     display: 'flex',
@@ -70,6 +72,7 @@ const useStyles = makeStyles({
   },
   selectBlock: {
     flexGrow: '1',
+    width: '100%',
   },
   modalOverlay: {
     position: 'fixed',
@@ -103,6 +106,20 @@ const useStyles = makeStyles({
     width: '100%',
     height: '100%',
   },
+  base: {
+    display: 'flex',
+    width: '100%',
+    maxBlockSize: '100%',
+    flexDirection: 'column',
+    fontSize: tokens.fontSizeBase400,
+
+    '> label': {
+      marginBottom: tokens.spacingVerticalXXS,
+    },
+  },
+  selectButton: {
+    textAlign: 'center',
+  },
 });
 
 export function ProductInfo(props: ProductInfoProps | null) {
@@ -133,6 +150,8 @@ export function ProductInfo(props: ProductInfoProps | null) {
       handleCloseModal();
     }
   };
+
+  const productVariationAttributes = findProductVariationAttributes(props?.variants);
 
   useEffect(() => {
     if (isModalOpen && modalRef.current) {
@@ -175,24 +194,30 @@ export function ProductInfo(props: ProductInfoProps | null) {
         <Text className={styles.productSubtitle}>About the Artwork</Text>
         <div className={styles.productText}>{props?.description}</div>
         <div className={styles.selectContainer}>
-          <div className={styles.selectBlock}>
-            <label htmlFor={`${selectId}-large`}>Select Size</label>
-            <Select id={`${selectId}-large`} size="large">
-              <option>20x16</option>
-              <option>30x24</option>
-              <option>40x32</option>
-              <option>50x40</option>
-              <option>60x48</option>
-            </Select>
-          </div>
-          <div className={styles.selectBlock}>
-            <label htmlFor={`${selectId}-large`}>Select Material</label>
-            <Select id={`${selectId}-large`} size="large">
-              <option>Giclee</option>
-              <option>Photo Rag</option>
-              <option>Canvas</option>
-            </Select>
-          </div>
+          {Object.entries(productVariationAttributes)?.map(([key, values]) => {
+            return (
+              <div key={`select-block-${key}`} className={styles.selectBlock}>
+                <label htmlFor={`${selectId}-${key}`}>Select {key}</label>
+                <Select id={`${selectId}-${key}`} size="large">
+                  {Array.from(values).map((value, index) => (
+                    <option key={`${key}-option-${index}`} value={value}>
+                      {value}
+                    </option>
+                  ))}
+                </Select>
+              </div>
+            );
+          })}
+        </div>
+        <div className={styles.base}>
+          <SpinButton
+            className={styles.selectButton}
+            size="medium"
+            defaultValue={1}
+            min={0}
+            max={20}
+            id={selectId}
+          />
         </div>
       </div>
 
