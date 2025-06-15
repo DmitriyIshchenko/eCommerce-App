@@ -13,7 +13,7 @@ import type {
 import { login as loginApi } from '../../../lib/api/login';
 import { signup as signupApi, type AddressOptions } from '../../../lib/api/create-customer';
 import { updateCustomer as updateCustomerApi } from '../../../lib/api/update-customer';
-import { createAnonymousClient, getApiRoot } from '../../../lib/api/client';
+import { getAnonymousClient } from '../../../lib/api/get-anonymous-client';
 
 export function UserContextProvider({ children }: { children: ReactNode }) {
   const [token, setToken] = useState<AuthToken | null>(null);
@@ -32,20 +32,19 @@ export function UserContextProvider({ children }: { children: ReactNode }) {
           return;
         }
 
-        if (!isTokenValid('anonymous')) {
-          const anonApiRoot = getApiRoot(createAnonymousClient());
-          await anonApiRoot.me().get().execute();
-        }
-
-        const anonToken = getStoredTokens('anonymous');
-        if (anonToken) {
+        if (isTokenValid('anonymous')) {
+          const anonToken = getStoredTokens('anonymous');
           setToken(anonToken);
           setAuthorized(false);
+          return;
         }
       } catch (error) {
         console.error('Auth initialization failed:', error);
-        logout();
         clearTokens('anonymous');
+        clearTokens('customer');
+        setToken(null);
+        setAuthorized(false);
+        setCustomer(null);
       }
     };
 
@@ -70,6 +69,8 @@ export function UserContextProvider({ children }: { children: ReactNode }) {
     setToken(null);
     setAuthorized(false);
     setCustomer(null);
+
+    void getAnonymousClient();
   };
 
   const signup = async (data: RegisterSchema, options: AddressOptions) => {
