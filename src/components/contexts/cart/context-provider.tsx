@@ -1,5 +1,5 @@
 import type { Cart } from '@commercetools/platform-sdk';
-import { useState, type ReactNode } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import {
   createCartForCurrentCustomer,
   getActiveCart,
@@ -10,6 +10,19 @@ import { CartContext } from './context';
 export function CartContextProvider({ children }: { children: ReactNode }) {
   const [cart, setCart] = useState<Cart | null>(null);
   const [cartLoading, setCartLoading] = useState(false);
+
+  useEffect(() => {
+    const init = async () => {
+      try {
+        const newCart = await createCart();
+        setCart(newCart);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    void init();
+  }, []);
 
   const createCart = async () => {
     const { body: newCart } = await createCartForCurrentCustomer({ currency: 'USD' });

@@ -41,8 +41,6 @@ export function UserContextProvider({ children }: { children: ReactNode }) {
           setAuthorized(false);
 
           await refreshCart();
-        } else {
-          await createCart();
         }
       } catch (error) {
         console.error('Auth initialization failed:', error);
