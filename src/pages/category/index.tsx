@@ -1,8 +1,9 @@
-import type { ProductProjection } from '@commercetools/platform-sdk';
+import type { Cart, ProductProjection } from '@commercetools/platform-sdk';
 import { LargeTitle, makeStyles, tokens } from '@fluentui/react-components';
-import { useState } from 'react';
 import { ProductCard } from '../../components/product-card';
 import formatPrice from '../../lib/utils/format-price';
+import { useEffect, useState } from 'react';
+import { useCart } from '../../hooks/use-cart';
 
 const useStyles = makeStyles({
   separate: {
@@ -66,6 +67,18 @@ function getTitle(categoryName: string, subcategoryName?: string) {
   return `${categoryTitle} - ${subcategoryTitle}`;
 }
 
+function getCartGoodsMap(cart: Cart) {
+  const goodsMap: Record<string, number> = {};
+  if (cart.lineItems) {
+    for (const item of cart.lineItems) {
+      if (item.productId && item.quantity) {
+        goodsMap[item.productId] = item.quantity;
+      }
+    }
+  }
+  return goodsMap;
+}
+
 export default function CategoryPage({
   products,
   categoryName,
@@ -76,15 +89,24 @@ export default function CategoryPage({
   subcategoryName?: string;
 }) {
   const styles = useStyles();
+  const { cart, addItemToCart } = useCart();
+  const [cartGoods, setCartGoods] = useState<Record<string, number>>({});
+
   const title = getTitle(categoryName, subcategoryName);
 
-  const tempGoodsCache = Object.fromEntries(products?.map((p) => [p.id, 0]) ?? []);
-  const [cache, setCache] = useState(tempGoodsCache);
+  useEffect(() => {
+    if (cart) {
+      setCartGoods(getCartGoodsMap(cart));
+    }
+  }, [cart]);
 
-  const handleCartClick = (id: string) => {
-    const newCache = { ...cache };
-    newCache[id] = -~cache[id];
-    setTimeout(() => setCache(newCache), 2000);
+  const handleCartClick = async (id: string) => {
+    try {
+      const updatedCart = await addItemToCart(id);
+      setCartGoods(getCartGoodsMap(updatedCart));
+    } catch {
+      console.error('Failed to add to cart');
+    }
   };
 
   return (
@@ -96,37 +118,41 @@ export default function CategoryPage({
           </LargeTitle>
         </div>
         <div className={styles.head}>
-          {products?.slice(0, 4).map((product) => (
+          {products
+            ?.slice(0, 4)
+            .map((product) => (
+              <ProductCard
+                id={product.id}
+                key={product.id}
+                onCartClick={(id) => void handleCartClick(id)}
+                value={product.slug?.['en-US']}
+                name={product.name?.['en-US']}
+                description={product.description?.['en-US']}
+                price={formatPrice(product.masterVariant.prices?.at(0)?.value)}
+                discount={formatPrice(product.masterVariant.prices?.at(0)?.discounted?.value)}
+                image={product.masterVariant.images?.at(0)?.url}
+                cartGoods={cartGoods[product.id] ?? 0}
+              />
+            ))}
+        </div>
+      </div>
+      <div className={styles.tail}>
+        {products
+          ?.slice(4)
+          .map((product) => (
             <ProductCard
               id={product.id}
               key={product.id}
-              onCartClick={handleCartClick}
+              onCartClick={(id) => void handleCartClick(id)}
               value={product.slug?.['en-US']}
               name={product.name?.['en-US']}
               description={product.description?.['en-US']}
               price={formatPrice(product.masterVariant.prices?.at(0)?.value)}
               discount={formatPrice(product.masterVariant.prices?.at(0)?.discounted?.value)}
               image={product.masterVariant.images?.at(0)?.url}
-              // cartGoods={cache[product.id]}
+              cartGoods={cartGoods[product.id] ?? 0}
             />
           ))}
-        </div>
-      </div>
-      <div className={styles.tail}>
-        {products?.slice(4).map((product) => (
-          <ProductCard
-            id={product.id}
-            key={product.id}
-            onCartClick={handleCartClick}
-            value={product.slug?.['en-US']}
-            name={product.name?.['en-US']}
-            description={product.description?.['en-US']}
-            price={formatPrice(product.masterVariant.prices?.at(0)?.value)}
-            discount={formatPrice(product.masterVariant.prices?.at(0)?.discounted?.value)}
-            image={product.masterVariant.images?.at(0)?.url}
-            // cartGoods={cache[product.id]}
-          />
-        ))}
       </div>
     </div>
   );

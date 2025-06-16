@@ -8,12 +8,13 @@ import {
   makeStyles,
   tokens,
 } from '@fluentui/react-components';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { ProductCardProps } from '../../lib/types';
 import CustomInfoLabel from '../ui/buttons/custom-info-label';
 import CartButton from '../ui/cart/button';
 import { InternalLink } from '../ui/links/fui-tanstack';
 import CustomSpinner from '../ui/spinners/custom';
+import { useCart } from '../../hooks/use-cart';
 
 const useStyles = makeStyles({
   card: {
@@ -47,7 +48,8 @@ const useStyles = makeStyles({
 export function ProductCard(props: ProductCardProps) {
   const styles = useStyles();
   const [loading, setLoading] = useState(false);
-  // useEffect(() => setLoading(false), [props.cartGoods]);
+  const { setCartLoading } = useCart();
+  useEffect(() => setLoading(false), [props.cartGoods]);
   return (
     <Card className={styles.card}>
       <InternalLink
@@ -128,6 +130,7 @@ export function ProductCard(props: ProductCardProps) {
                 props.onCartClick(props.id);
               }
               setLoading(true);
+              setCartLoading(true);
             }}
             style={{
               position: 'relative',
@@ -144,7 +147,7 @@ export function ProductCard(props: ProductCardProps) {
               </div>
             }
             loading={loading}
-            // goods={props.cartGoods}
+            goods={props.cartGoods}
           />
         </div>
       </CardFooter>

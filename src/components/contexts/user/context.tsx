@@ -20,7 +20,7 @@ interface UserContextType {
   customer: Customer | null;
   authorized: boolean;
   login: (data: LoginSchema) => Promise<ClientResponse<Customer> | undefined>;
-  logout: () => void;
+  logout: () => Promise<void>;
   signup: (
     data: RegisterSchema,
     options: AddressOptions,

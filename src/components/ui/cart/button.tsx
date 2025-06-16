@@ -121,7 +121,7 @@ export default function CartButton({
               strokeWidth={0.5}
             />
             <div className={mergeClasses(classes.data, 'data')}>
-              {loading ? <CustomSpinner /> : goods || ''}
+              {loading ? <CustomSpinner /> : goods || '0'}
             </div>
             <div className={mergeClasses(classes.plus, 'plus')}>
               <PlusIcon strokeWidth={1} width={'60%'} height={'60%'} />

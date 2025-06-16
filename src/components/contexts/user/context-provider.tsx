@@ -14,11 +14,13 @@ import { login as loginApi } from '../../../lib/api/login';
 import { signup as signupApi, type AddressOptions } from '../../../lib/api/create-customer';
 import { updateCustomer as updateCustomerApi } from '../../../lib/api/update-customer';
 import { getAnonymousClient } from '../../../lib/api/get-anonymous-client';
+import { useCart } from '../../../hooks/use-cart';
 
 export function UserContextProvider({ children }: { children: ReactNode }) {
   const [token, setToken] = useState<AuthToken | null>(null);
   const [customer, setCustomer] = useState<Customer | null>(null);
   const [authorized, setAuthorized] = useState(isTokenValid('customer'));
+  const { setCart, createCart, refreshCart } = useCart();
 
   useEffect(() => {
     const initializeAuth = async () => {
@@ -26,17 +28,21 @@ export function UserContextProvider({ children }: { children: ReactNode }) {
         if (isTokenValid('customer')) {
           const storedTokens = getStoredTokens('customer');
           const customerData = await getCurrentCustomer();
+
           setCustomer(customerData);
           setAuthorized(true);
           setToken(storedTokens);
-          return;
-        }
 
-        if (isTokenValid('anonymous')) {
+          await refreshCart();
+        } else if (isTokenValid('anonymous')) {
           const anonToken = getStoredTokens('anonymous');
+
           setToken(anonToken);
           setAuthorized(false);
-          return;
+
+          await refreshCart();
+        } else {
+          await createCart();
         }
       } catch (error) {
         console.error('Auth initialization failed:', error);
@@ -45,11 +51,12 @@ export function UserContextProvider({ children }: { children: ReactNode }) {
         setToken(null);
         setAuthorized(false);
         setCustomer(null);
+        setCart(null);
       }
     };
 
     void initializeAuth();
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const login = async (data: LoginSchema) => {
     const customer = await loginApi(data);
@@ -61,16 +68,21 @@ export function UserContextProvider({ children }: { children: ReactNode }) {
     setCustomer(customer.body);
     setAuthorized(true);
 
+    await refreshCart();
+
     return customer;
   };
 
-  const logout = () => {
+  const logout = async () => {
     clearTokens('customer');
     setToken(null);
     setAuthorized(false);
     setCustomer(null);
+    setCart(null);
 
-    void getAnonymousClient();
+    await getAnonymousClient();
+
+    await createCart();
   };
 
   const signup = async (data: RegisterSchema, options: AddressOptions) => {
@@ -82,6 +94,8 @@ export function UserContextProvider({ children }: { children: ReactNode }) {
     setToken(getStoredTokens('customer'));
     setCustomer(customer.body);
     setAuthorized(true);
+
+    await refreshCart();
 
     return customer;
   };

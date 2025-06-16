@@ -12,6 +12,7 @@ import userEvent from '@testing-library/user-event';
 import RegisterForm from './index';
 import { UserContextProvider } from '../../components/contexts/user/context-provider';
 import { LoadingContextProvider } from '../../components/contexts/loading/context-provider';
+import { CartContextProvider } from '../../components/contexts/cart/context-provider';
 
 describe('Ensure that input validation checks are performed in real-time when the user enters their information.', () => {
   let emailField: HTMLInputElement;
@@ -53,13 +54,15 @@ describe('Ensure that input validation checks are performed in real-time when th
       getParentRoute: () => rootRoute,
       path: '/',
       component: () => (
-        <UserContextProvider>
-          <LoadingContextProvider>
-            <div data-testid="is-rendered">
-              <RegisterForm />
-            </div>
-          </LoadingContextProvider>
-        </UserContextProvider>
+        <CartContextProvider>
+          <UserContextProvider>
+            <LoadingContextProvider>
+              <div data-testid="is-rendered">
+                <RegisterForm />
+              </div>
+            </LoadingContextProvider>
+          </UserContextProvider>
+        </CartContextProvider>
       ),
     });
     const testRouter = createRouter({
