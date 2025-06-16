@@ -2,15 +2,19 @@ import {
   Breadcrumb,
   BreadcrumbDivider,
   BreadcrumbItem,
+  isTruncatableBreadcrumbContent,
   makeStyles,
   tokens,
+  truncateBreadcrumbLongName,
 } from '@fluentui/react-components';
-import { InternalLink } from '../links/fui-tanstack';
 import { Fragment } from 'react/jsx-runtime';
 import type { Link } from '../../../lib/types';
+import { InternalLink } from '../links/fui-tanstack';
+import StyledTooltip from '../tooltips/styled';
 
 interface Props {
   links?: Link[];
+  truncate?: number;
 }
 
 const useStyles = makeStyles({
@@ -24,7 +28,55 @@ const useStyles = makeStyles({
   },
 });
 
-export default function CustomBreadcrumb({ links }: Props) {
+const Item = ({
+  key,
+  text,
+  to,
+  className,
+  isLast,
+}: {
+  key: string;
+  className?: string;
+  to: string;
+  isLast?: boolean;
+  text: string;
+}) => (
+  <Fragment key={key}>
+    <BreadcrumbDivider className={className} />
+    <InternalLink to={to} appearance="muted" asBlock accent={isLast} notInteractive={isLast}>
+      {text}
+    </InternalLink>
+  </Fragment>
+);
+
+const TruncatedItem = ({
+  key,
+  text,
+  to,
+  className,
+  isLast,
+  truncateTo,
+}: {
+  key: string;
+  className?: string;
+  to: string;
+  isLast?: boolean;
+  text: string;
+  truncateTo: number;
+}) => (
+  <Fragment key={key}>
+    <BreadcrumbDivider className={className} />
+    <StyledTooltip contentChildren={text}>
+      <div>
+        <InternalLink to={to} appearance="muted" asBlock accent={isLast} notInteractive={isLast}>
+          {truncateBreadcrumbLongName(text, truncateTo)}
+        </InternalLink>
+      </div>
+    </StyledTooltip>
+  </Fragment>
+);
+
+export default function CustomBreadcrumb({ links, truncate }: Props) {
   const styles = useStyles();
   return (
     <Breadcrumb aria-label="Catalog Breadcrumb" className={styles.breadcrumb}>
@@ -35,19 +87,17 @@ export default function CustomBreadcrumb({ links }: Props) {
       </BreadcrumbItem>
       {links?.map((v, i, a) => {
         const isLast = i === a.length - 1;
-        return (
-          <Fragment key={v.to}>
-            <BreadcrumbDivider className={styles.divider} />
-            <InternalLink
-              to={v.to}
-              appearance="muted"
-              asBlock
-              accent={isLast}
-              notInteractive={isLast}
-            >
-              {v.text}
-            </InternalLink>
-          </Fragment>
+        return truncate && isTruncatableBreadcrumbContent(v.text, truncate) ? (
+          <TruncatedItem
+            key={v.to}
+            text={v.text}
+            to={v.to}
+            truncateTo={truncate}
+            className={styles.breadcrumb}
+            isLast={isLast}
+          />
+        ) : (
+          <Item key={v.to} text={v.text} to={v.to} className={styles.breadcrumb} isLast={isLast} />
         );
       })}
     </Breadcrumb>

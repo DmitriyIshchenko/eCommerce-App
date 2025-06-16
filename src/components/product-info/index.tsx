@@ -1,226 +1,393 @@
 import {
-  Button,
-  Image,
-  makeStyles,
-  Select,
+  Divider,
+  Label,
+  Menu,
+  MenuItemRadio,
+  MenuList,
+  MenuPopover,
+  MenuTrigger,
   Text,
+  makeStyles,
   tokens,
-  useFocusFinders,
-  useId,
-  useModalAttributes,
+  typographyStyles,
 } from '@fluentui/react-components';
+import { ChevronDownRegular } from '@fluentui/react-icons';
+import { useLocation } from '@tanstack/react-router';
+import { useState } from 'react';
+import useMatchMediaQuery from '../../hooks/use-match-media';
+import { allColors, allMaterials } from '../../lib/constants/constants';
 import type { ProductInfoProps } from '../../lib/types';
 import { ProductCarousel } from '../carousel';
-import { useEffect, useRef, useState } from 'react';
-import { DismissRegular } from '@fluentui/react-icons';
+import CustomButton from '../ui/buttons/custom';
+import CustomSpinButton from '../ui/buttons/custom-spin';
+import FacebookIcon from '../ui/icons/facebook';
+import PinterestIcon from '../ui/icons/pinterest';
+import XIcon from '../ui/icons/x';
+import { ExternalLink } from '../ui/links/fui-tanstack';
+import CustomSpinner from '../ui/spinners/custom';
+import ImageSwatchPicker from '../ui/swatch-picker/image';
+import LargeSwatchPicker from '../ui/swatch-picker/large';
+import { AccordionProductInfo } from './accordion';
+
+const BASE_URL = 'https://celestia-art.netlify.app';
 
 const useStyles = makeStyles({
-  productContainer: {
-    display: 'flex',
-    gap: '1rem',
-    padding: '0 40px 40px',
-    '@media (max-width: 950px)': {
-      display: 'flex',
-      flexDirection: 'column',
-    },
+  root: {
+    '@media (max-width: 1024px)': {},
   },
-  productImg: {
-    display: 'flex',
-    alignItems: 'center',
+  left: {
+    display: 'inline-block',
+    verticalAlign: 'top',
     boxSizing: 'border-box',
-    maxWidth: '50%',
-    '@media (max-width: 950px)': {
-      maxWidth: '100%',
-    },
-    '@media (max-width: 1100px)': {
-      maxWidth: '60%',
+    width: '50%',
+    position: 'sticky',
+    top: 0,
+    padding: '24px',
+    overflowX: 'hidden',
+    '@media (max-width: 1024px)': {
+      width: '100%',
+      position: 'static',
+      maxHeight: 'none',
     },
   },
-  img: {
-    width: '100%',
-    margin: '0 auto',
-    cursor: 'pointer',
+  right: {
+    display: 'inline-block',
+    verticalAlign: 'top',
+    width: '50%',
+    padding: '40px',
+    containerName: 'right',
+    containerType: 'inline-size',
+    minHeight: '100vh',
+    borderLeft: `1px solid ${tokens.colorNeutralStroke1}`,
+    '@media (max-width: 1024px)': {
+      padding: '24px',
+      width: '100%',
+      borderLeft: `0px solid ${tokens.colorNeutralStroke1}`,
+      borderTop: `1px solid ${tokens.colorNeutralStroke1}`,
+      minHeight: 'unset',
+    },
   },
   productInfo: {
-    maxWidth: '50%',
     display: 'flex',
     flexDirection: 'column',
-    gap: '2rem',
-    padding: '5rem 0',
-    '@media (max-width: 950px)': {
-      maxWidth: '100%',
+    gap: tokens.spacingVerticalXXL,
+    maxWidth: '720px',
+    '@media (max-width: 1024px)': {
+      margin: '0 auto',
     },
   },
   productTitle: {
-    fontSize: '2.5rem',
-    fontWeight: '500',
-    lineHeight: '1',
+    ...typographyStyles.title2,
   },
   productSubtitle: {
-    fontSize: '1.3rem',
-    fontWeight: '500',
+    fontSize: tokens.fontSizeBase500,
+    fontWeight: tokens.fontWeightMedium,
   },
   productText: {
-    fontSize: '1rem',
-    lineHeight: '1.5',
+    ...typographyStyles.body1,
+    marginTop: tokens.spacingVerticalM,
+    fontSize: tokens.fontSizeBase400,
+    lineHeight: tokens.lineHeightBase400,
   },
-  selectContainer: {
+  cartButtons: {
     display: 'flex',
-    gap: '1rem',
+    gap: tokens.spacingHorizontalXL,
+    '@container right (max-width: 512px)': {
+      flexDirection: 'column',
+    },
   },
-  selectBlock: {
-    flexGrow: '1',
-  },
-  modalOverlay: {
-    position: 'fixed',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+  mobileHeading: {
     display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    zIndex: 1000,
-  },
-  modalContent: {
-    backgroundColor: tokens.colorNeutralBackground1,
-    padding: '20px',
-    borderRadius: tokens.borderRadiusMedium,
-    width: '80%',
-    maxWidth: '900px',
-    maxHeight: '95vh',
-    overflow: 'auto',
-    position: 'relative',
-  },
-  closeButton: {
-    position: 'absolute',
-    top: '10px',
-    right: '10px',
-    zIndex: 1,
-  },
-  modalCarousel: {
+    gap: tokens.spacingVerticalL,
+    flexDirection: 'column',
     width: '100%',
-    height: '100%',
+  },
+  desktopHeading: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: tokens.spacingVerticalL,
   },
 });
 
-export function ProductInfo(props: ProductInfoProps | null) {
+export function ProductInfo({
+  id,
+  description,
+  discount,
+  images,
+  materials,
+  name,
+  price,
+  sizes,
+  colors,
+  inCart = 0,
+  variants,
+}: ProductInfoProps) {
   const styles = useStyles();
-  const selectId = useId();
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const { triggerAttributes, modalAttributes } = useModalAttributes({
-    legacyTrapFocus: true,
-    trapFocus: true,
-  });
-  const { findFirstFocusable } = useFocusFinders();
-  const triggerRef = useRef<HTMLDivElement>(null);
-  const modalRef = useRef<HTMLDivElement>(null);
-
-  const handleImageClick = () => {
-    if (props?.images && props.images.length > 0) {
-      setIsModalOpen(true);
-    }
+  const [currentSize, setCurrentSize] = useState<string | null>(sizes?.[0] ?? null);
+  const [currentColor, setCurrentColor] = useState<string | null>(colors?.[0] ?? null);
+  const [currentMaterial, setCurrentMaterial] = useState<string | null>(materials?.[0] ?? null);
+  const [quantity, setQuantity] = useState(Math.max(1, inCart ?? 0));
+  const [addLoading, setAddLoading] = useState(false);
+  const [removeLoading, setRemoveLoading] = useState(false);
+  const variantId =
+    variants?.find(
+      (v) =>
+        (v.attributes?.[0]?.value?.key === currentMaterial || currentMaterial === null) &&
+        (v.attributes?.[1]?.value === currentSize || currentSize === null) &&
+        (v.attributes?.[2]?.value === currentColor || currentColor === null),
+    )?.id ?? 1;
+  const addToCart = () => {
+    setAddLoading(true);
+    setTimeout(() => {
+      console.log('add to cart prod id', id, 'variant id', variantId);
+      setAddLoading(false);
+    }, 2000);
   };
-
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-    triggerRef.current?.focus();
+  const removeFromToCart = () => {
+    setRemoveLoading(true);
+    setTimeout(() => {
+      console.log('remove from cart all variants prod id', id);
+      setQuantity(1);
+      setRemoveLoading(false);
+    }, 2000);
   };
-
-  const onModalKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
-    if (e.key === 'Escape') {
-      handleCloseModal();
-    }
-  };
-
-  useEffect(() => {
-    if (isModalOpen && modalRef.current) {
-      document.body.style.overflow = 'hidden';
-      findFirstFocusable(modalRef.current)?.focus();
-    }
-    return () => {
-      document.body.style.overflow = 'auto';
-    };
-  }, [isModalOpen, findFirstFocusable]);
+  const location = useLocation();
+  const matchMobileWidth = useMatchMediaQuery('(max-width: 1024px)');
 
   return (
-    <div className={styles.productContainer}>
-      <div className={styles.productImg} ref={triggerRef} {...triggerAttributes}>
-        {props?.images && props?.images.length > 1 ? (
-          <ProductCarousel images={props.images} onImageClick={handleImageClick} />
-        ) : (
-          <Image className={styles.img} src={props?.image} onClick={handleImageClick} />
-        )}
-      </div>
-
-      <div className={styles.productInfo}>
-        <Text as="h2" className={styles.productTitle}>
-          {props?.name}
-        </Text>
-        <div>
-          {props?.discount ? (
-            <div>
-              <Text className={styles.productSubtitle} strikethrough style={{ marginRight: '5px' }}>
-                {props.price}
+    <div className={styles.root}>
+      <div className={styles.left}>
+        {matchMobileWidth && (
+          <div className={styles.mobileHeading}>
+            <Text
+              as="h2"
+              className={styles.productTitle}
+              style={{ viewTransitionName: `product-name-${id}` }}
+            >
+              {name}
+            </Text>
+            <p
+              style={{
+                display: 'flex',
+                gap: tokens.spacingHorizontalS,
+                viewTransitionName: `product-price-${id}`,
+              }}
+            >
+              {discount && <Text className={styles.productSubtitle}>{discount}</Text>}
+              <Text
+                className={styles.productSubtitle}
+                strikethrough={!!discount}
+                style={{ marginRight: '5px' }}
+              >
+                {price}
               </Text>
-              <Text className={styles.productSubtitle}>{props.discount}</Text>
-            </div>
-          ) : (
-            <div>
-              <Text className={styles.productSubtitle}>{props?.price}</Text>
+            </p>
+            <Divider style={{ width: '200%', marginLeft: '-50%' }} />
+          </div>
+        )}
+        <ProductCarousel images={images} style={{ width: '100%', position: 'relative' }} id={id} />
+      </div>
+      <div className={styles.right}>
+        <div className={styles.productInfo}>
+          {!matchMobileWidth && (
+            <div className={styles.desktopHeading}>
+              <Text
+                as="h2"
+                className={styles.productTitle}
+                style={{ viewTransitionName: `product-name-${id}` }}
+              >
+                {name}
+              </Text>
+              <p
+                style={{
+                  display: 'flex',
+                  gap: tokens.spacingHorizontalS,
+                  viewTransitionName: `product-price-${id}`,
+                }}
+              >
+                {discount && <Text className={styles.productSubtitle}>{discount}</Text>}
+                <Text
+                  className={styles.productSubtitle}
+                  strikethrough={!!discount}
+                  style={{ marginRight: '5px' }}
+                >
+                  {price}
+                </Text>
+              </p>
             </div>
           )}
-        </div>
-        <Text className={styles.productSubtitle}>About the Artwork</Text>
-        <div className={styles.productText}>{props?.description}</div>
-        <div className={styles.selectContainer}>
-          <div className={styles.selectBlock}>
-            <label htmlFor={`${selectId}-large`}>Select Size</label>
-            <Select id={`${selectId}-large`} size="large">
-              <option>20x16</option>
-              <option>30x24</option>
-              <option>40x32</option>
-              <option>50x40</option>
-              <option>60x48</option>
-            </Select>
+          <div>
+            <Text className={styles.productSubtitle}>About the Artwork</Text>
+            <p className={styles.productText}>{description}</p>
           </div>
-          <div className={styles.selectBlock}>
-            <label htmlFor={`${selectId}-large`}>Select Material</label>
-            <Select id={`${selectId}-large`} size="large">
-              <option>Giclee</option>
-              <option>Photo Rag</option>
-              <option>Canvas</option>
-            </Select>
+          <div
+            style={{
+              display: 'flex',
+              gap: 20,
+              flexWrap: 'wrap',
+            }}
+          >
+            {!!materials?.length && (
+              <div>
+                <Label style={{ fontSize: tokens.fontSizeBase400 }}>Materials</Label>
+                <ImageSwatchPicker
+                  images={allMaterials.filter((m) => materials?.includes(m.value))}
+                  value={currentMaterial ?? undefined}
+                  onChange={(v) => setCurrentMaterial(v)}
+                />
+              </div>
+            )}
+            {!!colors?.length && (
+              <div>
+                <Label style={{ fontSize: tokens.fontSizeBase400 }}>Colors</Label>
+                <LargeSwatchPicker
+                  colors={allColors.filter((c) => colors?.includes(c.value))}
+                  onChange={(v) => setCurrentColor(v)}
+                  value={currentColor ?? undefined}
+                />
+              </div>
+            )}
+            {!!sizes?.length && (
+              <div>
+                <Label style={{ fontSize: tokens.fontSizeBase400 }}>Sizes</Label>
+                <Menu
+                  defaultCheckedValues={{ size: [sizes[0]] }}
+                  onCheckedValueChange={(_, d) => setCurrentSize(d.checkedItems[0])}
+                >
+                  <MenuTrigger disableButtonEnhancement>
+                    <div>
+                      <CustomButton
+                        appearance="transparent"
+                        outlined
+                        shape="square"
+                        icon={<ChevronDownRegular />}
+                        iconPosition="after"
+                        style={{
+                          minWidth: 138,
+                          justifyContent: 'space-between',
+                          fontSize: tokens.fontSizeBase400,
+                          height: 40,
+                          paddingRight: 12,
+                        }}
+                      >
+                        {currentSize}
+                      </CustomButton>
+                    </div>
+                  </MenuTrigger>
+                  <MenuPopover>
+                    <MenuList>
+                      {sizes?.map((v) => (
+                        <MenuItemRadio
+                          key={v}
+                          name="size"
+                          value={v}
+                          style={{ fontSize: tokens.fontSizeBase400 }}
+                        >
+                          {v}
+                        </MenuItemRadio>
+                      ))}
+                    </MenuList>
+                  </MenuPopover>
+                </Menu>
+              </div>
+            )}
+            <div>
+              <Label style={{ fontSize: tokens.fontSizeBase400 }}>Quantity</Label>
+              {
+                <CustomSpinButton
+                  style={{ display: 'grid', fontSize: tokens.fontSizeBase400 }}
+                  value={quantity}
+                  onChange={(_, d) => setQuantity(d.value ?? 1)}
+                  min={1}
+                />
+              }
+            </div>
+          </div>
+          <div className={styles.cartButtons}>
+            <CustomButton
+              shape="circular"
+              style={{
+                flexBasis: '50%',
+                position: 'relative',
+                lineHeight: '26px',
+                padding: 12,
+              }}
+              disabled={addLoading || removeLoading}
+              onClick={addToCart}
+            >
+              {addLoading ? (
+                <CustomSpinner
+                  style={{
+                    right: 8,
+                    fontSize: 26,
+                  }}
+                />
+              ) : (
+                'ADD TO CART'
+              )}
+            </CustomButton>
+            <CustomButton
+              shape="circular"
+              style={{
+                flexBasis: '50%',
+                position: 'relative',
+                lineHeight: '26px',
+                padding: 12,
+              }}
+              appearance="inverted"
+              disabled={inCart === 0 || removeLoading || addLoading}
+              onClick={removeFromToCart}
+            >
+              REMOVE FROM CART
+              <CustomSpinner
+                style={{
+                  position: 'absolute',
+                  right: 8,
+                  fontSize: 26,
+                  visibility: removeLoading ? 'visible' : 'hidden',
+                }}
+              />
+            </CustomButton>
+          </div>
+          <AccordionProductInfo />
+          <div
+            style={{
+              display: 'flex',
+              gap: tokens.spacingHorizontalXS,
+              alignItems: 'center',
+            }}
+          >
+            <span style={{ lineHeight: 1, fontSize: tokens.fontSizeBase400 }}>Share:</span>
+            <ExternalLink
+              href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(name)}&url=${BASE_URL}${location.pathname}`}
+              appearance="stickless"
+              style={{ fontSize: tokens.fontSizeBase600, lineHeight: 1 }}
+              target="_blank"
+              asBlock
+            >
+              <XIcon />
+            </ExternalLink>
+            <ExternalLink
+              href={`https://www.facebook.com/sharer.php?u=${BASE_URL}${location.pathname}`}
+              appearance="stickless"
+              style={{ fontSize: tokens.fontSizeBase600, lineHeight: 1 }}
+              target="_blank"
+              asBlock
+            >
+              <FacebookIcon />
+            </ExternalLink>
+            <ExternalLink
+              href={`https://pinterest.com/pin/create/button/?url=${BASE_URL}${location.pathname}&media=${images?.[0].url}?description=${encodeURIComponent(name)}`}
+              appearance="stickless"
+              style={{ fontSize: tokens.fontSizeBase600, lineHeight: 1 }}
+              target="_blank"
+              asBlock
+            >
+              <PinterestIcon />
+            </ExternalLink>
           </div>
         </div>
       </div>
-
-      {isModalOpen && (
-        <div className={styles.modalOverlay} onClick={handleCloseModal}>
-          <div
-            className={styles.modalContent}
-            ref={modalRef}
-            {...modalAttributes}
-            aria-modal="true"
-            role="dialog"
-            aria-label="Product image gallery"
-            onClick={(e) => e.stopPropagation()}
-            onKeyDown={onModalKeyDown}
-          >
-            <Button
-              className={styles.closeButton}
-              appearance="transparent"
-              onClick={handleCloseModal}
-              aria-label="Close gallery"
-              icon={<DismissRegular />}
-            />
-            <div className={styles.modalCarousel}>
-              <ProductCarousel images={props?.images ?? []} />
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

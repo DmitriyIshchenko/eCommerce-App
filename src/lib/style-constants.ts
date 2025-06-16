@@ -1,3 +1,3 @@
 export const styleConstants = {
-  containerMaxWidth: "1440px"
-}
+  containerMaxWidth: '1440px',
+};

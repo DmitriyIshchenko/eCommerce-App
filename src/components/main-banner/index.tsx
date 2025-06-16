@@ -2,7 +2,7 @@ import { makeStyles, Subtitle1, Title2 } from '@fluentui/react-components';
 
 const useClasses = makeStyles({
   main: {
-    minHeight: "calc(100vh - 100px)",
+    minHeight: 'calc(100vh - 100px)',
     width: '100%',
     display: 'flex',
     flexDirection: 'column',
@@ -16,7 +16,7 @@ const useClasses = makeStyles({
 });
 
 export function MainBanner() {
-	const classes = useClasses();
+  const classes = useClasses();
 
   return (
     <main className={classes.main}>

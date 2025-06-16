@@ -16,6 +16,7 @@ const useCss = makeStyles({
     textDecoration: 'none',
     userSelect: 'none',
     display: 'inline-block',
+    lineHeight: 1.1,
     '[data-fui-focus-visible]': {
       textDecoration: 'none',
       '::after': {
@@ -133,7 +134,7 @@ export const ExternalLink = forwardRef<HTMLAnchorElement, StyledLinkProps>(
           appearance === 'inverted' && css.inverted,
           appearance === 'inverted' && css.stick,
           appearance === 'muted' && css.muted,
-          appearance === "stickless" && css.stickless,
+          appearance === 'stickless' && css.stickless,
           asBlock && css.block,
           accent && css.accent,
           notInteractive && css.notInteractive,

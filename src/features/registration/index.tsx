@@ -1,7 +1,5 @@
-import RegistrationForm from "../../components/registration-form";
+import RegistrationForm from '../../components/registration-form';
 
 export default function Registration() {
-  return (
-    <RegistrationForm/>
-  )
+  return <RegistrationForm />;
 }

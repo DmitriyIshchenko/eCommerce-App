@@ -16,10 +16,7 @@ try {
     const baseName = path.basename(file, ext);
     const outputPath = path.join(outputDir, `${baseName}-lqip.webp`);
     try {
-      await sharp(inputPath)
-        .resize({ width: 128 })
-        .webp({quality: 90})
-        .toFile(outputPath);
+      await sharp(inputPath).resize({ width: 128 }).webp({ quality: 90 }).toFile(outputPath);
     } catch (e) {
       if (e instanceof Error) console.error(`Error in file ${file}:`, e.message);
     }
