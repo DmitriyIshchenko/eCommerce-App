@@ -20,3 +20,16 @@ textarea {
   width: 100%;
   display: block;
 }
+
+.main {
+  min-height: calc(100vh - 100px);
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 30px;
+  max-width: 1440px;
+  box-sizing: border-box;
+  margin: 0 auto;
+}
