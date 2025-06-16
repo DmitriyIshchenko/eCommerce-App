@@ -9,10 +9,17 @@ import {
   DrawerHeader,
   DrawerHeaderTitle,
 } from '@fluentui/react-components';
-import { NavigationRegular, DismissRegular } from '@fluentui/react-icons';
-import { createLink, useNavigate } from '@tanstack/react-router';
+import { DismissRegular } from '@fluentui/react-icons';
+import { createLink, useLocation, useNavigate, useRouteContext } from '@tanstack/react-router';
 import { useUser } from '../../hooks/use-user';
 import { useState, useEffect } from 'react';
+import SearchButton from '../ui/buttons/search';
+import BurgerButton from '../ui/buttons/burger';
+import SplitLinkMenu from '../ui/menu/split-link';
+import adaptCategoriesToSplitLinkMenuItemProp from '../../lib/utils/adapt-categories';
+import { InternalLink } from '../ui/links/fui-tanstack';
+import { CatalogTree } from '../../features/catalog-tree';
+import SearchDrawer from '../../features/search-drawer';
 
 const useClasses = makeStyles({
   header: {
@@ -52,7 +59,8 @@ const useClasses = makeStyles({
     listStyle: 'none',
     fontSize: '1.2rem',
     textDecoration: 'none',
-    '@media (max-width: 600px)': {
+    marginRight: tokens.spacingHorizontalMNudge,
+    '@media (max-width: 768px)': {
       display: 'none',
     },
   },
@@ -66,8 +74,8 @@ const useClasses = makeStyles({
   },
   burgerButton: {
     display: 'none',
-    '@media (max-width: 600px)': {
-      display: 'block',
+    '@media (max-width: 768px)': {
+      display: 'flex',
     },
   },
   drawerMenu: {
@@ -93,21 +101,27 @@ const useClasses = makeStyles({
 export function Header() {
   const CustomLink = createLink(Link);
   const classes = useClasses();
-  const { authorized, setAuthorized } = useUser();
+  const { authorized, logout } = useUser();
   const navigate = useNavigate();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [isSearchDrawerOpen, setIsSearchDrawerOpen] = useState(false);
 
-  const menuItems = [
-    {
-      name: 'About',
-      to: '/about',
-      ariaLabel: 'Learn more about our company',
-    },
-    {
-      name: 'Catalog',
-      to: '/catalog',
-      ariaLabel: 'Browse our product catalog',
-    },
+  const { pathname } = useLocation();
+  const { categories } = useRouteContext({
+    from: '__root__',
+  });
+  const catalogMenuItems = adaptCategoriesToSplitLinkMenuItemProp(
+    categories,
+    '/catalog/$category/$',
+  );
+
+  const about = {
+    name: 'About',
+    to: '/about',
+    ariaLabel: 'Learn more about our company',
+  };
+
+  const authMenu = [
     {
       name: 'Login',
       to: authorized ? '/' : '/login',
@@ -120,15 +134,21 @@ export function Header() {
     },
   ];
 
+  const account = {
+    name: 'Account',
+    to: '/account',
+    ariaLabel: 'Customer account',
+  };
+
   const handleLogout = () => {
-    setAuthorized(false);
+    logout();
     setIsDrawerOpen(false);
     void navigate({ to: '/login' });
   };
 
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth > 600 && isDrawerOpen) {
+      if (window.innerWidth > 768 && isDrawerOpen) {
         setIsDrawerOpen(false);
       }
     };
@@ -155,30 +175,74 @@ export function Header() {
           <LargeTitle className={classes.title}>Celestia Art</LargeTitle>
         </CustomLink>
 
-        <ul className={classes.menu}>
-          {menuItems.map((item) => (
-            <li key={item.name}>
-              <CustomLink className={classes.menuLink} aria-label={item.ariaLabel} to={item.to}>
-                {item.name}
-              </CustomLink>
-            </li>
-          ))}
-          {authorized && (
+        <div style={{ display: 'flex' }}>
+          <ul className={classes.menu}>
             <li>
-              <Button shape="circular" onClick={handleLogout}>
-                Logout
-              </Button>
+              <SplitLinkMenu
+                name="Catalog"
+                to="/catalog"
+                items={catalogMenuItems}
+                active={pathname.split('/').slice(0, 2).join('/') === '/catalog'}
+              />
             </li>
-          )}
-        </ul>
+            <li>
+              <InternalLink
+                aria-label={about.ariaLabel}
+                to={about.to}
+                appearance="straight"
+                inline
+                active={about.to === pathname.split('/').slice(0, 2).join('/')}
+              >
+                {about.name}
+              </InternalLink>
+            </li>
 
-        <Button
-          className={classes.burgerButton}
-          appearance="transparent"
-          icon={<NavigationRegular />}
-          onClick={() => setIsDrawerOpen(true)}
-          aria-label="Open navigation menu"
-        />
+            {!authorized &&
+              authMenu.map((item) => (
+                <li key={item.name}>
+                  <InternalLink
+                    aria-label={item.ariaLabel}
+                    to={item.to}
+                    appearance="straight"
+                    inline
+                    active={item.to === pathname.split('/').slice(0, 2).join('/')}
+                  >
+                    {item.name}
+                  </InternalLink>
+                </li>
+              ))}
+            {authorized && (
+              <>
+                <li key={account.name}>
+                  <InternalLink
+                    aria-label={account.ariaLabel}
+                    to={account.to}
+                    appearance="straight"
+                    inline
+                    active={account.to === pathname.split('/').slice(0, 2).join('/')}
+                  >
+                    {account.name}
+                  </InternalLink>
+                </li>
+                <li>
+                  <Button size="large" shape="circular" onClick={handleLogout}>
+                    Logout
+                  </Button>
+                </li>
+              </>
+            )}
+          </ul>
+
+          <div style={{ display: 'flex' }}>
+            <SearchButton onClick={() => setIsSearchDrawerOpen(true)} />
+
+            <BurgerButton
+              className={classes.burgerButton}
+              onClick={() => setIsDrawerOpen(true)}
+              aria-label="Open navigation menu"
+            />
+          </div>
+        </div>
 
         <Drawer
           modalType="modal"
@@ -206,28 +270,60 @@ export function Header() {
 
           <DrawerBody>
             <ul className={classes.drawerMenu}>
-              {menuItems.map((item) => (
-                <li key={item.name}>
-                  <CustomLink
-                    className={classes.drawerMenuItem}
-                    aria-label={item.ariaLabel}
-                    to={item.to}
-                    onClick={() => setIsDrawerOpen(false)}
-                  >
-                    {item.name}
-                  </CustomLink>
-                </li>
-              ))}
+              <li>
+                <CatalogTree />
+              </li>
+              <li>
+                <InternalLink
+                  aria-label={about.ariaLabel}
+                  to={about.to}
+                  appearance="straight"
+                  inline
+                  active={about.to === pathname.split('/').slice(0, 2).join('/')}
+                >
+                  {about.name}
+                </InternalLink>
+              </li>
+
+              {!authorized &&
+                authMenu.map((item) => (
+                  <li key={item.name}>
+                    <InternalLink
+                      aria-label={item.ariaLabel}
+                      to={item.to}
+                      appearance="straight"
+                      inline
+                      active={item.to === pathname.split('/').slice(0, 2).join('/')}
+                    >
+                      {item.name}
+                    </InternalLink>
+                  </li>
+                ))}
               {authorized && (
-                <li>
-                  <Button shape="circular" onClick={handleLogout}>
-                    Logout
-                  </Button>
-                </li>
+                <>
+                  <li key={account.name}>
+                    <InternalLink
+                      aria-label={account.ariaLabel}
+                      to={account.to}
+                      appearance="straight"
+                      inline
+                      active={account.to === pathname.split('/').slice(0, 2).join('/')}
+                    >
+                      {account.name}
+                    </InternalLink>
+                  </li>
+                  <li>
+                    <Button size="large" shape="circular" onClick={handleLogout}>
+                      Logout
+                    </Button>
+                  </li>
+                </>
               )}
             </ul>
           </DrawerBody>
         </Drawer>
+
+        <SearchDrawer open={isSearchDrawerOpen} onOpenChange={setIsSearchDrawerOpen} />
       </div>
     </header>
   );

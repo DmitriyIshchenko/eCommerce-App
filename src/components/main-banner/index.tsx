@@ -1,24 +1,14 @@
-import { makeStyles, Title2 } from '@fluentui/react-components';
-
-export const useClasses = makeStyles({
-  main: {
-    minHeight: `calc(100vh - 100px)`,
-    width: '100%',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    maxWidth: '1440px',
-    boxSizing: 'border-box',
-    margin: '0 auto',
-  },
-});
+import { Subtitle1, Title2 } from '@fluentui/react-components';
+import '../../styles/globals.css';
 
 export function MainBanner() {
-  const classes = useClasses();
-
   return (
-    <main className={classes.main}>
+    <main className="main">
       <Title2>🐱‍💻 Main Page 🐱‍💻</Title2>
+      <Subtitle1 align="center">
+        Hey! We&apos;re still wrapping up our project - would it be okay if you review it on the
+        last day? Thanks a lot and good luck! 🙏
+      </Subtitle1>
     </main>
   );
 }
