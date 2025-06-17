@@ -2,7 +2,9 @@ import type { Cart } from '@commercetools/platform-sdk';
 import { useCallback, useState, type ReactNode } from 'react';
 import {
   createCartForCurrentCustomer,
+  deleteItemFromCart,
   getActiveCart,
+  reduceItemQuantityInCart,
   updateActiveCart,
 } from '../../../lib/api/cart';
 import { CartContext } from './context';
@@ -48,6 +50,55 @@ export function CartContextProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
+  const reduceItemQuantity = useCallback(async (id: string) => {
+    try {
+      setCartLoading(true);
+      const { body: activeCart } = await getActiveCart();
+
+      const { body: updatedCart } = await reduceItemQuantityInCart({
+        cartId: activeCart.id,
+        cartUpdateDraft: {
+          version: activeCart.version,
+          lineItemId: id,
+          quantity: 1,
+        },
+      });
+
+      setCart(updatedCart);
+
+      return updatedCart;
+    } catch (error) {
+      console.error('Failed to decrement quantity:', error);
+      throw error;
+    } finally {
+      setCartLoading(false);
+    }
+  }, []);
+
+  const deleteItem = useCallback(async (id: string) => {
+    try {
+      setCartLoading(true);
+      const { body: activeCart } = await getActiveCart();
+
+      const { body: updatedCart } = await deleteItemFromCart({
+        cartId: activeCart.id,
+        cartUpdateDraft: {
+          version: activeCart.version,
+          lineItemId: id,
+        },
+      });
+
+      setCart(updatedCart);
+
+      return updatedCart;
+    } catch (error) {
+      console.error('Failed to delete item:', error);
+      throw error;
+    } finally {
+      setCartLoading(false);
+    }
+  }, []);
+
   const refreshCart = useCallback(async () => {
     try {
       const activeCart = await getActiveCart();
@@ -71,6 +122,8 @@ export function CartContextProvider({ children }: { children: ReactNode }) {
         addItemToCart,
         createCart,
         refreshCart,
+        reduceItemQuantity,
+        deleteItem,
       }}
     >
       {children}

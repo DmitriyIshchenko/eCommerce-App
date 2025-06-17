@@ -7,6 +7,8 @@ interface CartContextType {
   cartLoading: boolean;
   setCartLoading: (value: boolean) => void;
   addItemToCart: (productId: string, variantId?: number) => Promise<Cart>;
+  reduceItemQuantity: (id: string) => Promise<Cart>;
+  deleteItem: (id: string) => Promise<Cart>;
   createCart: () => Promise<Cart>;
   refreshCart: () => Promise<void>;
 }

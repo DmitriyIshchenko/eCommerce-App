@@ -3,6 +3,7 @@ import { Button, Image, makeStyles, Text, tokens, Body1Strong } from '@fluentui/
 import { CaretDownRegular, CaretUpRegular, DeleteRegular } from '@fluentui/react-icons';
 import formatPrice from '../../lib/utils/format-price';
 import { InternalLink } from '../../components/ui/links/fui-tanstack';
+import { useCart } from '../../hooks/use-cart';
 
 interface ValidAttribute extends Attribute {
   value: string;
@@ -54,6 +55,8 @@ const useStyles = makeStyles({
 export default function CartItem({ item }: Props) {
   const styles = useStyles();
 
+  const { addItemToCart, reduceItemQuantity, deleteItem } = useCart();
+
   const {
     variant: { attributes, images },
     name,
@@ -102,10 +105,17 @@ export default function CartItem({ item }: Props) {
       </div>
 
       <div className={styles.controls}>
-        <Button icon={<CaretUpRegular />} />
+        <Button
+          icon={<CaretUpRegular />}
+          onClick={() => void addItemToCart(item.productId, item.variant.id)}
+        />
         <Text>{quantity}</Text>
-        <Button icon={<CaretDownRegular />} />
-        <Button className={styles.delete} icon={<DeleteRegular />} />
+        <Button icon={<CaretDownRegular />} onClick={() => void reduceItemQuantity(item.id)} />
+        <Button
+          className={styles.delete}
+          icon={<DeleteRegular />}
+          onClick={() => void deleteItem(item.id)}
+        />
       </div>
     </article>
   );

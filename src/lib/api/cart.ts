@@ -1,4 +1,4 @@
-import type { CartDraft } from '@commercetools/platform-sdk';
+import type { CartDraft, MyCartUpdateAction } from '@commercetools/platform-sdk';
 import { getApiRootSmart } from './client';
 
 interface CartUpdateDraft {
@@ -6,6 +6,17 @@ interface CartUpdateDraft {
   productId: string;
   variantId?: number;
   quantity: number;
+}
+
+interface ReduceQuantityDraft {
+  version: number;
+  lineItemId: string;
+  quantity?: number;
+}
+
+interface DeleteItemDraft {
+  version: number;
+  lineItemId: string;
 }
 
 export async function createCartForCurrentCustomer(cartDraft: CartDraft) {
@@ -76,5 +87,68 @@ export async function updateActiveCart(productDetails: {
     return updatedCart;
   } catch {
     throw new Error('Failed to add cart item');
+  }
+}
+
+export async function reduceItemQuantityInCart(productDetails: {
+  cartId: string;
+  cartUpdateDraft: ReduceQuantityDraft;
+}) {
+  try {
+    const { cartId, cartUpdateDraft } = productDetails;
+    const apiRoot = getApiRootSmart();
+
+    const removeAction: MyCartUpdateAction = {
+      action: 'removeLineItem',
+      lineItemId: cartUpdateDraft.lineItemId,
+      ...(cartUpdateDraft.quantity && { quantity: cartUpdateDraft.quantity }),
+    };
+
+    const updatedCart = await apiRoot
+      .me()
+      .carts()
+      .withId({ ID: cartId })
+      .post({
+        body: {
+          version: cartUpdateDraft.version,
+          actions: [removeAction],
+        },
+      })
+      .execute();
+
+    return updatedCart;
+  } catch {
+    throw new Error('Failed to reduce quantity');
+  }
+}
+
+export async function deleteItemFromCart(productDetails: {
+  cartId: string;
+  cartUpdateDraft: DeleteItemDraft;
+}) {
+  try {
+    const { cartId, cartUpdateDraft } = productDetails;
+    const apiRoot = getApiRootSmart();
+
+    const updatedCart = await apiRoot
+      .me()
+      .carts()
+      .withId({ ID: cartId })
+      .post({
+        body: {
+          version: cartUpdateDraft.version,
+          actions: [
+            {
+              action: 'removeLineItem',
+              lineItemId: cartUpdateDraft.lineItemId,
+            },
+          ],
+        },
+      })
+      .execute();
+
+    return updatedCart;
+  } catch {
+    throw new Error('Failed to remove item');
   }
 }
