@@ -37,6 +37,7 @@ export default function Pagination({
         search={{ [searchParamName]: currentPage - 1 }}
         disabled={currentPage === 1}
         notInteractive={currentPage === 1}
+        viewTransition={{ types: ['slide-right'] }}
       >
         <ChevronLeftFilled />
       </InternalLink>
@@ -52,6 +53,7 @@ export default function Pagination({
             ...search,
             [searchParamName]: p,
           }}
+          viewTransition={{ types: [+p > currentPage ? 'slide-left' : 'slide-right'] }}
         >
           {p}
         </InternalLink>
@@ -62,6 +64,7 @@ export default function Pagination({
         search={{ ...search, page: currentPage + 1 }}
         disabled={currentPage === total}
         notInteractive={currentPage === total}
+        viewTransition={{ types: ['slide-left'] }}
       >
         <ChevronRightFilled />
       </InternalLink>
