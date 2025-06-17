@@ -105,3 +105,8 @@ export const registerSchema = personalSchema.extend({
 });
 
 export type RegisterSchema = z.infer<typeof registerSchema>;
+
+export const keyLabelSchema = z.object({
+  key: z.string(),
+  label: z.string(),
+});

@@ -151,7 +151,25 @@ export function ProductInfo(props: ProductInfoProps | null) {
     }
   };
 
+  const handleAttributeChange = (attributeName: string, value: string) => {
+    setSelectedAttributes((prev) => ({
+      ...prev,
+      [attributeName]: value,
+    }));
+  };
+
+  const getFirstAttributeValue = (attrName: string): string => {
+    const values = productVariationAttributes[attrName];
+    return values ? Array.from(values)[0] : '';
+  };
+
   const productVariationAttributes = findProductVariationAttributes(props?.variants);
+
+  const [selectedAttributes, setSelectedAttributes] = useState({
+    size: getFirstAttributeValue('size'),
+    material: getFirstAttributeValue('material'),
+    color: getFirstAttributeValue('color'),
+  });
 
   useEffect(() => {
     if (isModalOpen && modalRef.current) {
@@ -198,7 +216,11 @@ export function ProductInfo(props: ProductInfoProps | null) {
             return (
               <div key={`select-block-${key}`} className={styles.selectBlock}>
                 <label htmlFor={`${selectId}-${key}`}>Select {key}</label>
-                <Select id={`${selectId}-${key}`} size="large">
+                <Select
+                  id={`${selectId}-${key}`}
+                  size="large"
+                  onChange={(e) => handleAttributeChange(key, e.target.value)}
+                >
                   {Array.from(values).map((value, index) => (
                     <option key={`${key}-option-${index}`} value={value}>
                       {value}

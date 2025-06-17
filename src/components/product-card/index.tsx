@@ -25,7 +25,10 @@ export function ProductCard(props: ProductCardProps) {
 
   const onActionCardClick = async () => {
     if (props.id) {
-      await navigate({ to: `/products/${props.id}`, params: { id: props.id } });
+      await navigate({
+        to: `/catalog/$category/$subcategory/$id`,
+        params: { id: props.id, category: props.category, subcategory: props.subCategory },
+      });
     }
   };
 
