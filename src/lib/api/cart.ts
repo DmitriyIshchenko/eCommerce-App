@@ -152,3 +152,24 @@ export async function deleteItemFromCart(productDetails: {
     throw new Error('Failed to remove item');
   }
 }
+
+export async function deleteCart() {
+  try {
+    const cart = await getActiveCart();
+
+    const apiRoot = getApiRootSmart();
+
+    await apiRoot
+      .me()
+      .carts()
+      .withId({ ID: cart.body.id })
+      .delete({
+        queryArgs: {
+          version: cart.body.version,
+        },
+      })
+      .execute();
+  } catch {
+    throw new Error('Failed to delete cart');
+  }
+}

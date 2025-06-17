@@ -2,6 +2,7 @@ import type { Cart } from '@commercetools/platform-sdk';
 import { useCallback, useState, type ReactNode } from 'react';
 import {
   createCartForCurrentCustomer,
+  deleteCart,
   deleteItemFromCart,
   getActiveCart,
   reduceItemQuantityInCart,
@@ -112,6 +113,22 @@ export function CartContextProvider({ children }: { children: ReactNode }) {
     }
   }, [createCart]);
 
+  const clearCart = useCallback(async () => {
+    try {
+      setCartLoading(true);
+
+      await deleteCart();
+      await createCart();
+    } catch (error) {
+      console.error('Failed to clear cart:', error);
+      throw error;
+    } finally {
+      setCartLoading(false);
+    }
+  }, [createCart]);
+
+  const isCartEmpty = useCallback(() => cart?.lineItems.length === 0, [cart?.lineItems.length]);
+
   return (
     <CartContext.Provider
       value={{
@@ -124,6 +141,8 @@ export function CartContextProvider({ children }: { children: ReactNode }) {
         refreshCart,
         reduceItemQuantity,
         deleteItem,
+        clearCart,
+        isCartEmpty,
       }}
     >
       {children}
