@@ -1,6 +1,6 @@
 import { LargeTitle, makeStyles, tokens } from '@fluentui/react-components';
 import ButtonLink from '../../components/ui/links/button';
-import { Cart24Regular } from '@fluentui/react-icons/fonts';
+import { Cart24Regular } from '@fluentui/react-icons';
 
 const useStyles = makeStyles({
   message: {
