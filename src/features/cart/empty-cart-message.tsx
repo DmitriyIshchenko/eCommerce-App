@@ -1,5 +1,6 @@
 import { LargeTitle, makeStyles, tokens } from '@fluentui/react-components';
-import { InternalLink } from '../../components/ui/links/fui-tanstack';
+import ButtonLink from '../../components/ui/links/button';
+import { Cart24Regular } from '@fluentui/react-icons/fonts';
 
 const useStyles = makeStyles({
   message: {
@@ -16,9 +17,13 @@ export default function EmptyCartMessage() {
   return (
     <div className={styles.message}>
       <LargeTitle>Your cart is empty!</LargeTitle>
-      <InternalLink to="/catalog/$category/$" params={{ category: 'all' }}>
-        Continue shopping
-      </InternalLink>
+
+      <ButtonLink
+        text="Continue shopping"
+        to="/catalog/$category/$"
+        params={{ category: 'all' }}
+        icon={<Cart24Regular />}
+      />
     </div>
   );
 }
