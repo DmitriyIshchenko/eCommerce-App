@@ -4,6 +4,7 @@ import { CaretDownRegular, CaretUpRegular, DeleteRegular } from '@fluentui/react
 import formatPrice from '../../lib/utils/format-price';
 import { InternalLink } from '../../components/ui/links/fui-tanstack';
 import { useCart } from '../../hooks/use-cart';
+import defaultImage from '../../assets/images/default-image.jpg';
 
 interface ValidAttribute extends Attribute {
   value: string;
@@ -75,7 +76,7 @@ export default function CartItem({ item }: Props) {
     if (isValidAttribute(sizeAttr)) size = sizeAttr.value;
   }
 
-  const imageUrl = images?.[0].url ?? '';
+  const imageUrl = images?.[0].url ?? defaultImage;
   const imageLabel = images?.[0].label ?? 'default image';
 
   const isDiscounted = 'discounted' in price;
