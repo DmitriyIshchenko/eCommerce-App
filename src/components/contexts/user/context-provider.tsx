@@ -2,7 +2,7 @@ import { useEffect, useState, type ReactNode } from 'react';
 import { UserContext, type AuthToken } from './context';
 
 import { clearTokens, getStoredTokens, isTokenValid } from '../../../lib/api/token-storage';
-import type { Customer } from '@commercetools/platform-sdk';
+import type { Cart, Customer } from '@commercetools/platform-sdk';
 import { getCurrentCustomer } from '../../../lib/api/get-customer';
 import type {
   LoginSchema,
@@ -14,13 +14,18 @@ import { login as loginApi } from '../../../lib/api/login';
 import { signup as signupApi, type AddressOptions } from '../../../lib/api/create-customer';
 import { updateCustomer as updateCustomerApi } from '../../../lib/api/update-customer';
 import { getAnonymousClient } from '../../../lib/api/get-anonymous-client';
-import { useCart } from '../../../hooks/use-cart';
+import {
+  createCartForCurrentCustomer,
+  getActiveCart,
+  updateActiveCart,
+} from '../../../lib/api/cart';
 
 export function UserContextProvider({ children }: { children: ReactNode }) {
   const [token, setToken] = useState<AuthToken | null>(null);
   const [customer, setCustomer] = useState<Customer | null>(null);
   const [authorized, setAuthorized] = useState(isTokenValid('customer'));
-  const { setCart, createCart, refreshCart } = useCart();
+  const [cart, setCart] = useState<Cart | null>(null);
+  const [cartLoading, setCartLoading] = useState(false);
 
   useEffect(() => {
     const initializeAuth = async () => {
@@ -41,6 +46,8 @@ export function UserContextProvider({ children }: { children: ReactNode }) {
           setAuthorized(false);
 
           await refreshCart();
+        } else {
+          await createCart();
         }
       } catch (error) {
         console.error('Auth initialization failed:', error);
@@ -106,9 +113,59 @@ export function UserContextProvider({ children }: { children: ReactNode }) {
     setCustomer(customerResponse.body);
   };
 
+  const createCart = async () => {
+    const { body: newCart } = await createCartForCurrentCustomer({ currency: 'USD' });
+    setCart(newCart);
+  };
+
+  const addItemToCart = async (productId: string, variantId?: number) => {
+    if (!cart) {
+      const { body: newCart } = await createCartForCurrentCustomer({ currency: 'USD' });
+      setCart(newCart);
+    }
+
+    const { body: activeCart } = await getActiveCart();
+
+    const { body: updatedCart } = await updateActiveCart({
+      cartId: activeCart.id,
+      cartUpdateDraft: {
+        version: activeCart.version,
+        productId,
+        variantId,
+        quantity: 1,
+      },
+    });
+
+    setCart(updatedCart);
+
+    return updatedCart;
+  };
+
+  const refreshCart = async () => {
+    const activeCart = await getActiveCart();
+    if (activeCart.statusCode === 200) {
+      setCart(activeCart.body);
+    } else {
+      await createCart();
+    }
+  };
+
   return (
     <UserContext.Provider
-      value={{ token, customer, authorized, login, logout, signup, updateInfo }}
+      value={{
+        token,
+        customer,
+        authorized,
+        login,
+        logout,
+        signup,
+        updateInfo,
+        cart,
+        cartLoading,
+        setCartLoading,
+        addItemToCart,
+        createCart,
+      }}
     >
       {children}
     </UserContext.Provider>

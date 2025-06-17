@@ -9,7 +9,6 @@ import { UserContextProvider } from './components/contexts/user/context-provider
 import { TOASTER_ID } from './lib/constants';
 import { LoadingContextProvider } from './components/contexts/loading/context-provider';
 import type { Category } from '@commercetools/platform-sdk';
-import { CartContextProvider } from './components/contexts/cart/context-provider';
 
 interface RouterContext {
   categories: Category[];
@@ -33,14 +32,12 @@ document.body.append(root);
 createRoot(root).render(
   <StrictMode>
     <FluentProvider theme={customTheme}>
-      <CartContextProvider>
-        <UserContextProvider>
-          <LoadingContextProvider>
-            <RouterProvider router={router} />
-            <Toaster toasterId={TOASTER_ID} />
-          </LoadingContextProvider>
-        </UserContextProvider>
-      </CartContextProvider>
+      <UserContextProvider>
+        <LoadingContextProvider>
+          <RouterProvider router={router} />
+          <Toaster toasterId={TOASTER_ID} />
+        </LoadingContextProvider>
+      </UserContextProvider>
     </FluentProvider>
   </StrictMode>,
 );

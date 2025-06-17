@@ -10,7 +10,6 @@ import { render, waitFor, screen } from '@testing-library/react';
 import RegisterPage from '.';
 import { UserContextProvider } from '../../components/contexts/user/context-provider';
 import { LoadingContextProvider } from '../../components/contexts/loading/context-provider';
-import { CartContextProvider } from '../../components/contexts/cart/context-provider';
 
 describe('Ensure that page exists', () => {
   let titleElement: HTMLHeadingElement;
@@ -20,15 +19,13 @@ describe('Ensure that page exists', () => {
       getParentRoute: () => rootRoute,
       path: '/',
       component: () => (
-        <CartContextProvider>
-          <UserContextProvider>
-            <LoadingContextProvider>
-              <div data-testid="is-rendered">
-                <RegisterPage />
-              </div>
-            </LoadingContextProvider>
-          </UserContextProvider>
-        </CartContextProvider>
+        <UserContextProvider>
+          <LoadingContextProvider>
+            <div data-testid="is-rendered">
+              <RegisterPage />
+            </div>
+          </LoadingContextProvider>
+        </UserContextProvider>
       ),
     });
     const testRouter = createRouter({

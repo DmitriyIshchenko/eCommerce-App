@@ -21,7 +21,6 @@ import { InternalLink } from '../ui/links/fui-tanstack';
 import { CatalogTree } from '../../features/catalog-tree';
 import SearchDrawer from '../../features/search-drawer';
 import CartLink from '../ui/cart/link';
-import { useCart } from '../../hooks/use-cart';
 
 const useClasses = makeStyles({
   header: {
@@ -107,7 +106,7 @@ export function Header() {
   const navigate = useNavigate();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isSearchDrawerOpen, setIsSearchDrawerOpen] = useState(false);
-  const { cart, cartLoading, setCartLoading } = useCart();
+  const { cart, cartLoading, setCartLoading } = useUser();
 
   const { pathname } = useLocation();
   const { categories } = useRouteContext({
