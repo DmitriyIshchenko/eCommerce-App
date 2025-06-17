@@ -6,7 +6,7 @@ import { isTokenValid } from '../../lib/api/token-storage';
 export const Route = createFileRoute('/account/change-password')({
   component: RouteComponent,
   beforeLoad: () => {
-    if (!isTokenValid()) throw redirect({ to: '/login' });
+    if (!isTokenValid('customer')) throw redirect({ to: '/login' });
   },
 });
 

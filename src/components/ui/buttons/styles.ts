@@ -77,6 +77,26 @@ export const useCustomButtonCss = makeStyles({
       },
     },
   },
+  transparent: {
+    color: tokens.colorNeutralForeground1,
+    backgroundColor: 'transparent',
+    ':hover': {
+      color: tokens.colorNeutralForeground3Hover,
+      backgroundColor: 'transparent',
+      ':disabled': {
+        color: tokens.colorNeutralForeground3Hover,
+        backgroundColor: 'transparent',
+      },
+      ':active': {
+        color: tokens.colorNeutralStrokeAccessibleHover,
+        backgroundColor: 'transparent',
+        ':disabled': {
+          color: tokens.colorNeutralStrokeAccessibleHover,
+          backgroundColor: 'transparent',
+        },
+      },
+    },
+  },
   small: {
     '> span.fui-Button__icon': {
       fontSize: '16px',

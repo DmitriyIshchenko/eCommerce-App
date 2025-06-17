@@ -1,11 +1,10 @@
-import { createAnonymousClient, getApiRoot } from './client';
+import { getApiRootSmart } from './client';
 
 export async function getCategories() {
-  const anonymousClient = createAnonymousClient();
-  const anonymousApiRoot = getApiRoot(anonymousClient);
+  const apiRoot = getApiRootSmart();
 
   try {
-    const categoriesResponse = await anonymousApiRoot.categories().get().execute();
+    const categoriesResponse = await apiRoot.categories().get().execute();
 
     return categoriesResponse.body.results;
   } catch {
@@ -14,11 +13,10 @@ export async function getCategories() {
 }
 
 export async function getCategoryBySlug(slug: string) {
-  const anonymousClient = createAnonymousClient();
-  const anonymousApiRoot = getApiRoot(anonymousClient);
+  const apiRoot = getApiRootSmart();
 
   try {
-    const categoriesResponse = await anonymousApiRoot
+    const categoriesResponse = await apiRoot
       .categories()
       .get({
         queryArgs: {
@@ -34,11 +32,10 @@ export async function getCategoryBySlug(slug: string) {
 }
 
 export async function getSubcategoriesByParentId(parentId: string) {
-  const anonymousClient = createAnonymousClient();
-  const anonymousApiRoot = getApiRoot(anonymousClient);
+  const apiRoot = getApiRootSmart();
 
   try {
-    const categoriesResponse = await anonymousApiRoot
+    const categoriesResponse = await apiRoot
       .categories()
       .get({
         queryArgs: {
