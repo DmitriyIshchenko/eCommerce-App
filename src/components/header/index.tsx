@@ -22,6 +22,7 @@ import { CatalogTree } from '../../features/catalog-tree';
 import SearchDrawer from '../../features/search-drawer';
 import CartLink from '../ui/cart/link';
 import { useCart } from '../../hooks/use-cart';
+import { useLoading } from '../../hooks/use-loading';
 
 const useClasses = makeStyles({
   header: {
@@ -107,7 +108,8 @@ export function Header() {
   const navigate = useNavigate();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isSearchDrawerOpen, setIsSearchDrawerOpen] = useState(false);
-  const { cart, cartLoading } = useCart();
+  const { cart } = useCart();
+  const { loading } = useLoading();
 
   const { pathname } = useLocation();
   const { categories } = useRouteContext({
@@ -241,7 +243,7 @@ export function Header() {
 
             <CartLink
               to="/catalog"
-              loading={cartLoading}
+              loading={loading}
               size={30}
               goods={cart?.totalLineItemQuantity}
             />

@@ -33,14 +33,14 @@ document.body.append(root);
 createRoot(root).render(
   <StrictMode>
     <FluentProvider theme={customTheme}>
-      <CartContextProvider>
-        <UserContextProvider>
-          <LoadingContextProvider>
+      <LoadingContextProvider>
+        <CartContextProvider>
+          <UserContextProvider>
             <RouterProvider router={router} />
             <Toaster toasterId={TOASTER_ID} />
-          </LoadingContextProvider>
-        </UserContextProvider>
-      </CartContextProvider>
+          </UserContextProvider>
+        </CartContextProvider>
+      </LoadingContextProvider>
     </FluentProvider>
   </StrictMode>,
 );

@@ -20,15 +20,15 @@ describe('Ensure that page exists', () => {
       getParentRoute: () => rootRoute,
       path: '/',
       component: () => (
-        <CartContextProvider>
-          <UserContextProvider>
-            <LoadingContextProvider>
+        <LoadingContextProvider>
+          <CartContextProvider>
+            <UserContextProvider>
               <div data-testid="is-rendered">
                 <RegisterPage />
               </div>
-            </LoadingContextProvider>
-          </UserContextProvider>
-        </CartContextProvider>
+            </UserContextProvider>
+          </CartContextProvider>
+        </LoadingContextProvider>
       ),
     });
     const testRouter = createRouter({
