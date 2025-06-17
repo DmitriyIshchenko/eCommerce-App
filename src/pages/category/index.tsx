@@ -3,7 +3,7 @@ import { LargeTitle, makeStyles, tokens } from '@fluentui/react-components';
 import { ProductCard } from '../../components/product-card';
 import formatPrice from '../../lib/utils/format-price';
 import { useEffect, useState } from 'react';
-import { useUser } from '../../hooks/use-user';
+import { useCart } from '../../hooks/use-cart';
 
 const useStyles = makeStyles({
   separate: {
@@ -89,7 +89,7 @@ export default function CategoryPage({
   subcategoryName?: string;
 }) {
   const styles = useStyles();
-  const { cart, addItemToCart } = useUser();
+  const { cart, addItemToCart } = useCart();
   const [cartGoods, setCartGoods] = useState<Record<string, number>>({});
 
   const title = getTitle(categoryName, subcategoryName);

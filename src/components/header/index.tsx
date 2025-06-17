@@ -21,6 +21,7 @@ import { InternalLink } from '../ui/links/fui-tanstack';
 import { CatalogTree } from '../../features/catalog-tree';
 import SearchDrawer from '../../features/search-drawer';
 import CartLink from '../ui/cart/link';
+import { useCart } from '../../hooks/use-cart';
 
 const useClasses = makeStyles({
   header: {
@@ -106,7 +107,7 @@ export function Header() {
   const navigate = useNavigate();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isSearchDrawerOpen, setIsSearchDrawerOpen] = useState(false);
-  const { cart, cartLoading, setCartLoading } = useUser();
+  const { cart, cartLoading } = useCart();
 
   const { pathname } = useLocation();
   const { categories } = useRouteContext({
@@ -169,8 +170,6 @@ export function Header() {
       };
     }
   }, [isDrawerOpen]);
-
-  useEffect(() => setCartLoading(false), [cart]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <header className={classes.header}>

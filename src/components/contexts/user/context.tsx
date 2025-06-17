@@ -4,7 +4,7 @@ import type {
   PersonalSchemaNoPassword,
   RegisterSchema,
 } from '../../../lib/schemas/user';
-import type { Cart, ClientResponse, Customer } from '@commercetools/platform-sdk';
+import type { ClientResponse, Customer } from '@commercetools/platform-sdk';
 import type { AddressOptions } from '../../../lib/api/create-customer';
 
 export interface AuthToken {
@@ -26,11 +26,11 @@ interface UserContextType {
     options: AddressOptions,
   ) => Promise<ClientResponse<Customer> | undefined>;
   updateInfo: (data: PersonalSchemaNoPassword) => Promise<void>;
-  cart: Cart | null;
-  cartLoading: boolean;
-  setCartLoading: (value: boolean) => void;
-  addItemToCart: (productId: string, variantId?: number) => Promise<Cart>;
-  createCart: () => Promise<void>;
+  // cart: Cart | null;
+  // cartLoading: boolean;
+  // setCartLoading: (value: boolean) => void;
+  // addItemToCart: (productId: string, variantId?: number) => Promise<Cart>;
+  // createCart: () => Promise<Cart>;
 }
 
 export const UserContext = createContext<UserContextType | null>(null);

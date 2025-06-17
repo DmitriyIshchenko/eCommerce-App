@@ -97,6 +97,7 @@ export default function CartButton({
     <StyledTooltip contentChildren={tooltipContent} positioning={tooltipPositioning}>
       <div>
         <CustomButton
+          disabled={loading}
           appearance="transparent"
           style={style}
           onClick={onClick}
