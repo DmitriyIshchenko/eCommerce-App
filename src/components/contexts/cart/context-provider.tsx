@@ -127,7 +127,7 @@ export function CartContextProvider({ children }: { children: ReactNode }) {
     }
   }, [createCart]);
 
-  const isCartEmpty = useCallback(() => cart?.lineItems.length === 0, [cart?.lineItems.length]);
+  const isCartEmpty = useCallback(() => !cart || cart?.lineItems.length === 0, [cart]);
 
   return (
     <CartContext.Provider
