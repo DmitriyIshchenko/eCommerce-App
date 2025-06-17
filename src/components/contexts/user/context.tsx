@@ -20,17 +20,12 @@ interface UserContextType {
   customer: Customer | null;
   authorized: boolean;
   login: (data: LoginSchema) => Promise<ClientResponse<Customer> | undefined>;
-  logout: () => Promise<void>;
+  logout: () => void;
   signup: (
     data: RegisterSchema,
     options: AddressOptions,
   ) => Promise<ClientResponse<Customer> | undefined>;
   updateInfo: (data: PersonalSchemaNoPassword) => Promise<void>;
-  // cart: Cart | null;
-  // cartLoading: boolean;
-  // setCartLoading: (value: boolean) => void;
-  // addItemToCart: (productId: string, variantId?: number) => Promise<Cart>;
-  // createCart: () => Promise<Cart>;
 }
 
 export const UserContext = createContext<UserContextType | null>(null);

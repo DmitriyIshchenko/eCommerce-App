@@ -13,7 +13,6 @@ import type {
 import { login as loginApi } from '../../../lib/api/login';
 import { signup as signupApi, type AddressOptions } from '../../../lib/api/create-customer';
 import { updateCustomer as updateCustomerApi } from '../../../lib/api/update-customer';
-import { getAnonymousClient } from '../../../lib/api/get-anonymous-client';
 import { useCart } from '../../../hooks/use-cart';
 
 export function UserContextProvider({ children }: { children: ReactNode }) {
@@ -41,8 +40,6 @@ export function UserContextProvider({ children }: { children: ReactNode }) {
           setAuthorized(false);
 
           await refreshCart();
-        } else {
-          await createCart();
         }
       } catch (error) {
         console.error('Auth initialization failed:', error);
@@ -73,16 +70,12 @@ export function UserContextProvider({ children }: { children: ReactNode }) {
     return customer;
   };
 
-  const logout = async () => {
+  const logout = () => {
     clearTokens('customer');
     setToken(null);
     setAuthorized(false);
     setCustomer(null);
     setCart(null);
-
-    await getAnonymousClient();
-
-    await createCart();
   };
 
   const signup = async (data: RegisterSchema, options: AddressOptions) => {
