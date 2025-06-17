@@ -240,7 +240,7 @@ export function Header() {
             <SearchButton onClick={() => setIsSearchDrawerOpen(true)} />
 
             <CartLink
-              to="/catalog"
+              to="/cart"
               loading={cartLoading}
               size={30}
               goods={cart?.totalLineItemQuantity}
