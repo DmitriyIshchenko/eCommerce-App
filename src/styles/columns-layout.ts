@@ -34,6 +34,7 @@ export const useColumnsStyles = makeStyles({
 
   content: {
     padding: tokens.spacingHorizontalXXXL,
+    minHeight: '80vh',
 
     '@media(width<768px)': {
       overflowY: 'visible',
