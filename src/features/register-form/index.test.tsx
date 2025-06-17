@@ -54,15 +54,15 @@ describe('Ensure that input validation checks are performed in real-time when th
       getParentRoute: () => rootRoute,
       path: '/',
       component: () => (
-        <CartContextProvider>
-          <UserContextProvider>
-            <LoadingContextProvider>
+        <LoadingContextProvider>
+          <CartContextProvider>
+            <UserContextProvider>
               <div data-testid="is-rendered">
                 <RegisterForm />
               </div>
-            </LoadingContextProvider>
-          </UserContextProvider>
-        </CartContextProvider>
+            </UserContextProvider>
+          </CartContextProvider>
+        </LoadingContextProvider>
       ),
     });
     const testRouter = createRouter({

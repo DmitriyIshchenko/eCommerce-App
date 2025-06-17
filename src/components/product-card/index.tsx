@@ -14,7 +14,7 @@ import CustomInfoLabel from '../ui/buttons/custom-info-label';
 import CartButton from '../ui/cart/button';
 import { InternalLink } from '../ui/links/fui-tanstack';
 import CustomSpinner from '../ui/spinners/custom';
-import { useCart } from '../../hooks/use-cart';
+import { useLoading } from '../../hooks/use-loading';
 
 const useStyles = makeStyles({
   card: {
@@ -48,7 +48,7 @@ const useStyles = makeStyles({
 export function ProductCard(props: ProductCardProps) {
   const styles = useStyles();
   const [loading, setLoading] = useState(false);
-  const { setCartLoading } = useCart();
+  const { setLoading: setCartLoading } = useLoading();
   useEffect(() => setLoading(false), [props.cartGoods]);
   return (
     <Card className={styles.card}>

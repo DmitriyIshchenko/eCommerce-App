@@ -9,10 +9,11 @@ import {
   updateActiveCart,
 } from '../../../lib/api/cart';
 import { CartContext } from './context';
+import { useLoading } from '../../../hooks/use-loading';
 
 export function CartContextProvider({ children }: { children: ReactNode }) {
   const [cart, setCart] = useState<Cart | null>(null);
-  const [cartLoading, setCartLoading] = useState(false);
+  const { setLoading: setCartLoading } = useLoading();
 
   const createCart = useCallback(async () => {
     try {
@@ -25,31 +26,34 @@ export function CartContextProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  const addItemToCart = useCallback(async (productId: string, variantId?: number) => {
-    try {
-      setCartLoading(true);
-      const { body: activeCart } = await getActiveCart();
+  const addItemToCart = useCallback(
+    async (productId: string, variantId?: number) => {
+      try {
+        setCartLoading(true);
+        const { body: activeCart } = await getActiveCart();
 
-      const { body: updatedCart } = await updateActiveCart({
-        cartId: activeCart.id,
-        cartUpdateDraft: {
-          version: activeCart.version,
-          productId,
-          variantId,
-          quantity: 1,
-        },
-      });
+        const { body: updatedCart } = await updateActiveCart({
+          cartId: activeCart.id,
+          cartUpdateDraft: {
+            version: activeCart.version,
+            productId,
+            variantId,
+            quantity: 1,
+          },
+        });
 
-      setCart(updatedCart);
+        setCart(updatedCart);
 
-      return updatedCart;
-    } catch (error) {
-      console.error('Failed to add item to cart:', error);
-      throw error;
-    } finally {
-      setCartLoading(false);
-    }
-  }, []);
+        return updatedCart;
+      } catch (error) {
+        console.error('Failed to add item to cart:', error);
+        throw error;
+      } finally {
+        setCartLoading(false);
+      }
+    },
+    [setCartLoading],
+  );
 
   const reduceItemQuantity = useCallback(async (id: string) => {
     try {
@@ -134,8 +138,6 @@ export function CartContextProvider({ children }: { children: ReactNode }) {
       value={{
         cart,
         setCart,
-        cartLoading,
-        setCartLoading,
         addItemToCart,
         createCart,
         refreshCart,

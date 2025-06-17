@@ -8,16 +8,6 @@ import StyledTooltip from '../tooltips/styled';
 
 const useClasses = makeStyles({
   data: {
-    // "> div:nth-child(2)": {
-    // 	transform: "scale(0)",
-    // 	opacity: 0,
-    // 	transition: `transform ${tokens.durationNormal}, opacity ${tokens.durationNormal}`,
-    // },
-    // "> div:nth-child(1)": {
-    // 	transform: "scale(1)",
-    // 	opacity: 1,
-    // 	transition: `transform ${tokens.durationNormal}, opacity ${tokens.durationNormal}`,
-    // },
     position: 'absolute',
     top: 0,
     left: 0,
