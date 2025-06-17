@@ -28,15 +28,22 @@ function isValidAttribute(attr: ValidAttribute): attr is ValidAttribute {
 const useStyles = makeStyles({
   item: {
     display: 'grid',
-    gridTemplateColumns: 'auto 1fr',
+    gridTemplateColumns: '150px 1fr',
     gap: tokens.spacingVerticalM,
     padding: tokens.spacingVerticalM,
-    maxWidth: '600px',
     margin: '0 auto',
     marginBottom: tokens.spacingVerticalM,
-  },
 
-  image: { gridColumn: '1/2', gridRow: '1/4', maxHeight: '150px' },
+    '@media(width<768px)': {
+      gridTemplateColumns: '100px 1fr',
+    },
+  },
+  image: {
+    gridColumn: '1/2',
+    gridRow: '1/4',
+    width: '100%',
+    objectFit: 'cover',
+  },
   info: {
     display: 'grid',
     gap: tokens.spacingVerticalS,
