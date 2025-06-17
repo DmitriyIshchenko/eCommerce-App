@@ -55,54 +55,60 @@ export function CartContextProvider({ children }: { children: ReactNode }) {
     [setCartLoading],
   );
 
-  const reduceItemQuantity = useCallback(async (id: string) => {
-    try {
-      setCartLoading(true);
-      const { body: activeCart } = await getActiveCart();
+  const reduceItemQuantity = useCallback(
+    async (id: string) => {
+      try {
+        setCartLoading(true);
+        const { body: activeCart } = await getActiveCart();
 
-      const { body: updatedCart } = await reduceItemQuantityInCart({
-        cartId: activeCart.id,
-        cartUpdateDraft: {
-          version: activeCart.version,
-          lineItemId: id,
-          quantity: 1,
-        },
-      });
+        const { body: updatedCart } = await reduceItemQuantityInCart({
+          cartId: activeCart.id,
+          cartUpdateDraft: {
+            version: activeCart.version,
+            lineItemId: id,
+            quantity: 1,
+          },
+        });
 
-      setCart(updatedCart);
+        setCart(updatedCart);
 
-      return updatedCart;
-    } catch (error) {
-      console.error('Failed to decrement quantity:', error);
-      throw error;
-    } finally {
-      setCartLoading(false);
-    }
-  }, []);
+        return updatedCart;
+      } catch (error) {
+        console.error('Failed to decrement quantity:', error);
+        throw error;
+      } finally {
+        setCartLoading(false);
+      }
+    },
+    [setCartLoading],
+  );
 
-  const deleteItem = useCallback(async (id: string) => {
-    try {
-      setCartLoading(true);
-      const { body: activeCart } = await getActiveCart();
+  const deleteItem = useCallback(
+    async (id: string) => {
+      try {
+        setCartLoading(true);
+        const { body: activeCart } = await getActiveCart();
 
-      const { body: updatedCart } = await deleteItemFromCart({
-        cartId: activeCart.id,
-        cartUpdateDraft: {
-          version: activeCart.version,
-          lineItemId: id,
-        },
-      });
+        const { body: updatedCart } = await deleteItemFromCart({
+          cartId: activeCart.id,
+          cartUpdateDraft: {
+            version: activeCart.version,
+            lineItemId: id,
+          },
+        });
 
-      setCart(updatedCart);
+        setCart(updatedCart);
 
-      return updatedCart;
-    } catch (error) {
-      console.error('Failed to delete item:', error);
-      throw error;
-    } finally {
-      setCartLoading(false);
-    }
-  }, []);
+        return updatedCart;
+      } catch (error) {
+        console.error('Failed to delete item:', error);
+        throw error;
+      } finally {
+        setCartLoading(false);
+      }
+    },
+    [setCartLoading],
+  );
 
   const refreshCart = useCallback(async () => {
     try {
@@ -129,7 +135,7 @@ export function CartContextProvider({ children }: { children: ReactNode }) {
     } finally {
       setCartLoading(false);
     }
-  }, [createCart]);
+  }, [createCart, setCartLoading]);
 
   const isCartEmpty = useCallback(() => !cart || cart?.lineItems.length === 0, [cart]);
 
