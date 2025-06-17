@@ -8,16 +8,11 @@ interface CartUpdateDraft {
   quantity: number;
 }
 
-interface ReduceQuantityDraft {
-  version: number;
+type ReduceQuantityDraft = Pick<CartUpdateDraft, 'version' | 'quantity'> & {
   lineItemId: string;
-  quantity?: number;
-}
+};
 
-interface DeleteItemDraft {
-  version: number;
-  lineItemId: string;
-}
+type DeleteItemDraft = Omit<ReduceQuantityDraft, 'quantity'>;
 
 export async function createCartForCurrentCustomer(cartDraft: CartDraft) {
   const { currency } = cartDraft;
@@ -101,7 +96,7 @@ export async function reduceItemQuantityInCart(productDetails: {
     const removeAction: MyCartUpdateAction = {
       action: 'removeLineItem',
       lineItemId: cartUpdateDraft.lineItemId,
-      ...(cartUpdateDraft.quantity && { quantity: cartUpdateDraft.quantity }),
+      quantity: cartUpdateDraft.quantity,
     };
 
     const updatedCart = await apiRoot
