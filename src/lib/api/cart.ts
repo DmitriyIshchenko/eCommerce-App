@@ -1,4 +1,4 @@
-import type { CartDraft } from '@commercetools/platform-sdk';
+import type { CartDraft, MyCartUpdateAction } from '@commercetools/platform-sdk';
 import { getApiRootSmart } from './client';
 
 interface CartUpdateDraft {
@@ -7,6 +7,12 @@ interface CartUpdateDraft {
   variantId?: number;
   quantity: number;
 }
+
+type ReduceQuantityDraft = Pick<CartUpdateDraft, 'version' | 'quantity'> & {
+  lineItemId: string;
+};
+
+type DeleteItemDraft = Omit<ReduceQuantityDraft, 'quantity'>;
 
 export async function createCartForCurrentCustomer(cartDraft: CartDraft) {
   const { currency } = cartDraft;
@@ -76,5 +82,89 @@ export async function updateActiveCart(productDetails: {
     return updatedCart;
   } catch {
     throw new Error('Failed to add cart item');
+  }
+}
+
+export async function reduceItemQuantityInCart(productDetails: {
+  cartId: string;
+  cartUpdateDraft: ReduceQuantityDraft;
+}) {
+  try {
+    const { cartId, cartUpdateDraft } = productDetails;
+    const apiRoot = getApiRootSmart();
+
+    const removeAction: MyCartUpdateAction = {
+      action: 'removeLineItem',
+      lineItemId: cartUpdateDraft.lineItemId,
+      quantity: cartUpdateDraft.quantity,
+    };
+
+    const updatedCart = await apiRoot
+      .me()
+      .carts()
+      .withId({ ID: cartId })
+      .post({
+        body: {
+          version: cartUpdateDraft.version,
+          actions: [removeAction],
+        },
+      })
+      .execute();
+
+    return updatedCart;
+  } catch {
+    throw new Error('Failed to reduce quantity');
+  }
+}
+
+export async function deleteItemFromCart(productDetails: {
+  cartId: string;
+  cartUpdateDraft: DeleteItemDraft;
+}) {
+  try {
+    const { cartId, cartUpdateDraft } = productDetails;
+    const apiRoot = getApiRootSmart();
+
+    const updatedCart = await apiRoot
+      .me()
+      .carts()
+      .withId({ ID: cartId })
+      .post({
+        body: {
+          version: cartUpdateDraft.version,
+          actions: [
+            {
+              action: 'removeLineItem',
+              lineItemId: cartUpdateDraft.lineItemId,
+            },
+          ],
+        },
+      })
+      .execute();
+
+    return updatedCart;
+  } catch {
+    throw new Error('Failed to remove item');
+  }
+}
+
+export async function deleteCart() {
+  try {
+    const cart = await getActiveCart();
+
+    const apiRoot = getApiRootSmart();
+
+    await apiRoot
+      .me()
+      .carts()
+      .withId({ ID: cart.body.id })
+      .delete({
+        queryArgs: {
+          version: cart.body.version,
+        },
+      })
+      .execute();
+  } catch {
+    throw new Error('Failed to delete cart');
   }
 }

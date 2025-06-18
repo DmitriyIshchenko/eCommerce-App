@@ -2,7 +2,10 @@ import type { Cart } from '@commercetools/platform-sdk';
 import { useCallback, useState, type ReactNode } from 'react';
 import {
   createCartForCurrentCustomer,
+  deleteCart,
+  deleteItemFromCart,
   getActiveCart,
+  reduceItemQuantityInCart,
   updateActiveCart,
 } from '../../../lib/api/cart';
 import { CartContext } from './context';
@@ -52,6 +55,61 @@ export function CartContextProvider({ children }: { children: ReactNode }) {
     [setCartLoading],
   );
 
+  const reduceItemQuantity = useCallback(
+    async (id: string) => {
+      try {
+        setCartLoading(true);
+        const { body: activeCart } = await getActiveCart();
+
+        const { body: updatedCart } = await reduceItemQuantityInCart({
+          cartId: activeCart.id,
+          cartUpdateDraft: {
+            version: activeCart.version,
+            lineItemId: id,
+            quantity: 1,
+          },
+        });
+
+        setCart(updatedCart);
+
+        return updatedCart;
+      } catch (error) {
+        console.error('Failed to decrement quantity:', error);
+        throw error;
+      } finally {
+        setCartLoading(false);
+      }
+    },
+    [setCartLoading],
+  );
+
+  const deleteItem = useCallback(
+    async (id: string) => {
+      try {
+        setCartLoading(true);
+        const { body: activeCart } = await getActiveCart();
+
+        const { body: updatedCart } = await deleteItemFromCart({
+          cartId: activeCart.id,
+          cartUpdateDraft: {
+            version: activeCart.version,
+            lineItemId: id,
+          },
+        });
+
+        setCart(updatedCart);
+
+        return updatedCart;
+      } catch (error) {
+        console.error('Failed to delete item:', error);
+        throw error;
+      } finally {
+        setCartLoading(false);
+      }
+    },
+    [setCartLoading],
+  );
+
   const refreshCart = useCallback(async () => {
     try {
       const activeCart = await getActiveCart();
@@ -65,6 +123,22 @@ export function CartContextProvider({ children }: { children: ReactNode }) {
     }
   }, [createCart]);
 
+  const clearCart = useCallback(async () => {
+    try {
+      setCartLoading(true);
+
+      await deleteCart();
+      await createCart();
+    } catch (error) {
+      console.error('Failed to clear cart:', error);
+      throw error;
+    } finally {
+      setCartLoading(false);
+    }
+  }, [createCart, setCartLoading]);
+
+  const isCartEmpty = useCallback(() => !cart || cart?.lineItems.length === 0, [cart]);
+
   return (
     <CartContext.Provider
       value={{
@@ -73,6 +147,10 @@ export function CartContextProvider({ children }: { children: ReactNode }) {
         addItemToCart,
         createCart,
         refreshCart,
+        reduceItemQuantity,
+        deleteItem,
+        clearCart,
+        isCartEmpty,
       }}
     >
       {children}
