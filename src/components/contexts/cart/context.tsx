@@ -11,6 +11,8 @@ interface CartContextType {
   refreshCart: () => Promise<void>;
   clearCart: () => Promise<void>;
   isCartEmpty: () => boolean;
+  addDiscountCode: (code: string) => Promise<Cart | undefined>;
+  removeDiscountCode: (codeId: string) => Promise<Cart>;
 }
 
 export const CartContext = createContext<CartContextType | null>(null);
