@@ -5,7 +5,7 @@ import StyledTooltip from '../tooltips/styled';
 const useStyles = makeStyles({
   button: {
     padding: 0,
-    color: 'white',
+    color: tokens.colorNeutralForegroundInverted,
     ':hover': {
       color: tokens.colorNeutralBackground2Hover,
       ':active': {
