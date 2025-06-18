@@ -53,7 +53,7 @@ export default function SingleImageSwatchPicker({
         onSelectionChange={handleSelect}
         className={styles.picker}
       >
-        <StyledTooltip key={image.value} text={image.label}>
+        <StyledTooltip key={image.value} contentChildren={image.label}>
           <ImageSwatch
             className={styles.swatch}
             src={image.swatchSrc}

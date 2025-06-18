@@ -9,8 +9,8 @@ import {
   makeStyles,
 } from '@fluentui/react-components';
 import type { ProductCardProps } from '../../lib/types';
-import { useNavigate } from '@tanstack/react-router';
 import BagCartIcon from '../ui/icons/bag-cart';
+import { InternalLink } from '../ui/links/fui-tanstack';
 
 const useStyles = makeStyles({
   card: {
@@ -21,23 +21,32 @@ const useStyles = makeStyles({
 
 export function ProductCard(props: ProductCardProps) {
   const styles = useStyles();
-  const navigate = useNavigate();
-
-  const onActionCardClick = async () => {
-    if (props.id) {
-      await navigate({
-        to: `/catalog/$category/$subcategory/$id`,
-        params: { id: props.id, category: props.category, subcategory: props.subCategory },
-      });
-    }
-  };
 
   const onButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.stopPropagation();
   };
 
   return (
-    <Card className={styles.card} onClick={() => void onActionCardClick()} focusMode="no-tab">
+    <Card className={styles.card}>
+      <InternalLink
+        to="/catalog/$category/$subcategory/$id"
+        appearance="stickless"
+        viewTransition
+        params={{
+          id: props.id,
+          category: props.category,
+          subcategory: props.subCategory,
+        }}
+        style={{
+          position: 'absolute',
+          display: 'block',
+          width: '100%',
+          height: '100%',
+          top: 0,
+          left: 0,
+          zIndex: 1,
+        }}
+      />
       <CardPreview>
         <img src={props.image} alt={props.value} />
       </CardPreview>

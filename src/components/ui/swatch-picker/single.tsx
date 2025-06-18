@@ -20,7 +20,7 @@ export default function SingleSwatchPicker({
         if (onChange) onChange(d.selectedValue);
       }}
     >
-      <StyledTooltip text={color['aria-label']} key={color.value}>
+      <StyledTooltip contentChildren={color['aria-label']} key={color.value}>
         <ColorSwatch {...color} />
       </StyledTooltip>
     </SwatchPicker>

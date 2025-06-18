@@ -22,11 +22,11 @@ export interface ProductInfoProps {
   discount?: string;
   image?: string;
   images?: { url: string }[];
-  variants?: ProductVariant[];
   inCart?: number;
   sizes?: string[];
   materials?: string[];
   colors?: string[];
+  variants?: ProductVariant[];
 }
 
 export interface MiniProductCardProps extends ProductCardProps {
