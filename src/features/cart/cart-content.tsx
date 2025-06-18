@@ -31,11 +31,11 @@ export default function CartContent() {
     if (promoCodeIds.length === 0) return;
 
     try {
-      await Promise.all(
-        promoCodeIds.map((promoCode) => removeDiscountCode(promoCode.discountCode.id)),
-      );
+      for (const promoCode of promoCodeIds) {
+        await removeDiscountCode(promoCode.discountCode.id);
+      }
     } catch (error) {
-      console.error(error);
+      console.error('Failed to remove one or more promo codes:', error);
     }
   };
 
