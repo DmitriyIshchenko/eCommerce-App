@@ -82,6 +82,8 @@ export default function CategoryPage({
               price={formatPrice(product.masterVariant.prices?.at(0)?.value)}
               discount={formatPrice(product.masterVariant.prices?.at(0)?.discounted?.value)}
               image={product.masterVariant.images?.at(0)?.url}
+              category={categoryName.toLowerCase().replace(/\s+/g, '-')}
+              subCategory={(subcategoryName ?? 'whole').toLowerCase().replace(/\s+/g, '-')}
             />
           ))}
         </div>
