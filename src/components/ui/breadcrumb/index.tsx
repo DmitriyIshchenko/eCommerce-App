@@ -29,19 +29,17 @@ const useStyles = makeStyles({
 });
 
 const Item = ({
-  key,
   text,
   to,
   className,
   isLast,
 }: {
-  key: string;
   className?: string;
   to: string;
   isLast?: boolean;
   text: string;
 }) => (
-  <Fragment key={key}>
+  <Fragment>
     <BreadcrumbDivider className={className} />
     <InternalLink to={to} appearance="muted" asBlock accent={isLast} notInteractive={isLast}>
       {text}
@@ -50,21 +48,19 @@ const Item = ({
 );
 
 const TruncatedItem = ({
-  key,
   text,
   to,
   className,
   isLast,
   truncateTo,
 }: {
-  key: string;
   className?: string;
   to: string;
   isLast?: boolean;
   text: string;
   truncateTo: number;
 }) => (
-  <Fragment key={key}>
+  <Fragment>
     <BreadcrumbDivider className={className} />
     <StyledTooltip contentChildren={text}>
       <div>
@@ -87,17 +83,20 @@ export default function CustomBreadcrumb({ links, truncate }: Props) {
       </BreadcrumbItem>
       {links?.map((v, i, a) => {
         const isLast = i === a.length - 1;
-        return truncate && isTruncatableBreadcrumbContent(v.text, truncate) ? (
-          <TruncatedItem
-            key={v.to}
-            text={v.text}
-            to={v.to}
-            truncateTo={truncate}
-            className={styles.breadcrumb}
-            isLast={isLast}
-          />
-        ) : (
-          <Item key={v.to} text={v.text} to={v.to} className={styles.breadcrumb} isLast={isLast} />
+        return (
+          <Fragment key={v.to}>
+            {truncate && isTruncatableBreadcrumbContent(v.text, truncate) ? (
+              <TruncatedItem
+                text={v.text}
+                to={v.to}
+                truncateTo={truncate}
+                className={styles.divider}
+                isLast={isLast}
+              />
+            ) : (
+              <Item text={v.text} to={v.to} className={styles.divider} isLast={isLast} />
+            )}
+          </Fragment>
         );
       })}
     </Breadcrumb>
