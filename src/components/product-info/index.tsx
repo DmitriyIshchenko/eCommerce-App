@@ -267,6 +267,7 @@ export function ProductInfo({
                     <div>
                       <CustomButton
                         appearance="transparent"
+                        outlined
                         shape="square"
                         icon={<ChevronDownRegular />}
                         iconPosition="after"
