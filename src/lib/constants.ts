@@ -63,3 +63,5 @@ export const allMaterials: Material[] = [
     fullImageSrc: photorag,
   },
 ];
+
+export const PROMO_CODE = 'FINE-ART-15';

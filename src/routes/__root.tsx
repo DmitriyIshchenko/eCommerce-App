@@ -6,6 +6,7 @@ import { getCategories } from '../lib/api/get-categories';
 import type { Category } from '@commercetools/platform-sdk';
 import { isTokenValid } from '../lib/api/token-storage';
 import { createCartForCurrentCustomer } from '../lib/api/cart';
+import { PromoBanner } from '../components/promo-banner';
 
 interface RouterContext {
   categories: Category[];
@@ -37,6 +38,7 @@ export const Route = createRootRouteWithContext<RouterContext>()({
 function RootComponent() {
   return (
     <>
+      <PromoBanner />
       <Header />
       <Outlet />
       <Footer />
