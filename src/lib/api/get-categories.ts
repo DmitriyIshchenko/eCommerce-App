@@ -52,3 +52,15 @@ export async function getSubcategoriesByParentId(parentId: string) {
     throw new Error('Failed to get subcategories');
   }
 }
+
+export async function getCategoryById(id: string) {
+  const anonymousClient = createAnonymousClient();
+  const anonymousApiRoot = getApiRoot(anonymousClient);
+
+  try {
+    const categoryResponse = await anonymousApiRoot.categories().withId({ ID: id }).get().execute();
+    return categoryResponse.body;
+  } catch {
+    throw new Error('Category not found');
+  }
+}

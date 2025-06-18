@@ -301,7 +301,7 @@ function RouteComponent() {
               <DrawerHeader>
                 <DrawerHeaderTitle
                   action={
-                    <StyledTooltip text="Close" positioning={'before'}>
+                    <StyledTooltip contentChildren="Close" positioning={'before'}>
                       <div>
                         <CustomButton
                           appearance="subtle"

@@ -39,7 +39,7 @@ export default function SearchButton(
   const css = useCss();
   const { tooltipPositioning, ...rest } = props;
   return (
-    <StyledTooltip text="Search" positioning={tooltipPositioning}>
+    <StyledTooltip contentChildren="Search" positioning={tooltipPositioning}>
       <Button
         {...rest}
         size="large"

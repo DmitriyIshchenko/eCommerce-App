@@ -52,7 +52,7 @@ export default function BurgerButton(
   const css = useCss();
   const { tooltipPositioning, className } = props;
   return (
-    <StyledTooltip text="Menu" positioning={tooltipPositioning}>
+    <StyledTooltip contentChildren="Menu" positioning={tooltipPositioning}>
       <Button
         {...props}
         size="large"
