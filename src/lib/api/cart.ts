@@ -1,4 +1,4 @@
-import type { CartDraft, MyCartUpdateAction } from '@commercetools/platform-sdk';
+import type { Cart, CartDraft, MyCartUpdateAction } from '@commercetools/platform-sdk';
 import { getApiRootSmart } from './client';
 
 interface CartUpdateDraft {
@@ -13,6 +13,14 @@ type ReduceQuantityDraft = Pick<CartUpdateDraft, 'version' | 'quantity'> & {
 };
 
 type DeleteItemDraft = Omit<ReduceQuantityDraft, 'quantity'>;
+
+type AddDiscountCodeDraft = Pick<Cart, 'id' | 'version'> & {
+  code: string;
+};
+
+type RemoveDiscountCodeDraft = Pick<Cart, 'id' | 'version'> & {
+  codeId: string;
+};
 
 export async function createCartForCurrentCustomer(cartDraft: CartDraft) {
   const { currency } = cartDraft;
@@ -166,5 +174,66 @@ export async function deleteCart() {
       .execute();
   } catch {
     throw new Error('Failed to delete cart');
+  }
+}
+
+export async function addDiscountCodeToCart(cartDetails: AddDiscountCodeDraft) {
+  const { id, version, code } = cartDetails;
+
+  const apiRoot = getApiRootSmart();
+
+  try {
+    const discountedCart = apiRoot
+      .me()
+      .carts()
+      .withId({ ID: id })
+      .post({
+        body: {
+          version,
+          actions: [
+            {
+              action: 'addDiscountCode',
+              code,
+            },
+          ],
+        },
+      })
+      .execute();
+
+    return discountedCart;
+  } catch {
+    throw new Error('Failed to add discount code to cart');
+  }
+}
+
+export async function removeDiscountCodeFromCart(cartDetails: RemoveDiscountCodeDraft) {
+  const { id, version, codeId } = cartDetails;
+
+  const apiRoot = getApiRootSmart();
+
+  try {
+    const undiscountedCart = apiRoot
+      .me()
+      .carts()
+      .withId({ ID: id })
+      .post({
+        body: {
+          version,
+          actions: [
+            {
+              action: 'removeDiscountCode',
+              discountCode: {
+                typeId: 'discount-code',
+                id: codeId,
+              },
+            },
+          ],
+        },
+      })
+      .execute();
+
+    return undiscountedCart;
+  } catch {
+    throw new Error('Failed to remove discount code from cart');
   }
 }
