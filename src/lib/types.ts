@@ -5,12 +5,13 @@ export interface ProductCardProps {
   id: string;
   value: string;
   name: string;
+  category: string;
+  subCategory: string;
   description?: string;
   price: string;
   discount?: string;
   image?: string;
-  category: string;
-  subCategory: string;
+  onCartClick?: (id: string, category: string, subCategory: string) => void;
   cartGoods?: number;
 }
 
@@ -37,3 +38,6 @@ export interface Link {
   to: ToPathOption;
   text: string;
 }
+
+export type ClientType = 'customer' | 'anonymous';
+export type PreloadOptions = false | 'intent' | 'viewport' | 'render' | undefined;

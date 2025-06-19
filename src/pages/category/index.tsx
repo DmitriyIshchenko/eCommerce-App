@@ -1,36 +1,53 @@
-import { LargeTitle, makeStyles } from '@fluentui/react-components';
-import type { ProductProjection } from '@commercetools/platform-sdk';
+import type { Cart, ProductProjection } from '@commercetools/platform-sdk';
+import { LargeTitle, makeStyles, tokens } from '@fluentui/react-components';
 import { ProductCard } from '../../components/product-card';
 import formatPrice from '../../lib/utils/format-price';
+import { useEffect, useState } from 'react';
+import { useCart } from '../../hooks/use-cart';
 
 const useStyles = makeStyles({
-  titleContainer: {
-    width: '100%',
-    minHeight: '35vh',
+  separate: {
     display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: '75px 56px',
+    '@media(max-width: 1024px)': {
+      flexDirection: 'column',
+    },
   },
-  categoryContainer: {
+  wrapper: {
+    viewTransitionName: 'main-content',
+    containerType: 'inline-size',
+  },
+  title: {
     display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
     justifyContent: 'center',
-    margin: '0 auto',
-  },
-  listContainer: {
-    width: '100%',
-    display: 'flex',
     alignItems: 'center',
-    justifyContent: 'center',
+    flexBasis: '50%',
+    boxShadow: tokens.shadow4,
+    maxHeight: '100dvh',
+    position: 'sticky',
+    top: 0,
+    '@media(max-width: 1024px)': {
+      position: 'static',
+      height: '35dvh',
+      flexBasis: 'auto',
+    },
   },
-  list: {
+  head: {
     display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fill, minmax(310px, 1fr))',
+    flexBasis: '50%',
+    gridTemplateColumns: '1fr 1fr',
+    '@media(max-width: 640px)': {
+      gridTemplateColumns: '1fr',
+    },
   },
-  spinner: {
-    paddingBottom: '54px',
+  tail: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(4, 1fr)',
+    '@media(max-width: 1024px)': {
+      gridTemplateColumns: '1fr 1fr',
+    },
+    '@media(max-width: 640px)': {
+      gridTemplateColumns: '1fr',
+    },
   },
 });
 
@@ -47,7 +64,19 @@ function getTitle(categoryName: string, subcategoryName?: string) {
   }
 
   const subcategoryTitle = subcategoryName;
-  return categoryTitle + ' - ' + subcategoryTitle;
+  return `${categoryTitle} - ${subcategoryTitle}`;
+}
+
+function getCartGoodsMap(cart: Cart) {
+  const goodsMap: Record<string, number> = {};
+  if (cart.lineItems) {
+    for (const item of cart.lineItems) {
+      if (item.productId && item.quantity) {
+        goodsMap[item.productId] = item.quantity;
+      }
+    }
+  }
+  return goodsMap;
 }
 
 export default function CategoryPage({
@@ -60,33 +89,74 @@ export default function CategoryPage({
   subcategoryName?: string;
 }) {
   const styles = useStyles();
+  const { cart, addItemToCart } = useCart();
+  const [cartGoods, setCartGoods] = useState<Record<string, number>>({});
+
   const title = getTitle(categoryName, subcategoryName);
 
-  return (
-    <div className={styles.categoryContainer}>
-      <div className={styles.titleContainer}>
-        <LargeTitle align="center" as="h1">
-          {title}
-        </LargeTitle>
-      </div>
+  useEffect(() => {
+    if (cart) {
+      setCartGoods(getCartGoodsMap(cart));
+    }
+  }, [cart]);
 
-      <div className={styles.listContainer}>
-        <div className={styles.list}>
-          {products?.map((product) => (
+  const handleCartClick = async (id: string) => {
+    try {
+      const updatedCart = await addItemToCart(id);
+      setCartGoods(getCartGoodsMap(updatedCart));
+    } catch {
+      console.error('Failed to add to cart');
+    }
+  };
+
+  return (
+    <div className={styles.wrapper}>
+      <div className={styles.separate}>
+        <div className={styles.title}>
+          <LargeTitle style={{ padding: '0 20px' }} as="h1">
+            {title}
+          </LargeTitle>
+        </div>
+        <div className={styles.head}>
+          {products
+            ?.slice(0, 4)
+            .map((product) => (
+              <ProductCard
+                id={product.id}
+                key={product.id}
+                onCartClick={(id) => void handleCartClick(id)}
+                value={product.slug?.['en-US']}
+                name={product.name?.['en-US']}
+                description={product.description?.['en-US']}
+                price={formatPrice(product.masterVariant.prices?.at(0)?.value)}
+                discount={formatPrice(product.masterVariant.prices?.at(0)?.discounted?.value)}
+                image={product.masterVariant.images?.at(0)?.url}
+                cartGoods={cartGoods[product.id] ?? 0}
+                category={categoryName.toLowerCase().replace(/\s+/g, '-')}
+                subCategory={(subcategoryName ?? 'whole').toLowerCase().replace(/\s+/g, '-')}
+              />
+            ))}
+        </div>
+      </div>
+      <div className={styles.tail}>
+        {products
+          ?.slice(4)
+          .map((product) => (
             <ProductCard
               id={product.id}
               key={product.id}
+              onCartClick={(id) => void handleCartClick(id)}
               value={product.slug?.['en-US']}
               name={product.name?.['en-US']}
               description={product.description?.['en-US']}
               price={formatPrice(product.masterVariant.prices?.at(0)?.value)}
               discount={formatPrice(product.masterVariant.prices?.at(0)?.discounted?.value)}
               image={product.masterVariant.images?.at(0)?.url}
+              cartGoods={cartGoods[product.id] ?? 0}
               category={categoryName.toLowerCase().replace(/\s+/g, '-')}
               subCategory={(subcategoryName ?? 'whole').toLowerCase().replace(/\s+/g, '-')}
             />
           ))}
-        </div>
       </div>
     </div>
   );

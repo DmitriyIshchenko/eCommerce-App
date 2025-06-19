@@ -13,61 +13,82 @@ import type {
 import { login as loginApi } from '../../../lib/api/login';
 import { signup as signupApi, type AddressOptions } from '../../../lib/api/create-customer';
 import { updateCustomer as updateCustomerApi } from '../../../lib/api/update-customer';
+import { useCart } from '../../../hooks/use-cart';
 
 export function UserContextProvider({ children }: { children: ReactNode }) {
   const [token, setToken] = useState<AuthToken | null>(null);
   const [customer, setCustomer] = useState<Customer | null>(null);
-  const [authorized, setAuthorized] = useState(isTokenValid());
+  const [authorized, setAuthorized] = useState(isTokenValid('customer'));
+  const { setCart, refreshCart, createCart } = useCart();
 
   useEffect(() => {
     const initializeAuth = async () => {
       try {
-        const storedTokens = getStoredTokens();
-        if (!storedTokens) return;
+        if (isTokenValid('customer')) {
+          const storedTokens = getStoredTokens('customer');
+          const customerData = await getCurrentCustomer();
 
-        if (!isTokenValid()) {
-          logout();
-          return;
+          setCustomer(customerData);
+          setAuthorized(true);
+          setToken(storedTokens);
+
+          await refreshCart();
+        } else if (isTokenValid('anonymous')) {
+          const anonToken = getStoredTokens('anonymous');
+
+          setToken(anonToken);
+          setAuthorized(false);
+
+          await refreshCart();
         }
-
-        const customerData = await getCurrentCustomer();
-        setCustomer(customerData);
-        setAuthorized(true);
-        setToken(storedTokens);
       } catch (error) {
         console.error('Auth initialization failed:', error);
-        logout();
+        clearTokens('anonymous');
+        clearTokens('customer');
+        setToken(null);
+        setAuthorized(false);
+        setCustomer(null);
+        setCart(null);
       }
     };
 
     void initializeAuth();
-  }, []);
+  }, [refreshCart, createCart, setCart]);
 
   const login = async (data: LoginSchema) => {
     const customer = await loginApi(data);
     if (!customer) return;
 
-    setToken(getStoredTokens());
+    clearTokens('anonymous');
+
+    setToken(getStoredTokens('customer'));
     setCustomer(customer.body);
     setAuthorized(true);
+
+    await refreshCart();
 
     return customer;
   };
 
   const logout = () => {
-    clearTokens();
+    clearTokens('customer');
     setToken(null);
     setAuthorized(false);
     setCustomer(null);
+    setCart(null);
   };
 
   const signup = async (data: RegisterSchema, options: AddressOptions) => {
     const customer = await signupApi(data, options);
     if (!customer) return;
 
-    setToken(getStoredTokens());
+    clearTokens('anonymous');
+
+    setToken(getStoredTokens('customer'));
     setCustomer(customer.body);
     setAuthorized(true);
+
+    await refreshCart();
 
     return customer;
   };
@@ -82,7 +103,15 @@ export function UserContextProvider({ children }: { children: ReactNode }) {
 
   return (
     <UserContext.Provider
-      value={{ token, customer, authorized, login, logout, signup, updateInfo }}
+      value={{
+        token,
+        customer,
+        authorized,
+        login,
+        logout,
+        signup,
+        updateInfo,
+      }}
     >
       {children}
     </UserContext.Provider>

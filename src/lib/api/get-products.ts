@@ -1,11 +1,13 @@
-import { createAnonymousClient, getApiRoot } from './client';
+import { allColors, allMaterials, PRODUCTS_LIMIT, type Color, type Material } from '../constants';
+import { capitalizeString } from '../utils/capitalizeString';
+import { getApiRootSmart } from './client';
+import { isRangeFacetResult, isTermFacetResult } from './type-guards/facet';
 
 export async function getProducts() {
-  const anonymousClient = createAnonymousClient();
-  const anonymousApiRoot = getApiRoot(anonymousClient);
+  const apiRoot = getApiRootSmart();
 
   try {
-    const productsResponse = await anonymousApiRoot
+    const productsResponse = await apiRoot
       .productProjections()
       .get({
         queryArgs: {
@@ -23,17 +25,16 @@ export async function getProducts() {
 }
 
 export async function getProductsByCategoryId(categoryId: string) {
-  const anonymousClient = createAnonymousClient();
-  const anonymousApiRoot = getApiRoot(anonymousClient);
+  const apiRoot = getApiRootSmart();
 
   try {
-    const productsResponse = await anonymousApiRoot
+    const productsResponse = await apiRoot
       .productProjections()
       .search()
       .get({
         queryArgs: {
           filter: [`categories.id:"${categoryId}"`],
-          limit: 20,
+          limit: 100,
         },
       })
       .execute();
@@ -47,11 +48,10 @@ export async function getProductsByCategoryId(categoryId: string) {
 }
 
 export function getProductsByText(search: string) {
-  const anonymousClient = createAnonymousClient();
-  const anonymousApiRoot = getApiRoot(anonymousClient);
+  const apiRoot = getApiRootSmart();
 
   try {
-    const productsResponse = anonymousApiRoot
+    const productsResponse = apiRoot
       .productProjections()
       .search()
       .get({
@@ -69,46 +69,59 @@ export function getProductsByText(search: string) {
 }
 
 export function getProductsBySearch(
+  categoryId?: string,
+  page?: number,
   q?: string,
-  color?: string,
-  material?: string,
+  colors?: string[],
+  materials?: string[],
   minPrice?: number,
   maxPrice?: number,
   sort?: string,
-  categoryId?: string,
 ) {
-  const anonymousClient = createAnonymousClient();
-  const anonymousApiRoot = getApiRoot(anonymousClient);
+  const apiRoot = getApiRootSmart();
 
   try {
     const filters: string[] = [];
+
+    const facets: string[] = [];
 
     if (categoryId) {
       filters.push(`categories.id:"${categoryId}"`);
     }
 
-    if (color) {
-      filters.push(`variants.attributes.color:"${color}"`);
+    if (colors?.length) {
+      filters.push(`variants.attributes.color:${colors.map((c) => `"${c}"`).join(',')}`);
     }
 
-    if (material) {
-      filters.push(`variants.attributes.material.key:"${material}"`);
+    if (materials?.length) {
+      filters.push(
+        `variants.attributes.material.key:${materials.map((m) => `"${m.toLowerCase()}"`).join(',')}`,
+      );
     }
+
+    facets.push(
+      'variants.price.centAmount:range (0 to *)',
+      'variants.attributes.color',
+      'variants.attributes.material.key',
+    );
 
     if (minPrice !== undefined && maxPrice !== undefined) {
       filters.push(`variants.price.centAmount:range (${minPrice * 100} to ${maxPrice * 100})`);
     }
 
-    const productsResponse = anonymousApiRoot
+    const productsResponse = apiRoot
       .productProjections()
       .search()
       .get({
         queryArgs: {
+          markMatchingVariants: true,
           ...(q && { 'text.en-us': `${q}` }),
-          sort,
+          sort: sort ?? 'name.en-us asc',
           fuzzy: true,
-          limit: 100,
+          limit: PRODUCTS_LIMIT,
+          offset: PRODUCTS_LIMIT * ((page ?? 1) - 1),
           ...(filters.length > 0 && { 'filter.query': filters }),
+          facet: facets,
         },
       })
       .execute();
@@ -117,4 +130,57 @@ export function getProductsBySearch(
   } catch {
     throw new Error('Products not found');
   }
+}
+
+export async function getCategoryProductsFacets(...args: Parameters<typeof getProductsBySearch>) {
+  const { total, facets } = (await getProductsBySearch(...args)).body;
+  let minCategoryPrice = 0;
+  let maxCategoryPrice = 10000;
+  let categoryColors: Color[] = [];
+  let categoryMaterials: Material[] = [];
+  const colorFacet = facets?.['variants.attributes.color'];
+  const priceRangeFacet = facets?.['variants.price.centAmount'];
+  const materialFacet = facets?.['variants.attributes.material.key'];
+
+  if (priceRangeFacet && isRangeFacetResult(priceRangeFacet)) {
+    minCategoryPrice = Math.ceil(priceRangeFacet.ranges[0].min / 100);
+    maxCategoryPrice = Math.max(
+      Math.ceil(priceRangeFacet.ranges[0].max / 100),
+      minCategoryPrice + 1,
+    );
+  }
+
+  if (colorFacet && isTermFacetResult(colorFacet)) {
+    categoryColors = colorFacet.terms
+      .filter((c) => allColors.some((v) => c.term === v.value))
+      .map((c) => {
+        const value = typeof c.term === 'string' ? c.term : '';
+        return {
+          color: allColors.find((c) => c.value === value)?.color ?? '',
+          value,
+          'aria-label': value,
+        };
+      });
+  }
+
+  if (materialFacet && isTermFacetResult(materialFacet)) {
+    categoryMaterials = materialFacet.terms.map((m) => {
+      const value = typeof m.term === 'string' ? capitalizeString(m.term) : '';
+      const material = allMaterials.find((v) => v.value === value);
+      return {
+        swatchSrc: material?.swatchSrc ?? '',
+        value,
+        label: value,
+        fullImageSrc: material?.fullImageSrc ?? '',
+      };
+    });
+  }
+
+  return {
+    minCategoryPrice,
+    maxCategoryPrice,
+    categoryColors,
+    categoryMaterials,
+    total,
+  };
 }

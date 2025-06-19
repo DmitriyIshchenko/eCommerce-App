@@ -1,4 +1,3 @@
-export const TOASTER_ID = 'toasterId';
 import canvasLqip from '../assets/images/material-canvas-lqip.webp';
 import canvas from '../assets/images/material-canvas.png';
 import gicleeLqip from '../assets/images/material-giclee-lqip.webp';
@@ -6,6 +5,19 @@ import giclee from '../assets/images/material-giclee.webp';
 import photoragLqip from '../assets/images/material-photorag-lqip.webp';
 import photorag from '../assets/images/material-photorag.webp';
 
+export interface Color {
+  color: string;
+  value: string;
+  'aria-label': string;
+}
+export interface Material {
+  swatchSrc: string;
+  value: string;
+  label: string;
+  fullImageSrc: string;
+}
+
+export const TOASTER_ID = 'toasterId';
 export const DEFAULT_ADDRESS = {
   city: '',
   streetName: '',
@@ -24,6 +36,7 @@ export interface SwatchImg {
   label: string;
   fullImageSrc: string;
 }
+export const PRODUCTS_LIMIT = 12;
 
 export const allColors: Color[] = [
   { color: '#E9E9E9', value: 'Original', 'aria-label': 'Original' },

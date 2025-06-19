@@ -16,7 +16,7 @@ const useCss = makeStyles({
   tooltip: {
     paddingBottom: tokens.spacingVerticalXS,
     borderRadius: tokens.borderRadiusCircular,
-    fontSize: tokens.fontSizeBase400,
+    fontSize: tokens.fontSizeBase300,
   },
   nonCircular: {
     borderRadius: tokens.borderRadiusLarge,

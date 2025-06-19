@@ -28,6 +28,8 @@ const useStyles = makeStyles({
     pointerEvents: 'none',
     '> span:nth-child(2)': {
       padding: 0,
+      fontSize: '12px',
+      fontWeight: 450,
     },
   },
 });
@@ -38,8 +40,8 @@ export interface DismissTagProps {
 }
 
 const icons = {
-  color: <ColorRegular />,
-  material: <PipelineRegular />,
+  colors: <ColorRegular />,
+  materials: <PipelineRegular />,
   price: <MoneyHandRegular />,
   category: <TextBulletListCheckmarkRegular />,
 };
@@ -51,11 +53,11 @@ interface Data {
 
 export default function DismissWithInteractionTags({ tags, onDismiss }: DismissTagProps) {
   const styles = useStyles();
-  const { minPrice, maxPrice, color, material } = tags;
+  const { minPrice, maxPrice, colors, materials } = tags;
   const price = !minPrice || !maxPrice ? undefined : `$${minPrice} - $${maxPrice}`;
   const computedTags = {
-    color,
-    material,
+    colors,
+    materials,
     price,
   };
   const dataArr: Data[] = [];

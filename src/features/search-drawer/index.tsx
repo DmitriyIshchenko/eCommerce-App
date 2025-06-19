@@ -16,7 +16,7 @@ import type { ProductProjection } from '@commercetools/platform-sdk';
 import { MiniProductCard } from '../../components/mini-product-card';
 import formatPrice from '../../lib/utils/format-price';
 import { getProductsByText } from '../../lib/api/get-products';
-import { getCategoryById } from '../../lib/api/get-categories';
+import { getProductCategories } from '../../lib/api/get-categories';
 
 const useStyles = makeStyles({
   header: {
@@ -77,26 +77,6 @@ export default function SearchDrawer({ open, onOpenChange }: SearchDrawerProps) 
     } catch {
       setProducts([]);
       setCategoriesCache({});
-    }
-  };
-
-  const getProductCategories = async (product: ProductProjection) => {
-    try {
-      const mainCategoryId = product.categories?.[0]?.id;
-      const mainCategory = mainCategoryId ? await getCategoryById(mainCategoryId) : null;
-
-      const subCategoryId = product.categories?.[1]?.id;
-      const subCategory = subCategoryId ? await getCategoryById(subCategoryId) : null;
-
-      return {
-        category: mainCategory?.slug?.['en-US'] ?? 'all',
-        subCategory: subCategory?.slug?.['en-US'] ?? 'whole',
-      };
-    } catch {
-      return {
-        category: 'all',
-        subCategory: 'whole',
-      };
     }
   };
 

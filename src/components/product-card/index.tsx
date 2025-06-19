@@ -1,30 +1,55 @@
 import {
   Body1Strong,
-  Button,
   Caption1,
   Card,
-  CardHeader,
+  CardFooter,
   CardPreview,
-  InfoLabel,
+  Image,
   makeStyles,
+  tokens,
 } from '@fluentui/react-components';
 import type { ProductCardProps } from '../../lib/types';
-import BagCartIcon from '../ui/icons/bag-cart';
 import { InternalLink } from '../ui/links/fui-tanstack';
+import CustomInfoLabel from '../ui/buttons/custom-info-label';
+import CartButton from '../ui/cart/button';
+import CustomSpinner from '../ui/spinners/custom';
+import { useEffect, useState } from 'react';
+import { useLoading } from '../../hooks/use-loading';
 
 const useStyles = makeStyles({
   card: {
+    position: 'relative',
     width: '100%',
     borderRadius: 0,
+    gap: '0',
+    containerType: 'inline-size',
+    padding: '0',
+    overflow: 'hidden',
+    ':hover img': {
+      transform: 'scale(1.08)',
+    },
+  },
+  info: {
+    '> button': {
+      position: 'relative',
+      zIndex: 1,
+      justifySelf: 'center',
+      padding: 'clamp(6px, 2cqw, 20px)',
+      display: 'flex',
+      alignItems: 'center',
+      marginLeft: 'auto',
+      width: 'clamp(24px, 9cqw, 68px)',
+    },
+    lineHeight: '1.2',
+    fontSize: 'clamp(14px, 4cqw, 24px)',
   },
 });
 
 export function ProductCard(props: ProductCardProps) {
   const styles = useStyles();
-
-  const onButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    event.stopPropagation();
-  };
+  const [loading, setLoading] = useState(false);
+  const { setLoading: setCartLoading } = useLoading();
+  useEffect(() => setLoading(false), [props.cartGoods]);
 
   return (
     <Card className={styles.card}>
@@ -34,8 +59,8 @@ export function ProductCard(props: ProductCardProps) {
         viewTransition
         params={{
           id: props.id,
-          category: props.category,
-          subcategory: props.subCategory,
+          category: props.category ?? 'all',
+          subcategory: props.subCategory ?? 'whole',
         }}
         style={{
           position: 'absolute',
@@ -47,41 +72,90 @@ export function ProductCard(props: ProductCardProps) {
           zIndex: 1,
         }}
       />
-      <CardPreview>
-        <img src={props.image} alt={props.value} />
+      <CardPreview
+        style={{
+          aspectRatio: 1,
+          margin: 0,
+          padding: '8%',
+          backgroundColor: tokens.colorNeutralBackground1,
+        }}
+      >
+        <Image
+          style={{ transition: 'transform 0.4s ease-in-out' }}
+          src={props.image}
+          alt={props.value.split('-').join(' ')}
+          block
+        />
       </CardPreview>
-      <CardHeader
-        header={
-          <div onClick={(e) => e.stopPropagation()}>
-            <Body1Strong>{props.name}</Body1Strong>
-            <InfoLabel info={`${props.description?.slice(0, 200)}...`} />
+      <CardFooter
+        style={{
+          display: 'grid',
+          gridTemplateColumns: '5fr 1fr',
+          alignContent: 'space-between',
+          padding: '8%',
+          columnGap: '8%',
+        }}
+      >
+        <Body1Strong
+          style={{
+            display: '-webkit-box',
+            WebkitLineClamp: '2',
+            WebkitBoxOrient: 'vertical',
+            overflow: 'hidden',
+            minHeight: '2.4em',
+            fontSize: 'clamp(16px, 4.5cqw, 32px)',
+            lineHeight: 1.15,
+          }}
+        >
+          {props.name}
+        </Body1Strong>
+        <CustomInfoLabel
+          info={`${props.description?.split('.')[0].slice(0, 200)}...`}
+          className={styles.info}
+        />
+        {props.discount ? (
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1ch' }}>
+            <Caption1 style={{ fontSize: 'clamp(16px, 4.5cqw, 32px)' }}>From </Caption1>
+            <Caption1 style={{ fontSize: 'clamp(16px, 4.5cqw, 32px)' }}>{props.discount}</Caption1>
+            <Caption1 strikethrough style={{ fontSize: 'clamp(16px, 4.5cqw, 32px)' }}>
+              {props.price}
+            </Caption1>
           </div>
-        }
-        description={
-          <div>
-            {props.discount ? (
-              <div>
-                <Caption1>From </Caption1>
-                <Caption1 style={{ marginRight: '5px' }}>{props.discount}</Caption1>
-                <Caption1 strikethrough>{props.price}</Caption1>
-              </div>
-            ) : (
-              <div>
-                <Caption1>From {props.price}</Caption1>
-              </div>
-            )}
+        ) : (
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <Caption1 style={{ fontSize: 'clamp(16px, 4.5cqw, 32px)' }}>
+              From {props.price}
+            </Caption1>
           </div>
-        }
-        action={
-          <Button
-            size="large"
-            appearance="transparent"
-            icon={<BagCartIcon strokeWidth={0.8} />}
-            aria-label="Cart"
-            onClick={onButtonClick}
+        )}
+        <div style={{ width: 'clamp(24px, 9cqw, 68px)', justifySelf: 'end' }}>
+          <CartButton
+            onClick={() => {
+              if (props.onCartClick) {
+                props.onCartClick(props.id, props.category, props.subCategory);
+              }
+              setLoading(true);
+              setCartLoading(true);
+            }}
+            style={{
+              position: 'relative',
+              zIndex: 1,
+              width: '100%',
+              aspectRatio: 1,
+            }}
+            tooltipContent={
+              <div style={{ display: 'flex', gap: 4 }}>
+                Add to Cart{' '}
+                <span style={{ minWidth: 16, marginRight: -4 }}>
+                  {loading && <CustomSpinner />}
+                </span>
+              </div>
+            }
+            loading={loading}
+            goods={props.cartGoods}
           />
-        }
-      />
+        </div>
+      </CardFooter>
     </Card>
   );
 }
