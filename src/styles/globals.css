@@ -1,0 +1,35 @@
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  scrollbar-gutter: stable;
+}
+
+input,
+textarea {
+  width: 100%;
+  display: block;
+}
+
+.main {
+  min-height: calc(100vh - 100px);
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 30px;
+  max-width: 1440px;
+  box-sizing: border-box;
+  margin: 0 auto;
+}
