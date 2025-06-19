@@ -81,4 +81,13 @@ export const TEAM_MEMBERS: TeamMemberData[] = [
     ],
     githubLink: 'https://github.com/DmitriyIshchenko',
   },
+  {
+    name: 'Olga Dubodel',
+    role: 'Developer',
+    bio: `Hi, I'm Olya! When I first started learning frontend, everything felt new and a bit overwhelming. But step by step, things began to make sense, and I started to really enjoy building things with code. I love that feeling when something finally works — even after a few failed tries. I've learned so much during this project, not just about coding, but also about working in a team and solving problems together. Being part of this project has been such a rewarding experience, and I'm proud of everything our team has accomplished together.
+    `,
+    imageSrc: 'https://i.imgur.com/dVDlGXg.jpeg',
+    responsibilities: ['Login form', 'Catalog page', 'Product filter / sort', 'Product search'],
+    githubLink: 'https://github.com/olydbd',
+  },
 ];
