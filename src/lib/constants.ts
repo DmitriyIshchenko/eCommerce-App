@@ -90,6 +90,14 @@ export const TEAM_MEMBERS: TeamMemberData[] = [
     responsibilities: ['Login form', 'Catalog page', 'Product filter / sort', 'Product search'],
     githubLink: 'https://github.com/olydbd',
   },
+  {
+    name: 'Ekaterina Gribova',
+    role: 'Developer',
+    bio: `Hi, I'm Katya! Since school, I've loved two seemingly different things—math and drawing. In frontend development, I unexpectedly found what combines both logic and creativity. Not everything came easily: some projects on the course left me stumped, and some tasks had to be redone multiple times. But that's what hooked me—every time I figured something out, I felt real progress. Working with the team on this project became a valuable experience for me. I learned not just about code, but also how to blend different ideas into one product. Seeing our efforts turn into something tangible—that's what's truly awesome.`,
+    imageSrc: 'https://i.imgur.com/imP51O6.jpeg',
+    responsibilities: ['Navigation', 'Product page', 'Project setup'],
+    githubLink: 'https://github.com/KateGribova',
+  },
 ];
 
 export const PROMO_CODE_TOTAL = 'FINE-ART-15';
