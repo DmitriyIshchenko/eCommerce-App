@@ -16,9 +16,7 @@ import type { ProductProjection } from '@commercetools/platform-sdk';
 import { MiniProductCard } from '../../components/mini-product-card';
 import formatPrice from '../../lib/utils/format-price';
 import { getProductsByText } from '../../lib/api/get-products';
-import type { ProductSearchSchema } from '../../lib/schemas/products-search';
-import { Route } from '../../routes/catalog/$category.$';
-import { useMatchRoute } from '@tanstack/react-router';
+import { getProductCategories } from '../../lib/api/get-categories';
 
 const useStyles = makeStyles({
   header: {
@@ -47,35 +45,38 @@ const DRAWER_SUBTITLE = 'ALL PRODUCTS';
 export default function SearchDrawer({ open, onOpenChange }: SearchDrawerProps) {
   const styles = useStyles();
   const [value, setValue] = useState('');
-
-  const matchRoute = useMatchRoute();
-
-  const navigateFromCategory = Route.useNavigate();
-
-  const isCategory = matchRoute({ to: '/catalog/$category/$' });
-
-  const navigate = isCategory && navigateFromCategory;
-
   const [products, setProducts] = useState<ProductProjection[]>([]);
+  const [categoriesCache, setCategoriesCache] = useState<
+    Record<string, { category: string; subCategory: string }>
+  >({});
 
   const onChange = async (_ev: ChangeEvent<HTMLInputElement>, data: InputOnChangeData) => {
     const searchText = data.value;
     setValue(searchText);
 
-    if (navigate) {
-      void navigate({
-        search: (prev: ProductSearchSchema) => ({
-          ...prev,
-          q: searchText,
-        }),
-      });
-    }
-
     try {
       const productResponse = await getProductsByText(searchText);
       setProducts(productResponse.body.results);
+
+      setCategoriesCache({});
+
+      const categoryPromises = productResponse.body.results.map(async (product) => {
+        const categories = await getProductCategories(product);
+        return { productId: product.id, categories };
+      });
+
+      const categoriesResults = await Promise.all(categoryPromises);
+
+      setCategoriesCache((prev) => {
+        const newCache = { ...prev };
+        categoriesResults.forEach(({ productId, categories }) => {
+          newCache[productId] = categories;
+        });
+        return newCache;
+      });
     } catch {
       setProducts([]);
+      setCategoriesCache({});
     }
   };
 
@@ -119,18 +120,27 @@ export default function SearchDrawer({ open, onOpenChange }: SearchDrawerProps) 
               <div className={styles.container}>
                 <Body2>{DRAWER_SUBTITLE}</Body2>
               </div>
-              {products.map((product) => (
-                <MiniProductCard
-                  onClick={() => onOpenChange(false)}
-                  key={product.slug['en-US']}
-                  value={product.slug['en-US']}
-                  name={product.name['en-US']}
-                  price={formatPrice(product.masterVariant.prices?.at(0)?.value)}
-                  discount={formatPrice(product.masterVariant.prices?.at(0)?.discounted?.value)}
-                  image={product.masterVariant.images?.at(0)?.url}
-                  id={product.id}
-                />
-              ))}
+              {products.map((product) => {
+                const categories = categoriesCache[product.id] || {
+                  category: 'all',
+                  subCategory: 'whole',
+                };
+
+                return (
+                  <MiniProductCard
+                    onClick={() => onOpenChange(false)}
+                    key={product.id}
+                    value={product.slug?.['en-US']}
+                    name={product.name?.['en-US']}
+                    price={formatPrice(product.masterVariant.prices?.[0]?.value)}
+                    discount={formatPrice(product.masterVariant.prices?.[0]?.discounted?.value)}
+                    image={product.masterVariant.images?.[0]?.url}
+                    id={product.id}
+                    category={categories.category.toLowerCase().replace(/\s+/g, '-')}
+                    subCategory={categories.subCategory.toLowerCase().replace(/\s+/g, '-')}
+                  />
+                );
+              })}
             </div>
           )}
         </div>

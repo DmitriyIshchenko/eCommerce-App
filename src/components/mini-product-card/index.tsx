@@ -7,7 +7,7 @@ import {
   tokens,
 } from '@fluentui/react-components';
 import type { MiniProductCardProps } from '../../lib/types';
-import { useNavigate } from '@tanstack/react-router';
+import { InternalLink } from '../ui/links/fui-tanstack';
 
 const useStyles = makeStyles({
   card: {
@@ -17,23 +17,28 @@ const useStyles = makeStyles({
 
 export function MiniProductCard(props: MiniProductCardProps) {
   const styles = useStyles();
-  const navigate = useNavigate();
-
-  const onActionCardClick = async () => {
-    props.onClick?.();
-    if (props.id) {
-      await navigate({ to: `/products/${props.id}`, params: { id: props.id } });
-    }
-  };
 
   return (
-    <Card
-      className={styles.card}
-      onClick={() => void onActionCardClick()}
-      focusMode="no-tab"
-      size="small"
-      role="listitem"
-    >
+    <Card className={styles.card}>
+      <InternalLink
+        to="/catalog/$category/$subcategory/$id"
+        appearance="stickless"
+        viewTransition
+        params={{
+          id: props.id,
+          category: props.category,
+          subcategory: props.subCategory,
+        }}
+        style={{
+          position: 'absolute',
+          display: 'block',
+          width: '100%',
+          height: '100%',
+          top: 0,
+          left: 0,
+          zIndex: 1,
+        }}
+      />
       <CardHeader
         image={<img src={props.image} alt={props.value} style={{ width: '50px' }} />}
         header={

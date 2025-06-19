@@ -29,7 +29,7 @@ export function CartContextProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const addItemToCart = useCallback(
-    async (productId: string, variantId?: number) => {
+    async (productId: string, variantId?: number, quantity = 1) => {
       try {
         setCartLoading(true);
         const { body: activeCart } = await getActiveCart();
@@ -40,7 +40,7 @@ export function CartContextProvider({ children }: { children: ReactNode }) {
             version: activeCart.version,
             productId,
             variantId,
-            quantity: 1,
+            quantity: quantity,
           },
         });
 
@@ -96,6 +96,42 @@ export function CartContextProvider({ children }: { children: ReactNode }) {
           cartUpdateDraft: {
             version: activeCart.version,
             lineItemId: id,
+          },
+        });
+
+        setCart(updatedCart);
+
+        return updatedCart;
+      } catch (error) {
+        console.error('Failed to delete item:', error);
+        throw error;
+      } finally {
+        setCartLoading(false);
+      }
+    },
+    [setCartLoading],
+  );
+
+  const deleteItemByProductId = useCallback(
+    async (id: string, variantId = 1) => {
+      try {
+        setCartLoading(true);
+        const { body: activeCart } = await getActiveCart();
+
+        const lineItem = activeCart.lineItems.find((item) => {
+          return id === item.productId && variantId === item.variant.id;
+        });
+
+        if (!lineItem) {
+          console.error('Item not found in cart');
+          return activeCart;
+        }
+
+        const { body: updatedCart } = await deleteItemFromCart({
+          cartId: activeCart.id,
+          cartUpdateDraft: {
+            version: activeCart.version,
+            lineItemId: lineItem?.id || id,
           },
         });
 
@@ -189,6 +225,7 @@ export function CartContextProvider({ children }: { children: ReactNode }) {
         refreshCart,
         reduceItemQuantity,
         deleteItem,
+        deleteItemByProductId,
         clearCart,
         isCartEmpty,
         addDiscountCode,

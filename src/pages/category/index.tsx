@@ -132,6 +132,8 @@ export default function CategoryPage({
                 discount={formatPrice(product.masterVariant.prices?.at(0)?.discounted?.value)}
                 image={product.masterVariant.images?.at(0)?.url}
                 cartGoods={cartGoods[product.id] ?? 0}
+                category={categoryName.toLowerCase().replace(/\s+/g, '-')}
+                subCategory={(subcategoryName ?? 'whole').toLowerCase().replace(/\s+/g, '-')}
               />
             ))}
         </div>
@@ -151,6 +153,8 @@ export default function CategoryPage({
               discount={formatPrice(product.masterVariant.prices?.at(0)?.discounted?.value)}
               image={product.masterVariant.images?.at(0)?.url}
               cartGoods={cartGoods[product.id] ?? 0}
+              category={categoryName.toLowerCase().replace(/\s+/g, '-')}
+              subCategory={(subcategoryName ?? 'whole').toLowerCase().replace(/\s+/g, '-')}
             />
           ))}
       </div>

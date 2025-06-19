@@ -44,7 +44,6 @@ export default function CartContent() {
       {items.map((item) => (
         <CartItem item={item} key={item.id} />
       ))}
-
       <div style={{ display: 'flex', flexDirection: 'column' }}>
         <Text>
           Products, ({totalItems} items):{' '}

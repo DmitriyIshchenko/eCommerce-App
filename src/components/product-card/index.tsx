@@ -10,9 +10,9 @@ import {
 } from '@fluentui/react-components';
 import { useEffect, useState } from 'react';
 import type { ProductCardProps } from '../../lib/types';
+import { InternalLink } from '../ui/links/fui-tanstack';
 import CustomInfoLabel from '../ui/buttons/custom-info-label';
 import CartButton from '../ui/cart/button';
-import { InternalLink } from '../ui/links/fui-tanstack';
 import CustomSpinner from '../ui/spinners/custom';
 import { useLoading } from '../../hooks/use-loading';
 
@@ -50,13 +50,18 @@ export function ProductCard(props: ProductCardProps) {
   const [loading, setLoading] = useState(false);
   const { setLoading: setCartLoading } = useLoading();
   useEffect(() => setLoading(false), [props.cartGoods]);
+
   return (
     <Card className={styles.card}>
       <InternalLink
-        to="/products/$id"
+        to="/catalog/$category/$subcategory/$id"
         appearance="stickless"
         viewTransition
-        params={{ id: props.id }}
+        params={{
+          id: props.id,
+          category: props.category ?? 'all',
+          subcategory: props.subCategory ?? 'whole',
+        }}
         style={{
           position: 'absolute',
           display: 'block',
@@ -127,7 +132,7 @@ export function ProductCard(props: ProductCardProps) {
           <CartButton
             onClick={() => {
               if (props.onCartClick) {
-                props.onCartClick(props.id);
+                props.onCartClick(props.id, props.category, props.subCategory);
               }
               setLoading(true);
               setCartLoading(true);

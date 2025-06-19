@@ -240,9 +240,7 @@ export function Header() {
 
           <div style={{ display: 'flex', alignItems: 'center' }}>
             <SearchButton onClick={() => setIsSearchDrawerOpen(true)} />
-
             <CartLink to="/cart" loading={loading} size={30} goods={cart?.totalLineItemQuantity} />
-
             <BurgerButton
               className={classes.burgerButton}
               onClick={() => setIsDrawerOpen(true)}

@@ -5,6 +5,9 @@ import formatPrice from '../../lib/utils/format-price';
 import { InternalLink } from '../../components/ui/links/fui-tanstack';
 import { useCart } from '../../hooks/use-cart';
 import defaultImage from '../../assets/images/default-image.jpg';
+import { useEffect, useState } from 'react';
+import { getProductById } from '../../lib/api/get-product';
+import { getProductCategories } from '../../lib/api/get-categories';
 
 interface ValidAttribute extends Attribute {
   value: string;
@@ -65,16 +68,50 @@ export default function CartItem({ item }: Props) {
 
   const { addItemToCart, reduceItemQuantity, deleteItem } = useCart();
 
+  const [categories, setCategories] = useState({
+    category: 'all',
+    subCategory: 'whole',
+  });
+  const [imageUrl, setImageUrl] = useState(defaultImage);
+  const [imageLabel, setImageLabel] = useState('default image');
+
   const {
-    variant: { attributes, images },
+    variant: { attributes },
     name,
     price,
     quantity,
+    productId,
+    id,
   } = item;
 
   let material = '';
   let size = '';
   let color = '';
+
+  useEffect(() => {
+    const loadCategories = async () => {
+      try {
+        const product = await getProductById(productId);
+        if (product) {
+          const { category, subCategory } = await getProductCategories(product);
+          setCategories({
+            category: category || 'all',
+            subCategory: subCategory || 'whole',
+          });
+
+          const image = product.masterVariant.images?.[0];
+          if (image) {
+            setImageUrl(image.url);
+            setImageLabel(image.label ?? 'product image');
+          }
+        }
+      } catch (error) {
+        console.error('Failed to load categories', error);
+      }
+    };
+
+    void loadCategories();
+  }, [productId]);
 
   if (attributes) {
     const [materialAttr, sizeAttr, colorAttr] = attributes;
@@ -83,9 +120,6 @@ export default function CartItem({ item }: Props) {
     if (isValidAttribute(sizeAttr)) size = sizeAttr.value;
   }
 
-  const imageUrl = images?.[0].url ?? defaultImage;
-  const imageLabel = images?.[0].label ?? 'default image';
-
   const isDiscounted = 'discounted' in price;
 
   return (
@@ -93,7 +127,15 @@ export default function CartItem({ item }: Props) {
       <Image className={styles.image} alt={imageLabel} src={imageUrl} />
 
       <div className={styles.info}>
-        <InternalLink to="/products/$id" params={{ id: item.productId }}>
+        <InternalLink
+          to="/catalog/$category/$subcategory/$id"
+          params={{
+            category: categories.category,
+            subcategory: categories.subCategory,
+            id: item.productId,
+          }}
+          preload={false}
+        >
           {name['en-US']}
         </InternalLink>
         <div className={styles.price}>
@@ -122,7 +164,7 @@ export default function CartItem({ item }: Props) {
         <Button
           className={styles.delete}
           icon={<DeleteRegular />}
-          onClick={() => void deleteItem(item.id)}
+          onClick={() => void deleteItem(id)}
         />
       </div>
     </article>

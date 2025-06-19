@@ -1,226 +1,423 @@
 import {
-  Button,
-  Image,
-  makeStyles,
-  Select,
+  Divider,
+  Label,
+  Menu,
+  MenuItemRadio,
+  MenuList,
+  MenuPopover,
+  MenuTrigger,
   Text,
+  makeStyles,
   tokens,
-  useFocusFinders,
-  useId,
-  useModalAttributes,
+  typographyStyles,
 } from '@fluentui/react-components';
+import { ChevronDownRegular } from '@fluentui/react-icons';
+import { useEffect, useState } from 'react';
+import useMatchMediaQuery from '../../hooks/use-match-media';
+import { allColors, allMaterials } from '../../lib/constants';
 import type { ProductInfoProps } from '../../lib/types';
 import { ProductCarousel } from '../carousel';
-import { useEffect, useRef, useState } from 'react';
-import { DismissRegular } from '@fluentui/react-icons';
+import CustomButton from '../ui/buttons/custom';
+import CustomSpinButton from '../ui/buttons/custom-spin';
+import CustomSpinner from '../ui/spinners/custom';
+import ImageSwatchPicker from '../ui/swatch-picker/image';
+import LargeSwatchPicker from '../ui/swatch-picker/large';
+import { useLoading } from '../../hooks/use-loading';
+import { getActiveCart } from '../../lib/api/cart';
+
+interface ProductAttribute {
+  value: string | { key: string; label?: string };
+}
 
 const useStyles = makeStyles({
-  productContainer: {
-    display: 'flex',
-    gap: '1rem',
-    padding: '0 40px 40px',
-    '@media (max-width: 950px)': {
-      display: 'flex',
-      flexDirection: 'column',
-    },
+  root: {
+    '@media (max-width: 1024px)': {},
   },
-  productImg: {
-    display: 'flex',
-    alignItems: 'center',
+  left: {
+    display: 'inline-block',
+    verticalAlign: 'top',
     boxSizing: 'border-box',
-    maxWidth: '50%',
-    '@media (max-width: 950px)': {
-      maxWidth: '100%',
-    },
-    '@media (max-width: 1100px)': {
-      maxWidth: '60%',
+    width: '50%',
+    position: 'sticky',
+    top: 0,
+    padding: '24px',
+    overflowX: 'hidden',
+    '@media (max-width: 1024px)': {
+      width: '100%',
+      position: 'static',
+      maxHeight: 'none',
     },
   },
-  img: {
-    width: '100%',
-    margin: '0 auto',
-    cursor: 'pointer',
+  right: {
+    display: 'inline-block',
+    verticalAlign: 'top',
+    width: '50%',
+    padding: '40px',
+    containerName: 'right',
+    containerType: 'inline-size',
+    minHeight: '100vh',
+    borderLeft: `1px solid ${tokens.colorNeutralStroke1}`,
+    '@media (max-width: 1024px)': {
+      padding: '24px',
+      width: '100%',
+      borderLeft: `0px solid ${tokens.colorNeutralStroke1}`,
+      borderTop: `1px solid ${tokens.colorNeutralStroke1}`,
+      minHeight: 'unset',
+    },
   },
   productInfo: {
-    maxWidth: '50%',
     display: 'flex',
     flexDirection: 'column',
-    gap: '2rem',
-    padding: '5rem 0',
-    '@media (max-width: 950px)': {
-      maxWidth: '100%',
+    gap: tokens.spacingVerticalXXL,
+    maxWidth: '720px',
+    '@media (max-width: 1024px)': {
+      margin: '0 auto',
     },
   },
   productTitle: {
-    fontSize: '2.5rem',
-    fontWeight: '500',
-    lineHeight: '1',
+    ...typographyStyles.title2,
   },
   productSubtitle: {
-    fontSize: '1.3rem',
-    fontWeight: '500',
+    fontSize: tokens.fontSizeBase500,
+    fontWeight: tokens.fontWeightMedium,
   },
   productText: {
-    fontSize: '1rem',
-    lineHeight: '1.5',
+    ...typographyStyles.body1,
+    marginTop: tokens.spacingVerticalM,
+    fontSize: tokens.fontSizeBase400,
+    lineHeight: tokens.lineHeightBase400,
   },
-  selectContainer: {
+  cartButtons: {
     display: 'flex',
-    gap: '1rem',
+    gap: tokens.spacingHorizontalXL,
+    '@container right (max-width: 512px)': {
+      flexDirection: 'column',
+    },
   },
-  selectBlock: {
-    flexGrow: '1',
-  },
-  modalOverlay: {
-    position: 'fixed',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+  mobileHeading: {
     display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    zIndex: 1000,
-  },
-  modalContent: {
-    backgroundColor: tokens.colorNeutralBackground1,
-    padding: '20px',
-    borderRadius: tokens.borderRadiusMedium,
-    width: '80%',
-    maxWidth: '900px',
-    maxHeight: '95vh',
-    overflow: 'auto',
-    position: 'relative',
-  },
-  closeButton: {
-    position: 'absolute',
-    top: '10px',
-    right: '10px',
-    zIndex: 1,
-  },
-  modalCarousel: {
+    gap: tokens.spacingVerticalL,
+    flexDirection: 'column',
     width: '100%',
-    height: '100%',
+  },
+  desktopHeading: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: tokens.spacingVerticalL,
   },
 });
 
-export function ProductInfo(props: ProductInfoProps | null) {
+export function ProductInfo({
+  id,
+  description,
+  discount,
+  images,
+  materials,
+  name,
+  price,
+  sizes,
+  colors,
+  inCart = 0,
+  variants,
+  onCartClick,
+}: ProductInfoProps) {
   const styles = useStyles();
-  const selectId = useId();
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const { triggerAttributes, modalAttributes } = useModalAttributes({
-    legacyTrapFocus: true,
-    trapFocus: true,
-  });
-  const { findFirstFocusable } = useFocusFinders();
-  const triggerRef = useRef<HTMLDivElement>(null);
-  const modalRef = useRef<HTMLDivElement>(null);
+  const [currentSize, setCurrentSize] = useState<string | null>(sizes?.[0] ?? null);
+  const [currentColor, setCurrentColor] = useState<string | null>(colors?.[0] ?? null);
+  const [currentMaterial, setCurrentMaterial] = useState<string | null>(materials?.[0] ?? null);
+  const [quantity, setQuantity] = useState(Math.max(1, inCart ?? 0));
 
-  const handleImageClick = () => {
-    if (props?.images && props.images.length > 0) {
-      setIsModalOpen(true);
-    }
+  const [addLoading, setAddLoading] = useState(false);
+  const [removeLoading, setRemoveLoading] = useState(false);
+  const [, setLoading] = useState(false);
+  const { setLoading: setCartLoading } = useLoading();
+
+  const variantId =
+    variants?.find((v: { attributes?: ProductAttribute[] }): boolean => {
+      const materialAttr = v.attributes?.[0];
+      const sizeAttr = v.attributes?.[1];
+      const colorAttr = v.attributes?.[2];
+
+      const materialValue = materialAttr?.value;
+      const isMaterialMatch =
+        materialValue && typeof materialValue === 'object' && 'key' in materialValue
+          ? materialValue.key === currentMaterial
+          : currentMaterial === null;
+
+      const sizeValue = sizeAttr?.value;
+      const isSizeMatch =
+        typeof sizeValue === 'string' ? sizeValue === currentSize : currentSize === null;
+
+      const colorValue = colorAttr?.value;
+      const isColorMatch =
+        typeof colorValue === 'string' ? colorValue === currentColor : currentColor === null;
+
+      return isMaterialMatch && isSizeMatch && isColorMatch;
+    })?.id ?? 1;
+
+  const handleAddToCart = (e: React.MouseEvent) => {
+    e.preventDefault();
+
+    void (async () => {
+      if (!onCartClick) return;
+
+      try {
+        setAddLoading(true);
+        setLoading(true);
+        setCartLoading(true);
+        await onCartClick(id, quantity, currentSize, currentColor, currentMaterial);
+      } catch (error) {
+        console.error('Failed to add to cart', error);
+      } finally {
+        setAddLoading(false);
+        setLoading(false);
+        setCartLoading(false);
+      }
+    })();
   };
 
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-    triggerRef.current?.focus();
-  };
+  const handleRemoveFromCart = (e: React.MouseEvent) => {
+    e.preventDefault();
 
-  const onModalKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
-    if (e.key === 'Escape') {
-      handleCloseModal();
-    }
+    void (async () => {
+      if (!onCartClick || inCart <= 0) return;
+
+      const { body: cart } = await getActiveCart();
+
+      const lineItem = cart.lineItems.find(
+        (item) => item.productId === id && item.variant.id === variantId,
+      );
+
+      if (!lineItem) {
+        return;
+      }
+
+      try {
+        setRemoveLoading(true);
+        setLoading(true);
+        setCartLoading(true);
+
+        await onCartClick(id, 0, currentSize, currentColor, currentMaterial);
+      } catch (error) {
+        console.error('Failed to remove from cart', error);
+      } finally {
+        setRemoveLoading(false);
+        setLoading(false);
+        setCartLoading(false);
+      }
+    })();
   };
 
   useEffect(() => {
-    if (isModalOpen && modalRef.current) {
-      document.body.style.overflow = 'hidden';
-      findFirstFocusable(modalRef.current)?.focus();
-    }
-    return () => {
-      document.body.style.overflow = 'auto';
-    };
-  }, [isModalOpen, findFirstFocusable]);
+    setLoading(false);
+  }, [inCart]);
+
+  const matchMobileWidth = useMatchMediaQuery('(max-width: 1024px)');
 
   return (
-    <div className={styles.productContainer}>
-      <div className={styles.productImg} ref={triggerRef} {...triggerAttributes}>
-        {props?.images && props?.images.length > 1 ? (
-          <ProductCarousel images={props.images} onImageClick={handleImageClick} />
-        ) : (
-          <Image className={styles.img} src={props?.image} onClick={handleImageClick} />
-        )}
-      </div>
-
-      <div className={styles.productInfo}>
-        <Text as="h2" className={styles.productTitle}>
-          {props?.name}
-        </Text>
-        <div>
-          {props?.discount ? (
-            <div>
-              <Text className={styles.productSubtitle} strikethrough style={{ marginRight: '5px' }}>
-                {props.price}
+    <div className={styles.root}>
+      <div className={styles.left}>
+        {matchMobileWidth && (
+          <div className={styles.mobileHeading}>
+            <Text
+              as="h2"
+              className={styles.productTitle}
+              style={{ viewTransitionName: `product-name-${variantId}` }}
+            >
+              {name}
+            </Text>
+            <p
+              style={{
+                display: 'flex',
+                gap: tokens.spacingHorizontalS,
+                viewTransitionName: `product-price-${id}`,
+              }}
+            >
+              {discount && <Text className={styles.productSubtitle}>{discount}</Text>}
+              <Text
+                className={styles.productSubtitle}
+                strikethrough={!!discount}
+                style={{ marginRight: '5px' }}
+              >
+                {price}
               </Text>
-              <Text className={styles.productSubtitle}>{props.discount}</Text>
-            </div>
-          ) : (
-            <div>
-              <Text className={styles.productSubtitle}>{props?.price}</Text>
+            </p>
+            <Divider style={{ width: '200%', marginLeft: '-50%' }} />
+          </div>
+        )}
+        <ProductCarousel images={images} style={{ width: '100%', position: 'relative' }} id={id} />
+      </div>
+      <div className={styles.right}>
+        <div className={styles.productInfo}>
+          {!matchMobileWidth && (
+            <div className={styles.desktopHeading}>
+              <Text
+                as="h2"
+                className={styles.productTitle}
+                style={{ viewTransitionName: `product-name-${id}` }}
+              >
+                {name}
+              </Text>
+              <p
+                style={{
+                  display: 'flex',
+                  gap: tokens.spacingHorizontalS,
+                  viewTransitionName: `product-price-${id}`,
+                }}
+              >
+                {discount && <Text className={styles.productSubtitle}>{discount}</Text>}
+                <Text
+                  className={styles.productSubtitle}
+                  strikethrough={!!discount}
+                  style={{ marginRight: '5px' }}
+                >
+                  {price}
+                </Text>
+              </p>
             </div>
           )}
-        </div>
-        <Text className={styles.productSubtitle}>About the Artwork</Text>
-        <div className={styles.productText}>{props?.description}</div>
-        <div className={styles.selectContainer}>
-          <div className={styles.selectBlock}>
-            <label htmlFor={`${selectId}-large`}>Select Size</label>
-            <Select id={`${selectId}-large`} size="large">
-              <option>20x16</option>
-              <option>30x24</option>
-              <option>40x32</option>
-              <option>50x40</option>
-              <option>60x48</option>
-            </Select>
+          <div>
+            <Text className={styles.productSubtitle}>About the Artwork</Text>
+            <p className={styles.productText}>{description}</p>
           </div>
-          <div className={styles.selectBlock}>
-            <label htmlFor={`${selectId}-large`}>Select Material</label>
-            <Select id={`${selectId}-large`} size="large">
-              <option>Giclee</option>
-              <option>Photo Rag</option>
-              <option>Canvas</option>
-            </Select>
-          </div>
-        </div>
-      </div>
-
-      {isModalOpen && (
-        <div className={styles.modalOverlay} onClick={handleCloseModal}>
           <div
-            className={styles.modalContent}
-            ref={modalRef}
-            {...modalAttributes}
-            aria-modal="true"
-            role="dialog"
-            aria-label="Product image gallery"
-            onClick={(e) => e.stopPropagation()}
-            onKeyDown={onModalKeyDown}
+            style={{
+              display: 'flex',
+              gap: 20,
+              flexWrap: 'wrap',
+            }}
           >
-            <Button
-              className={styles.closeButton}
-              appearance="transparent"
-              onClick={handleCloseModal}
-              aria-label="Close gallery"
-              icon={<DismissRegular />}
-            />
-            <div className={styles.modalCarousel}>
-              <ProductCarousel images={props?.images ?? []} />
+            {!!materials?.length && (
+              <div>
+                <Label style={{ fontSize: tokens.fontSizeBase400 }}>Materials</Label>
+                <ImageSwatchPicker
+                  images={allMaterials.filter((m) => materials?.includes(m.value))}
+                  onChange={(v) => setCurrentMaterial(v)}
+                  value={currentMaterial ?? undefined}
+                />
+              </div>
+            )}
+            {!!colors?.length && (
+              <div>
+                <Label style={{ fontSize: tokens.fontSizeBase400 }}>Colors</Label>
+                <LargeSwatchPicker
+                  colors={allColors.filter((c) => colors?.includes(c.value))}
+                  onChange={(v) => setCurrentColor(v)}
+                  value={currentColor ?? colors[0]}
+                />
+              </div>
+            )}
+            {!!sizes?.length && (
+              <div>
+                <Label style={{ fontSize: tokens.fontSizeBase400 }}>Sizes</Label>
+                <Menu
+                  defaultCheckedValues={{ size: [sizes[0]] }}
+                  onCheckedValueChange={(_, d) => setCurrentSize(d.checkedItems[0])}
+                >
+                  <MenuTrigger disableButtonEnhancement>
+                    <div>
+                      <CustomButton
+                        appearance="transparent"
+                        outlined
+                        shape="square"
+                        icon={<ChevronDownRegular />}
+                        iconPosition="after"
+                        style={{
+                          minWidth: 138,
+                          justifyContent: 'space-between',
+                          fontSize: tokens.fontSizeBase400,
+                          height: 40,
+                          paddingRight: 12,
+                        }}
+                      >
+                        {currentSize}
+                      </CustomButton>
+                    </div>
+                  </MenuTrigger>
+                  <MenuPopover>
+                    <MenuList>
+                      {sizes?.map((v) => (
+                        <MenuItemRadio
+                          key={v}
+                          name="size"
+                          value={v}
+                          style={{ fontSize: tokens.fontSizeBase400 }}
+                        >
+                          {v}
+                        </MenuItemRadio>
+                      ))}
+                    </MenuList>
+                  </MenuPopover>
+                </Menu>
+              </div>
+            )}
+            <div>
+              <Label style={{ fontSize: tokens.fontSizeBase400 }}>Quantity</Label>
+              {
+                <CustomSpinButton
+                  style={{ display: 'grid', fontSize: tokens.fontSizeBase400 }}
+                  value={quantity}
+                  onChange={(_, d) => setQuantity(d.value ?? 1)}
+                  min={1}
+                />
+              }
             </div>
           </div>
+          <div className={styles.cartButtons}>
+            <CustomButton
+              shape="circular"
+              style={{
+                flexBasis: '50%',
+                position: 'relative',
+                lineHeight: '26px',
+                padding: 12,
+              }}
+              disabled={addLoading || removeLoading}
+              onClick={handleAddToCart}
+            >
+              {addLoading ? (
+                <CustomSpinner
+                  style={{
+                    right: 8,
+                    fontSize: 26,
+                  }}
+                />
+              ) : (
+                'ADD TO CART'
+              )}
+            </CustomButton>
+            <CustomButton
+              shape="circular"
+              style={{
+                flexBasis: '50%',
+                position: 'relative',
+                lineHeight: '26px',
+                padding: 12,
+              }}
+              appearance="inverted"
+              disabled={!inCart || inCart <= 0 || removeLoading || addLoading}
+              onClick={handleRemoveFromCart}
+            >
+              REMOVE FROM CART
+              <CustomSpinner
+                style={{
+                  position: 'absolute',
+                  right: 8,
+                  fontSize: 26,
+                  visibility: removeLoading ? 'visible' : 'hidden',
+                }}
+              />
+            </CustomButton>
+          </div>
+          <div
+            style={{
+              display: 'flex',
+              gap: tokens.spacingHorizontalXS,
+              alignItems: 'center',
+            }}
+          ></div>
         </div>
-      )}
+      </div>
     </div>
   );
 }

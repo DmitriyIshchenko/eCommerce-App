@@ -16,6 +16,7 @@ const useCss = makeStyles({
     textDecoration: 'none',
     userSelect: 'none',
     display: 'inline-block',
+    lineHeight: 1.1,
     '[data-fui-focus-visible]': {
       textDecoration: 'none',
       '::after': {

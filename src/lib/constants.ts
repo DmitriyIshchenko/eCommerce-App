@@ -19,13 +19,24 @@ export interface Material {
 }
 
 export const TOASTER_ID = 'toasterId';
-
 export const DEFAULT_ADDRESS = {
   city: '',
   streetName: '',
   postalCode: '',
   country: 'BY',
 };
+
+export interface Color {
+  color: string;
+  value: string;
+  'aria-label': string;
+}
+export interface SwatchImg {
+  swatchSrc: string;
+  value: string;
+  label: string;
+  fullImageSrc: string;
+}
 
 export const PRODUCTS_LIMIT = 12;
 
@@ -42,6 +53,16 @@ export const allColors: Color[] = [
   { color: '#191970', value: 'Midnight', 'aria-label': 'Midnight' },
   { color: '#DECCA6', value: 'Natural', 'aria-label': 'Natural' },
   { color: '#5F7492', value: 'Tide', 'aria-label': 'Tide' },
+  {
+    color: 'linear-gradient(to right, white, black)',
+    value: 'Black & White',
+    'aria-label': 'Black & White',
+  },
+  {
+    color: 'linear-gradient(to right, red, orange, green, blue)',
+    value: 'Color',
+    'aria-label': 'Color',
+  },
 ];
 
 export const allMaterials: Material[] = [
@@ -59,8 +80,8 @@ export const allMaterials: Material[] = [
   },
   {
     swatchSrc: photoragLqip,
-    value: 'Photo-rag',
-    label: 'Photo-rag',
+    value: 'photo-rag',
+    label: 'Photo Rag',
     fullImageSrc: photorag,
   },
 ];

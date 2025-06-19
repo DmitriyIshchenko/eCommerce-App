@@ -1,19 +1,40 @@
+import type { ProductVariant } from '@commercetools/platform-sdk';
 import type { ToPathOption } from '@tanstack/react-router';
 
 export interface ProductCardProps {
   id: string;
   value: string;
   name: string;
+  category: string;
+  subCategory: string;
   description?: string;
   price: string;
   discount?: string;
   image?: string;
-  onCartClick?: (id: string) => void;
+  onCartClick?: (id: string, category: string, subCategory: string) => void;
   cartGoods?: number;
 }
 
-export interface ProductInfoProps extends ProductCardProps {
+export interface ProductInfoProps {
+  id: string;
+  name: string;
+  description?: string;
+  price: string;
+  discount?: string;
+  image?: string;
   images?: { url: string }[];
+  inCart?: number;
+  sizes?: string[];
+  materials?: string[];
+  colors?: string[];
+  variants?: ProductVariant[];
+  onCartClick?: (
+    id: string,
+    quantity: number,
+    size: string | null,
+    color: string | null,
+    materials: string | null,
+  ) => Promise<void>;
 }
 
 export interface MiniProductCardProps extends ProductCardProps {
@@ -26,3 +47,4 @@ export interface Link {
 }
 
 export type ClientType = 'customer' | 'anonymous';
+export type PreloadOptions = false | 'intent' | 'viewport' | 'render' | undefined;
