@@ -91,3 +91,6 @@ export const TEAM_MEMBERS: TeamMemberData[] = [
     githubLink: 'https://github.com/olydbd',
   },
 ];
+
+export const PROMO_CODE_TOTAL = 'FINE-ART-15';
+export const PROMO_CODE_BIG_PRICE = 'GALLERY-GOALS';

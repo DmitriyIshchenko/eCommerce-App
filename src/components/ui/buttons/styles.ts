@@ -102,4 +102,19 @@ export const useCustomButtonCss = makeStyles({
       fontSize: '16px',
     },
   },
+  outlined: {
+    border: `1px solid ${tokens.colorNeutralStroke1}`,
+    ':hover': {
+      border: `1px solid ${tokens.colorNeutralStroke1}`,
+      ':disabled': {
+        border: `1px solid ${tokens.colorNeutralStroke1}`,
+      },
+      ':active': {
+        border: `1px solid ${tokens.colorNeutralStroke1}`,
+        ':disabled': {
+          border: `1px solid ${tokens.colorNeutralStroke1}`,
+        },
+      },
+    },
+  },
 });
