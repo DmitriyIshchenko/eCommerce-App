@@ -1,11 +1,13 @@
 import type { Cart } from '@commercetools/platform-sdk';
 import { useCallback, useState, type ReactNode } from 'react';
 import {
+  addDiscountCodeToCart,
   createCartForCurrentCustomer,
   deleteCart,
   deleteItemFromCart,
   getActiveCart,
   reduceItemQuantityInCart,
+  removeDiscountCodeFromCart,
   updateActiveCart,
 } from '../../../lib/api/cart';
 import { CartContext } from './context';
@@ -175,6 +177,44 @@ export function CartContextProvider({ children }: { children: ReactNode }) {
 
   const isCartEmpty = useCallback(() => !cart || cart?.lineItems.length === 0, [cart]);
 
+  const addDiscountCode = useCallback(async (code: string) => {
+    try {
+      const { body: activeCart } = await getActiveCart();
+
+      const { body: updatedCart } = await addDiscountCodeToCart({
+        id: activeCart.id,
+        version: activeCart.version,
+        code: code,
+      });
+
+      setCart(updatedCart);
+
+      return updatedCart;
+    } catch (error) {
+      console.error('Failed to add discount code:', error);
+      throw error;
+    }
+  }, []);
+
+  const removeDiscountCode = useCallback(async (codeId: string) => {
+    try {
+      const { body: activeCart } = await getActiveCart();
+
+      const { body: updatedCart } = await removeDiscountCodeFromCart({
+        id: activeCart.id,
+        version: activeCart.version,
+        codeId,
+      });
+
+      setCart(updatedCart);
+
+      return updatedCart;
+    } catch (error) {
+      console.error('Failed to remove discount code:', error);
+      throw error;
+    }
+  }, []);
+
   return (
     <CartContext.Provider
       value={{
@@ -188,6 +228,8 @@ export function CartContextProvider({ children }: { children: ReactNode }) {
         deleteItemByProductId,
         clearCart,
         isCartEmpty,
+        addDiscountCode,
+        removeDiscountCode,
       }}
     >
       {children}

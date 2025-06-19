@@ -8,12 +8,12 @@ import {
   makeStyles,
   tokens,
 } from '@fluentui/react-components';
+import { useEffect, useState } from 'react';
 import type { ProductCardProps } from '../../lib/types';
 import { InternalLink } from '../ui/links/fui-tanstack';
 import CustomInfoLabel from '../ui/buttons/custom-info-label';
 import CartButton from '../ui/cart/button';
 import CustomSpinner from '../ui/spinners/custom';
-import { useEffect, useState } from 'react';
 import { useLoading } from '../../hooks/use-loading';
 
 const useStyles = makeStyles({
