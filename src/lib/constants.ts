@@ -4,6 +4,7 @@ import gicleeLqip from '../assets/images/material-giclee-lqip.webp';
 import giclee from '../assets/images/material-giclee.webp';
 import photoragLqip from '../assets/images/material-photorag-lqip.webp';
 import photorag from '../assets/images/material-photorag.webp';
+import type { TeamMemberData } from '../pages/about/team-member';
 
 export interface Color {
   color: string;
@@ -61,5 +62,23 @@ export const allMaterials: Material[] = [
     value: 'Photo-rag',
     label: 'Photo-rag',
     fullImageSrc: photorag,
+  },
+];
+
+export const TEAM_MEMBERS: TeamMemberData[] = [
+  {
+    name: 'Dmitriy Ishchenko',
+    role: 'Team Lead',
+    bio: `Hi, I'm Dmitriy! I've always had a passion for automating things. I also love seeing my code turn into something visual and interactive. That's why I think that frontend development is a perfect fit for me. It feels amazing to reach the finish line of this course after pushing through so many challenges. I'm so grateful for this community and the opportunity to work on this project not alone, but as part of an amazing team!
+    `,
+    imageSrc: 'https://i.imgur.com/6CXhngR.jpeg',
+    responsibilities: [
+      'Data scraping',
+      'Deployment',
+      'Sign up form',
+      'User profile page',
+      'Cart page',
+    ],
+    githubLink: 'https://github.com/DmitriyIshchenko',
   },
 ];

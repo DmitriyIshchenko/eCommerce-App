@@ -108,7 +108,6 @@ export default function ButtonLink({
         appearance === 'outline' && inverted && css.outlineInverted,
       )}
       appearance="muted"
-      // {...props}
     >
       <p style={{ margin: 0, padding: 2 }}>{text}</p>
       <div className={css.icon}>{icon}</div>
