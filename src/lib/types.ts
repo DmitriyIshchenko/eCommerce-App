@@ -28,6 +28,13 @@ export interface ProductInfoProps {
   materials?: string[];
   colors?: string[];
   variants?: ProductVariant[];
+  onCartClick?: (
+    id: string,
+    quantity: number,
+    size: string | null,
+    color: string | null,
+    materials: string | null,
+  ) => Promise<void>;
 }
 
 export interface MiniProductCardProps extends ProductCardProps {

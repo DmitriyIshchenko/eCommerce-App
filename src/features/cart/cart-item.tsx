@@ -67,16 +67,21 @@ export default function CartItem({ item }: Props) {
   const styles = useStyles();
 
   const { addItemToCart, reduceItemQuantity, deleteItem } = useCart();
+
   const [categories, setCategories] = useState({
     category: 'all',
     subCategory: 'whole',
   });
+  const [imageUrl, setImageUrl] = useState(defaultImage);
+  const [imageLabel, setImageLabel] = useState('default image');
 
   const {
-    variant: { attributes, images },
+    variant: { attributes },
     name,
     price,
     quantity,
+    productId,
+    id,
   } = item;
 
   let material = '';
@@ -86,23 +91,27 @@ export default function CartItem({ item }: Props) {
   useEffect(() => {
     const loadCategories = async () => {
       try {
-        const product = await getProductById(item.productId);
+        const product = await getProductById(productId);
         if (product) {
           const { category, subCategory } = await getProductCategories(product);
           setCategories({
             category: category || 'all',
             subCategory: subCategory || 'whole',
           });
+
+          const image = product.masterVariant.images?.[0];
+          if (image) {
+            setImageUrl(image.url);
+            setImageLabel(image.label ?? 'product image');
+          }
         }
       } catch (error) {
         console.error('Failed to load categories', error);
       }
     };
 
-    loadCategories().catch((error) => {
-      console.error('Failed to load categories:', error);
-    });
-  }, [item.productId]);
+    void loadCategories();
+  }, [productId]);
 
   if (attributes) {
     const [materialAttr, sizeAttr, colorAttr] = attributes;
@@ -110,9 +119,6 @@ export default function CartItem({ item }: Props) {
     if (colorAttr && isValidAttribute(colorAttr)) color = colorAttr.value;
     if (isValidAttribute(sizeAttr)) size = sizeAttr.value;
   }
-
-  const imageUrl = images?.[0].url ?? defaultImage;
-  const imageLabel = images?.[0].label ?? 'default image';
 
   const isDiscounted = 'discounted' in price;
 
@@ -158,7 +164,7 @@ export default function CartItem({ item }: Props) {
         <Button
           className={styles.delete}
           icon={<DeleteRegular />}
-          onClick={() => void deleteItem(item.id)}
+          onClick={() => void deleteItem(id)}
         />
       </div>
     </article>

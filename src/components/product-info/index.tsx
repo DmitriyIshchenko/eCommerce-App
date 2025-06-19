@@ -12,7 +12,7 @@ import {
   typographyStyles,
 } from '@fluentui/react-components';
 import { ChevronDownRegular } from '@fluentui/react-icons';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import useMatchMediaQuery from '../../hooks/use-match-media';
 import { allColors, allMaterials } from '../../lib/constants';
 import type { ProductInfoProps } from '../../lib/types';
@@ -22,6 +22,8 @@ import CustomSpinButton from '../ui/buttons/custom-spin';
 import CustomSpinner from '../ui/spinners/custom';
 import ImageSwatchPicker from '../ui/swatch-picker/image';
 import LargeSwatchPicker from '../ui/swatch-picker/large';
+import { useLoading } from '../../hooks/use-loading';
+import { getActiveCart } from '../../lib/api/cart';
 
 interface ProductAttribute {
   value: string | { key: string; label?: string };
@@ -117,14 +119,18 @@ export function ProductInfo({
   colors,
   inCart = 0,
   variants,
+  onCartClick,
 }: ProductInfoProps) {
   const styles = useStyles();
   const [currentSize, setCurrentSize] = useState<string | null>(sizes?.[0] ?? null);
   const [currentColor, setCurrentColor] = useState<string | null>(colors?.[0] ?? null);
   const [currentMaterial, setCurrentMaterial] = useState<string | null>(materials?.[0] ?? null);
   const [quantity, setQuantity] = useState(Math.max(1, inCart ?? 0));
+
   const [addLoading, setAddLoading] = useState(false);
   const [removeLoading, setRemoveLoading] = useState(false);
+  const [, setLoading] = useState(false);
+  const { setLoading: setCartLoading } = useLoading();
 
   const variantId =
     variants?.find((v: { attributes?: ProductAttribute[] }): boolean => {
@@ -148,19 +154,64 @@ export function ProductInfo({
 
       return isMaterialMatch && isSizeMatch && isColorMatch;
     })?.id ?? 1;
-  const addToCart = () => {
-    setAddLoading(true);
-    setTimeout(() => {
-      setAddLoading(false);
-    }, 2000);
+
+  const handleAddToCart = (e: React.MouseEvent) => {
+    e.preventDefault();
+
+    void (async () => {
+      if (!onCartClick) return;
+
+      try {
+        setAddLoading(true);
+        setLoading(true);
+        setCartLoading(true);
+        await onCartClick(id, quantity, currentSize, currentColor, currentMaterial);
+      } catch (error) {
+        console.error('Failed to add to cart', error);
+      } finally {
+        setAddLoading(false);
+        setLoading(false);
+        setCartLoading(false);
+      }
+    })();
   };
-  const removeFromToCart = () => {
-    setRemoveLoading(true);
-    setTimeout(() => {
-      setQuantity(1);
-      setRemoveLoading(false);
-    }, 2000);
+
+  const handleRemoveFromCart = (e: React.MouseEvent) => {
+    e.preventDefault();
+
+    void (async () => {
+      if (!onCartClick || inCart <= 0) return;
+
+      const { body: cart } = await getActiveCart();
+
+      const lineItem = cart.lineItems.find(
+        (item) => item.productId === id && item.variant.id === variantId,
+      );
+
+      if (!lineItem) {
+        return;
+      }
+
+      try {
+        setRemoveLoading(true);
+        setLoading(true);
+        setCartLoading(true);
+
+        await onCartClick(id, 0, currentSize, currentColor, currentMaterial);
+      } catch (error) {
+        console.error('Failed to remove from cart', error);
+      } finally {
+        setRemoveLoading(false);
+        setLoading(false);
+        setCartLoading(false);
+      }
+    })();
   };
+
+  useEffect(() => {
+    setLoading(false);
+  }, [inCart]);
+
   const matchMobileWidth = useMatchMediaQuery('(max-width: 1024px)');
 
   return (
@@ -241,8 +292,8 @@ export function ProductInfo({
                 <Label style={{ fontSize: tokens.fontSizeBase400 }}>Materials</Label>
                 <ImageSwatchPicker
                   images={allMaterials.filter((m) => materials?.includes(m.value))}
-                  value={currentMaterial ?? undefined}
                   onChange={(v) => setCurrentMaterial(v)}
+                  value={currentMaterial ?? undefined}
                 />
               </div>
             )}
@@ -252,7 +303,7 @@ export function ProductInfo({
                 <LargeSwatchPicker
                   colors={allColors.filter((c) => colors?.includes(c.value))}
                   onChange={(v) => setCurrentColor(v)}
-                  value={currentColor ?? undefined}
+                  value={currentColor ?? colors[0]}
                 />
               </div>
             )}
@@ -322,7 +373,7 @@ export function ProductInfo({
                 padding: 12,
               }}
               disabled={addLoading || removeLoading}
-              onClick={addToCart}
+              onClick={handleAddToCart}
             >
               {addLoading ? (
                 <CustomSpinner
@@ -344,8 +395,8 @@ export function ProductInfo({
                 padding: 12,
               }}
               appearance="inverted"
-              disabled={inCart === 0 || removeLoading || addLoading}
-              onClick={removeFromToCart}
+              disabled={!inCart || inCart <= 0 || removeLoading || addLoading}
+              onClick={handleRemoveFromCart}
             >
               REMOVE FROM CART
               <CustomSpinner
