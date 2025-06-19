@@ -130,7 +130,7 @@ export default function ProductPage({
       if (quantity === 0) {
         await deleteItemByProductId(id, variantId);
       } else {
-        await addItemToCart(id, quantity, variantId);
+        await addItemToCart(id, variantId, quantity);
       }
     } catch (error) {
       console.error('Failed to update cart', error);

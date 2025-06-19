@@ -27,7 +27,7 @@ export function CartContextProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const addItemToCart = useCallback(
-    async (productId: string, quantity = 1, variantId?: number) => {
+    async (productId: string, variantId?: number, quantity = 1) => {
       try {
         setCartLoading(true);
         const { body: activeCart } = await getActiveCart();
