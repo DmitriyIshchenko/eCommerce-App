@@ -5,5 +5,5 @@ export const Route = createFileRoute('/pages/returns')({
 });
 
 function RouteComponent() {
-  return <div>Hello "/pages/returns"!</div>;
+  return <main style={{ viewTransitionName: 'warp-content' }}>Hello "/pages/returns"!</main>;
 }

@@ -26,6 +26,11 @@ const useStyles = makeStyles({
       flexWrap: 'wrap',
     },
   },
+  wrapper: {
+    width: '100%',
+    padding: `${tokens.spacingVerticalL} ${tokens.spacingHorizontalXL}`,
+    borderBottom: `1px solid ${tokens.colorNeutralStroke1}`,
+  },
 });
 
 const Item = ({
@@ -79,27 +84,35 @@ const TruncatedItem = ({
 export default function CustomBreadcrumb({ links, truncate }: Props) {
   const styles = useStyles();
   return (
-    <Breadcrumb aria-label="Catalog Breadcrumb" className={styles.breadcrumb}>
-      <BreadcrumbItem>
-        <InternalLink to="/" appearance="muted" asBlock>
-          Home
-        </InternalLink>
-      </BreadcrumbItem>
-      {links?.map((v, i, a) => {
-        const isLast = i === a.length - 1;
-        return truncate && isTruncatableBreadcrumbContent(v.text, truncate) ? (
-          <TruncatedItem
-            key={v.to}
-            text={v.text}
-            to={v.to}
-            truncateTo={truncate}
-            className={styles.breadcrumb}
-            isLast={isLast}
-          />
-        ) : (
-          <Item key={v.to} text={v.text} to={v.to} className={styles.breadcrumb} isLast={isLast} />
-        );
-      })}
-    </Breadcrumb>
+    <div className={styles.wrapper}>
+      <Breadcrumb aria-label="Catalog Breadcrumb" className={styles.breadcrumb}>
+        <BreadcrumbItem>
+          <InternalLink to="/" appearance="muted" asBlock>
+            Home
+          </InternalLink>
+        </BreadcrumbItem>
+        {links?.map((v, i, a) => {
+          const isLast = i === a.length - 1;
+          return truncate && isTruncatableBreadcrumbContent(v.text, truncate) ? (
+            <TruncatedItem
+              key={v.to}
+              text={v.text}
+              to={v.to}
+              truncateTo={truncate}
+              className={styles.breadcrumb}
+              isLast={isLast}
+            />
+          ) : (
+            <Item
+              key={v.to}
+              text={v.text}
+              to={v.to}
+              className={styles.breadcrumb}
+              isLast={isLast}
+            />
+          );
+        })}
+      </Breadcrumb>
+    </div>
   );
 }

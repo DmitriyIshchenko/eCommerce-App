@@ -49,6 +49,15 @@ export function ProductCard(props: ProductCardProps) {
 
   const [loading, setLoading] = useState(false);
   useEffect(() => setLoading(false), [props.cartGoods]);
+
+  const imageTransitionName = `product-image-${props.id}`;
+  const priceTransitionName = `product-price-${props.id}`;
+  const nameTransitionName = `product-name-${props.id}`;
+
+  const [imageTransition, setImageTransition] = useState('');
+  const [priceTransition, setPriceTransition] = useState('');
+  const [nameTransition, setNameTransition] = useState('');
+
   return (
     <Card className={styles.card}>
       <InternalLink
@@ -69,6 +78,11 @@ export function ProductCard(props: ProductCardProps) {
           left: 0,
           zIndex: 1,
         }}
+        onClick={() => {
+          setImageTransition(imageTransitionName);
+          setNameTransition(nameTransitionName);
+          setPriceTransition(priceTransitionName);
+        }}
       />
       <CardPreview
         style={{
@@ -82,7 +96,7 @@ export function ProductCard(props: ProductCardProps) {
           src={props.image}
           alt={props.value.split('-').join(' ')}
           block
-          style={{ viewTransitionName: `product-image-${props.id}` }}
+          style={{ viewTransitionName: imageTransition }}
         />
       </CardPreview>
       <CardFooter
@@ -103,7 +117,7 @@ export function ProductCard(props: ProductCardProps) {
             minHeight: '2.4em',
             fontSize: 'clamp(16px, 4.5cqw, 32px)',
             lineHeight: 1.15,
-            viewTransitionName: `product-name-${props.id}`,
+            viewTransitionName: nameTransition,
           }}
         >
           {props.name}
@@ -112,7 +126,7 @@ export function ProductCard(props: ProductCardProps) {
           info={`${props.description?.split(/[.!]/)[0].slice(0, 200)}...`}
           className={styles.info}
         />
-        <div style={{ viewTransitionName: `product-price-${props.id}` }}>
+        <div style={{ viewTransitionName: priceTransition }}>
           {props.discount ? (
             <div style={{ display: 'flex', alignItems: 'center', gap: '1ch' }}>
               <Caption1 style={{ fontSize: 'clamp(16px, 4.5cqw, 32px)' }}>From </Caption1>

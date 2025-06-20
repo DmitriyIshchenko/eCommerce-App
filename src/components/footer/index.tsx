@@ -21,6 +21,7 @@ const useClasses = makeStyles({
     backgroundColor: customTokens.tokenA,
     width: '100%',
     boxSizing: 'border-box',
+    minHeight: '100dvh',
   },
   footerContainer: {
     width: '100%',

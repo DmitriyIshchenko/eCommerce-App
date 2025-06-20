@@ -1,19 +1,11 @@
 import { FluentProvider, type Theme, Toaster, makeStaticStyles } from '@fluentui/react-components';
-import { RouterProvider, createRouter } from '@tanstack/react-router';
+import { RouterProvider } from '@tanstack/react-router';
 import { useEffect, useState } from 'react';
-import { routeTree } from '../routeTree.gen';
+import { TOASTER_ID } from '../lib/constants/constants.ts';
 import { LoadingContextProvider } from './contexts/loading/context-provider';
 import { useThemeContext } from './contexts/theme/context.tsx';
 import { UserContextProvider } from './contexts/user/context-provider';
-import { TOASTER_ID } from '../lib/constants/constants.ts';
-
-const router = createRouter({ routeTree });
-
-declare module '@tanstack/react-router' {
-  interface Register {
-    router: typeof router;
-  }
-}
+import { router } from '../main.tsx';
 
 const useStaticCss = makeStaticStyles({
   body: {

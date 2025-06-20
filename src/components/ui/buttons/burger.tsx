@@ -10,6 +10,9 @@ import StyledTooltip from '../tooltips/styled';
 import type { CustomButtonProps } from './custom';
 
 const useCss = makeStyles({
+  base: {
+    maxHeight: '40px',
+  },
   animate: {
     color: tokens.colorNeutralForeground1,
     '> span > svg': {

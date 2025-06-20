@@ -13,7 +13,7 @@ import {
 } from '@fluentui/react-components';
 import { ChevronDownRegular } from '@fluentui/react-icons';
 import { useLocation } from '@tanstack/react-router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import useMatchMediaQuery from '../../hooks/use-match-media';
 import { allColors, allMaterials } from '../../lib/constants/constants';
 import type { ProductInfoProps } from '../../lib/types';

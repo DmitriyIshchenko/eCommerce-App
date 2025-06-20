@@ -1,6 +1,6 @@
 import type { IconProps } from './icon-props';
 
-export default function DispatchClock({
+export default function DispatchClockIcon({
   color = 'currentColor',
   height = '1em',
   width = '1em',

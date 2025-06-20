@@ -1,10 +1,14 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { MainBanner } from '../components/main-banner';
+import MainPage from '../pages/main';
 
 export const Route = createFileRoute('/')({
   component: RouteComponent,
 });
 
 function RouteComponent() {
-  return <MainBanner />;
+  return (
+    <div style={{ viewTransitionName: 'warp-content', lineHeight: 0 }}>
+      <MainPage />
+    </div>
+  );
 }

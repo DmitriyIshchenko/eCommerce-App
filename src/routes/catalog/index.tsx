@@ -1,7 +1,11 @@
-import { createFileRoute } from '@tanstack/react-router';
-import { makeStyles, Spinner } from '@fluentui/react-components';
-import { Route as RootRoute } from '../__root';
+import { Spinner, makeStyles } from '@fluentui/react-components';
+import { createFileRoute, useLocation } from '@tanstack/react-router';
+import CustomBreadcrumb from '../../components/ui/breadcrumb';
 import { InternalLink } from '../../components/ui/links/fui-tanstack';
+import type { Link } from '../../lib/types';
+import { kebabToCapitalizedSpacedString } from '../../lib/utils/kebab-to-capitalized-spaced-string';
+import { Route as RootRoute } from '../__root';
+import CollectionsOverview from '../../features/collections-overview';
 
 const useStyles = makeStyles({
   container: {
@@ -10,6 +14,7 @@ const useStyles = makeStyles({
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
+    viewTransitionName: 'warp-container',
   },
 });
 
@@ -21,23 +26,25 @@ export const Route = createFileRoute('/catalog/')({
 function RouteComponent() {
   const styles = useStyles();
   const { categories } = RootRoute.useRouteContext();
-  const parentCategories = categories.filter((cat) => !cat.parent?.id);
+  // const parentCategories = categories.filter((cat) => !cat.parent?.id);
+
+  const links: Link[] = useLocation()
+    .pathname.split('/')
+    .slice(1)
+    .reduce((a: Link[], v) => {
+      const current: Link = {
+        text: kebabToCapitalizedSpacedString(v),
+        to: a.length ? `${a.at(-1)?.to}/${v}` : `/${v}`,
+      };
+      return [...a, current];
+    }, []);
 
   return (
-    <div className={styles.container}>
-      <InternalLink to="/catalog/$category/$" params={{ category: 'all' }} search>
-        Shop All
-      </InternalLink>
-      {parentCategories.map((category) => (
-        <InternalLink
-          key={category.id}
-          to="/catalog/$category/$"
-          params={{ category: `${category.slug['en-US']}` }}
-          search
-        >
-          {category.name['en-US']}
-        </InternalLink>
-      ))}
-    </div>
+    <>
+      <CustomBreadcrumb links={links} />
+      <main className={styles.container}>
+        <CollectionsOverview />
+      </main>
+    </>
   );
 }

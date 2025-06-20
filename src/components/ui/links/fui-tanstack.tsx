@@ -37,6 +37,9 @@ const useCss = makeStyles({
     },
     ':hover::after': { width: '100%' },
   },
+  staticStick: {
+    '::after': { width: '100%' },
+  },
   straight: {
     '::after': {
       backgroundColor: tokens.colorNeutralForeground3Hover,
@@ -110,11 +113,21 @@ type StyledLinkProps = Omit<FluentLinkProps, 'appearance' | 'as'> &
     asBlock: boolean;
     notInteractive: boolean;
     active: boolean;
+    staticStick: boolean;
   }>;
 
 export const ExternalLink = forwardRef<HTMLAnchorElement, StyledLinkProps>(
   (
-    { appearance = 'straight', accent, active, asBlock, notInteractive, disabled, ...props },
+    {
+      appearance = 'straight',
+      accent,
+      active,
+      asBlock,
+      notInteractive,
+      disabled,
+      staticStick,
+      ...props
+    },
     ref,
   ) => {
     const css = useCss();
@@ -135,6 +148,7 @@ export const ExternalLink = forwardRef<HTMLAnchorElement, StyledLinkProps>(
           appearance === 'inverted' && css.stick,
           appearance === 'muted' && css.muted,
           appearance === 'stickless' && css.stickless,
+          staticStick && css.staticStick,
           asBlock && css.block,
           accent && css.accent,
           notInteractive && css.notInteractive,

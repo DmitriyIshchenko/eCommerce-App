@@ -21,8 +21,6 @@
 html,
 body {
   height: 100%;
-  display: flex;
-  flex-direction: column;
   scrollbar-gutter: stable;
   scroll-behavior: smooth;
 }
@@ -87,4 +85,47 @@ html:active-view-transition-type(slide-left) {
   to {
     transform: translateX(0);
   }
+}
+
+/* Warp/Rotate Transition */
+html:active-view-transition-type(warp) {
+  &::view-transition-old(warp-content) {
+    animation: 1000ms ease-out both warp-out;
+  }
+
+  &::view-transition-new(warp-content) {
+    animation: 1000ms ease-out both warp-in;
+  }
+}
+
+@keyframes warp-out {
+  from {
+    opacity: 1;
+    filter: blur(0) brightness(1);
+    transform: scale(1) rotate(0deg);
+  }
+  to {
+    opacity: 0;
+    filter: blur(15px) brightness(1.8);
+    transform: scale(1.1) rotate(90deg);
+  }
+}
+
+@keyframes warp-in {
+  from {
+    opacity: 0;
+    filter: blur(15px) brightness(1.8);
+    transform: scale(0.9) rotate(-45deg);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0) brightness(1);
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+/* Default Transition For Root */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 400ms;
 }

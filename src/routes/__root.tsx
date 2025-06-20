@@ -9,6 +9,8 @@ import useDebounceLoading from '../hooks/use-debounce-loading';
 import { getCategories } from '../lib/api/get-categories';
 import ErrorPage from '../pages/error-page';
 import { TOASTER_ID } from '../lib/constants/constants';
+import AnnouncementBar from '../components/announcement-bar';
+import ScrollToTopButton from '../components/ui/buttons/scroll-to-top';
 
 interface RouterContext {
   categories: Category[];
@@ -48,8 +50,10 @@ function RootComponent() {
             }}
           />
         )}
+        <AnnouncementBar />
         <Header />
         <Outlet />
+        <ScrollToTopButton />
         <Footer />
       </UserContextProvider>
       <Toaster toasterId={TOASTER_ID} />

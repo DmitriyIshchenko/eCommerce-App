@@ -4,20 +4,22 @@ import {
   DrawerBody,
   DrawerHeader,
   DrawerHeaderTitle,
+  Switch,
   makeStyles,
   tokens,
 } from '@fluentui/react-components';
-import { DismissRegular } from '@fluentui/react-icons';
-import { Link, useLocation, useNavigate, useRouteContext } from '@tanstack/react-router';
+import { DismissRegular, WeatherMoonRegular, WeatherSunnyRegular } from '@fluentui/react-icons';
+import { useLocation, useNavigate, useRouteContext } from '@tanstack/react-router';
 import { useEffect, useState } from 'react';
 import { CatalogTree } from '../../features/catalog-tree';
 import SearchDrawer from '../../features/search-drawer';
+import useScrollDirection from '../../hooks/use-scroll-direction';
 import { useUser } from '../../hooks/use-user';
 import adaptCategoriesToSplitLinkMenuItemProp from '../../lib/utils/adapt-categories';
+import { useThemeContext } from '../contexts/theme/context';
 import BurgerButton from '../ui/buttons/burger';
 import SearchButton from '../ui/buttons/search';
-import CartButton from '../ui/cart/button';
-import CartLink from '../ui/cart/link';
+import LogoIcon from '../ui/icons/logo';
 import { InternalLink } from '../ui/links/fui-tanstack';
 import SplitLinkMenu from '../ui/menu/split-link';
 
@@ -29,6 +31,7 @@ const useClasses = makeStyles({
     width: '100%',
     margin: '0 auto',
     boxSizing: 'border-box',
+    borderTop: `1px solid ${tokens.colorNeutralStroke1}`,
     borderBottom: `1px solid ${tokens.colorNeutralStroke1}`,
   },
   title: {
@@ -94,6 +97,22 @@ const useClasses = makeStyles({
     '&:hover': {
       textDecoration: 'underline',
       color: tokens.colorNeutralForeground1Hover,
+    },
+  },
+  logo: {
+    filter: 'drop-shadow(3px 3px 1px rgba(0, 0, 0, 0.4))',
+    transition: `stroke-width ${tokens.durationSlow}`,
+    strokeWidth: '0',
+    ':hover': {
+      strokeWidth: '0.25px',
+    },
+  },
+  themeSwitch: {
+    '> .fui-Switch__indicator': {
+      margin: 0,
+    },
+    '> .fui-switch-input': {
+      width: 'auto',
     },
   },
 });
@@ -166,13 +185,31 @@ export function Header() {
       };
     }
   }, [isDrawerOpen]);
-  const [cartGoods, setCartGoods] = useState(0);
-  const [cartLoading, setCartLoading] = useState(false);
 
-  // const { mode, setMode } = useThemeContext();
+  const { mode, setMode } = useThemeContext();
+  const scrollDirection = useScrollDirection();
+
   return (
-    <header>
-      <div style={{ display: 'flex' }}>
+    <header
+      style={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        padding: '6px 20px',
+        backgroundColor: tokens.colorNeutralBackground1,
+        top: 0,
+        zIndex: 10,
+        borderBottom: `1px solid ${tokens.colorNeutralStroke1}`,
+        position: 'sticky',
+        transition: `transform ${tokens.durationSlow}`,
+        willChange: 'transform',
+        transform: scrollDirection === 'down' ? 'scale(1, 0)' : 'scale(1, 1)',
+        transformOrigin: 'top center',
+      }}
+    >
+      <InternalLink to="/" appearance="stickless">
+        <LogoIcon className={classes.logo} />
+      </InternalLink>
+      <div style={{ display: 'flex', alignItems: 'center' }}>
         <ul className={classes.menu}>
           <li>
             <SplitLinkMenu
@@ -189,29 +226,10 @@ export function Header() {
               appearance="straight"
               inline
               active={about.to === pathname.split('/').slice(0, 2).join('/')}
+              viewTransition={{ types: ['warp'] }}
             >
               {about.name}
             </InternalLink>
-          </li>
-          <li>
-            <CartLink to="" loading={cartLoading} size={60} goods={cartGoods} />
-          </li>
-          <Link to="/" viewTransition>
-            D
-          </Link>
-          <li>
-            <CartButton
-              loading={cartLoading}
-              goods={cartGoods}
-              size={60}
-              onClick={() => {
-                setCartLoading(true);
-                setCartGoods(cartGoods + 1);
-                setTimeout(() => setCartLoading(false), 5000);
-              }}
-              tooltipPositioning={'above'}
-              tooltipContent="Add to Cart"
-            />
           </li>
           {!authorized &&
             authMenu.map((item) => (
@@ -247,17 +265,43 @@ export function Header() {
               </li>
             </>
           )}
+          <li>
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: tokens.spacingHorizontalM,
+                marginLeft: 12,
+              }}
+            >
+              <SearchButton onClick={() => setIsSearchDrawerOpen(true)} />
+              <Switch
+                className={classes.themeSwitch}
+                onChange={(_, d) => {
+                  setMode(d.checked ? 'dark' : 'light');
+                }}
+                checked={mode === 'dark'}
+                indicator={
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      padding: 1.5,
+                      fontSize: 16,
+                    }}
+                  >
+                    {mode === 'dark' ? <WeatherMoonRegular /> : <WeatherSunnyRegular />}
+                  </div>
+                }
+              />
+            </div>
+          </li>
         </ul>
-
-        <div style={{ display: 'flex' }}>
-          <SearchButton onClick={() => setIsSearchDrawerOpen(true)} />
-
-          <BurgerButton
-            className={classes.burgerButton}
-            onClick={() => setIsDrawerOpen(true)}
-            aria-label="Open navigation menu"
-          />
-        </div>
+        <BurgerButton
+          className={classes.burgerButton}
+          onClick={() => setIsDrawerOpen(true)}
+          aria-label="Open navigation menu"
+        />
       </div>
 
       <Drawer
@@ -286,7 +330,7 @@ export function Header() {
 
         <DrawerBody>
           <ul className={classes.drawerMenu}>
-            <li>
+            <li onClick={() => setIsDrawerOpen(false)}>
               <CatalogTree />
             </li>
             <li>
@@ -296,6 +340,8 @@ export function Header() {
                 appearance="straight"
                 inline
                 active={about.to === pathname.split('/').slice(0, 2).join('/')}
+                viewTransition={{ types: ['warp'] }}
+                onClick={() => setIsDrawerOpen(false)}
               >
                 {about.name}
               </InternalLink>
@@ -310,6 +356,7 @@ export function Header() {
                     appearance="straight"
                     inline
                     active={item.to === pathname.split('/').slice(0, 2).join('/')}
+                    onClick={() => setIsDrawerOpen(false)}
                   >
                     {item.name}
                   </InternalLink>
@@ -324,11 +371,12 @@ export function Header() {
                     appearance="straight"
                     inline
                     active={account.to === pathname.split('/').slice(0, 2).join('/')}
+                    onClick={() => setIsDrawerOpen(false)}
                   >
                     {account.name}
                   </InternalLink>
                 </li>
-                <li>
+                <li onClick={() => setIsDrawerOpen(false)}>
                   <Button size="large" shape="circular" onClick={handleLogout}>
                     Logout
                   </Button>
@@ -338,9 +386,7 @@ export function Header() {
           </ul>
         </DrawerBody>
       </Drawer>
-      <div>
-        <SearchDrawer open={isSearchDrawerOpen} onOpenChange={setIsSearchDrawerOpen} />
-      </div>
+      <SearchDrawer open={isSearchDrawerOpen} onOpenChange={setIsSearchDrawerOpen} />
     </header>
   );
 }

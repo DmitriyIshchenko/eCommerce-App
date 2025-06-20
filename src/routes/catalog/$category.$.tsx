@@ -38,19 +38,6 @@ import CategoryPage from '../../pages/category';
 
 type Filter = ProductSearchSchema;
 
-const useStyles = makeStyles({
-  breadContainer: {
-    width: '100%',
-    padding: `${tokens.spacingVerticalL} ${tokens.spacingHorizontalXL}`,
-    borderBottom: `1px solid ${tokens.colorNeutralStroke1}`,
-  },
-  treeItem: {
-    '& .fui-Radio__indicator::after': {
-      backgroundColor: tokens.colorPaletteRoyalBlueForeground2,
-    },
-  },
-});
-
 const LIMIT_PER_PAGE = 8;
 
 export const Route = createFileRoute('/catalog/$category/$')({
@@ -117,7 +104,6 @@ export const Route = createFileRoute('/catalog/$category/$')({
 });
 
 function RouteComponent() {
-  const styles = useStyles();
   const [open, setOpen] = useState(false);
 
   const {
@@ -291,15 +277,15 @@ function RouteComponent() {
   };
 
   return (
-    <main>
-      <div className={styles.breadContainer}>
-        <CustomBreadcrumb links={links} />
+    <main style={{ viewTransitionName: 'warp-content' }}>
+      <CustomBreadcrumb links={links} />
+      <div>
+        <CategoryPage
+          products={results}
+          categoryName={categoryName}
+          subcategoryName={subcategoryName}
+        />
       </div>
-      <CategoryPage
-        products={results}
-        categoryName={categoryName}
-        subcategoryName={subcategoryName}
-      />
       <div style={{ display: 'flex', justifyContent: 'center', margin: 30 }}>
         <Pagination total={totalPages} searchParamName="page" />
       </div>
