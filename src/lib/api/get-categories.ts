@@ -1,5 +1,5 @@
 import type { ProductProjection } from '@commercetools/platform-sdk';
-import { createAnonymousClient, getApiRoot, getApiRootSmart } from './client';
+import { getApiRootSmart } from './client';
 
 export async function getCategories() {
   const apiRoot = getApiRootSmart();
@@ -52,11 +52,10 @@ export async function getSubcategoriesByParentId(parentId: string) {
 }
 
 export async function getCategoryById(id: string) {
-  const anonymousClient = createAnonymousClient();
-  const anonymousApiRoot = getApiRoot(anonymousClient);
+  const apiRoot = getApiRootSmart();
 
   try {
-    const categoryResponse = await anonymousApiRoot.categories().withId({ ID: id }).get().execute();
+    const categoryResponse = await apiRoot.categories().withId({ ID: id }).get().execute();
     return categoryResponse.body;
   } catch {
     throw new Error('Category not found');

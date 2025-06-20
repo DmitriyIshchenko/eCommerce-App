@@ -153,13 +153,11 @@ export function CartContextProvider({ children }: { children: ReactNode }) {
       const activeCart = await getActiveCart();
       if (activeCart.statusCode === 200) {
         setCart(activeCart.body);
-      } else {
-        await createCart();
       }
     } catch (error) {
       console.error('Failed to refresh cart:', error);
     }
-  }, [createCart]);
+  }, []);
 
   const clearCart = useCallback(async () => {
     try {
