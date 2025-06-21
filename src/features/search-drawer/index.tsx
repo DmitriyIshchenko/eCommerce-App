@@ -17,6 +17,9 @@ import { MiniProductCard } from '../../components/mini-product-card';
 import formatPrice from '../../lib/utils/format-price';
 import { getProductsByText } from '../../lib/api/get-products';
 import { getProductCategories } from '../../lib/api/get-categories';
+import { Route } from '../../routes/catalog/$category.$';
+import { useMatchRoute } from '@tanstack/react-router';
+import type { ProductSearchSchema } from '../../lib/schemas/products-search';
 
 const useStyles = makeStyles({
   header: {
@@ -44,15 +47,29 @@ const DRAWER_SUBTITLE = 'ALL PRODUCTS';
 
 export default function SearchDrawer({ open, onOpenChange }: SearchDrawerProps) {
   const styles = useStyles();
+  const matchRoute = useMatchRoute();
   const [value, setValue] = useState('');
   const [products, setProducts] = useState<ProductProjection[]>([]);
   const [categoriesCache, setCategoriesCache] = useState<
     Record<string, { category: string; subCategory: string }>
   >({});
 
+  const navigateFromCategory = Route.useNavigate();
+  const isCategory = matchRoute({ to: '/catalog/$category/$' });
+  const navigate = isCategory && navigateFromCategory;
+
   const onChange = async (_ev: ChangeEvent<HTMLInputElement>, data: InputOnChangeData) => {
     const searchText = data.value;
     setValue(searchText);
+
+    if (navigate) {
+      void navigate({
+        search: (prev: ProductSearchSchema) => ({
+          ...prev,
+          q: searchText,
+        }),
+      });
+    }
 
     try {
       const productResponse = await getProductsByText(searchText);
