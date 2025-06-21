@@ -135,8 +135,6 @@ function RouteComponent() {
     categoryMaterials,
     minCategoryPrice,
     maxCategoryPrice,
-    // categoryTotal,
-    // categoryId,
   } = Route.useLoaderData();
 
   const { category, _splat } = Route.useParams();
@@ -172,7 +170,7 @@ function RouteComponent() {
   const categoryName = formatString(category);
   const subcategoryName = _splat ? formatString(_splat) : undefined;
 
-  const pathnames = pathname.split('/').slice(1);
+  const pathnames = pathname.split('/').slice(1).filter(Boolean);
   const links: Link[] = pathnames.reduce((a: Link[], v) => {
     const current: Link = {
       text: formatString(v),
