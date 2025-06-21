@@ -21,6 +21,7 @@ import { DismissRegular } from '@fluentui/react-icons';
 import { type CSSProperties, useState } from 'react';
 import CustomButton from '../ui/buttons/custom';
 import StyledTooltip from '../ui/tooltips/styled';
+import { getSizedImageUrl } from '../../lib/utils/get-sized-image-url';
 
 const useCarouselStyles = makeStyles({
   carouselCard: {
@@ -111,7 +112,7 @@ export function ProductCarousel({ images = [], style, id }: ProductCarouselProps
                 >
                   <Image
                     className={classes.image}
-                    src={image.url}
+                    src={getSizedImageUrl(image.url, 'large')}
                     role="presentation"
                     style={{ viewTransitionName: index === 0 ? `product-image-${id}` : '' }}
                   />
@@ -153,7 +154,11 @@ export function ProductCarousel({ images = [], style, id }: ProductCarouselProps
                         aria-label={`${index + 1} of ${images.length}`}
                         style={{ padding: 0 }}
                       >
-                        <Image className={classes.modalImage} src={image.url} role="presentation" />
+                        <Image
+                          className={classes.modalImage}
+                          src={getSizedImageUrl(image.url, 'zoom')}
+                          role="presentation"
+                        />
                       </CarouselCard>
                     ))}
                   </CarouselSlider>
@@ -185,7 +190,7 @@ export function ProductCarousel({ images = [], style, id }: ProductCarouselProps
         >
           {(index) => (
             <CarouselNavImageButton
-              image={{ src: images[index].url }}
+              image={{ src: getSizedImageUrl(images[index].url, 'thumb') }}
               aria-label={`Carousel Nav Button ${index}`}
               className={classes.navButton}
             />
