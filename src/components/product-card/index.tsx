@@ -15,6 +15,7 @@ import CustomInfoLabel from '../ui/buttons/custom-info-label';
 import CartButton from '../ui/cart/button';
 import CustomSpinner from '../ui/spinners/custom';
 import { useLoading } from '../../hooks/use-loading';
+import { getSizedImageUrl } from '../../lib/utils/get-sized-image-url';
 
 const useStyles = makeStyles({
   card: {
@@ -82,7 +83,7 @@ export function ProductCard(props: ProductCardProps) {
       >
         <Image
           style={{ transition: 'transform 0.4s ease-in-out' }}
-          src={props.image}
+          src={props.image ? getSizedImageUrl(props.image, 'medium') : ''}
           alt={props.value.split('-').join(' ')}
           block
         />

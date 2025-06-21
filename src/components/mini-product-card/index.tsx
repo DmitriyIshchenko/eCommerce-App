@@ -8,6 +8,8 @@ import {
 } from '@fluentui/react-components';
 import type { MiniProductCardProps } from '../../lib/types';
 import { InternalLink } from '../ui/links/fui-tanstack';
+import { getSizedImageUrl } from '../../lib/utils/get-sized-image-url';
+import defaultImage from '../../assets/images/default-image.jpg';
 
 const useStyles = makeStyles({
   card: {
@@ -40,7 +42,13 @@ export function MiniProductCard(props: MiniProductCardProps) {
         }}
       />
       <CardHeader
-        image={<img src={props.image} alt={props.value} style={{ width: '50px' }} />}
+        image={
+          <img
+            src={props.image ? getSizedImageUrl(props.image, 'thumb') : defaultImage}
+            alt={props.value}
+            style={{ width: '50px' }}
+          />
+        }
         header={
           <div>
             <Body1Strong>{props.name}</Body1Strong>

@@ -8,6 +8,7 @@ import defaultImage from '../../assets/images/default-image.jpg';
 import { useEffect, useState } from 'react';
 import { getProductById } from '../../lib/api/get-product';
 import { getProductCategories } from '../../lib/api/get-categories';
+import { getSizedImageUrl } from '../../lib/utils/get-sized-image-url';
 
 interface ValidAttribute extends Attribute {
   value: string;
@@ -124,7 +125,7 @@ export default function CartItem({ item }: Props) {
 
   return (
     <article className={styles.item}>
-      <Image className={styles.image} alt={imageLabel} src={imageUrl} />
+      <Image className={styles.image} alt={imageLabel} src={getSizedImageUrl(imageUrl, 'small')} />
 
       <div className={styles.info}>
         <InternalLink
