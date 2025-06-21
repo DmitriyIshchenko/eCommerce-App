@@ -18,11 +18,11 @@ import BurgerButton from '../ui/buttons/burger';
 import SplitLinkMenu from '../ui/menu/split-link';
 import adaptCategoriesToSplitLinkMenuItemProp from '../../lib/utils/adapt-categories';
 import { InternalLink } from '../ui/links/fui-tanstack';
-import { CatalogTree } from '../../features/catalog-tree';
 import SearchDrawer from '../../features/search-drawer';
 import CartLink from '../ui/cart/link';
 import { useCart } from '../../hooks/use-cart';
 import { useLoading } from '../../hooks/use-loading';
+import { FlatTreeMenu } from '../ui/menu/flat-tree';
 
 const useClasses = makeStyles({
   header: {
@@ -276,7 +276,7 @@ export function Header() {
           <DrawerBody>
             <ul className={classes.drawerMenu}>
               <li>
-                <CatalogTree />
+                <FlatTreeMenu onClick={() => setIsDrawerOpen(false)} />
               </li>
               <li>
                 <InternalLink
@@ -285,6 +285,7 @@ export function Header() {
                   appearance="straight"
                   inline
                   active={about.to === pathname.split('/').slice(0, 2).join('/')}
+                  onClick={() => setIsDrawerOpen(false)}
                 >
                   {about.name}
                 </InternalLink>
@@ -299,6 +300,7 @@ export function Header() {
                       appearance="straight"
                       inline
                       active={item.to === pathname.split('/').slice(0, 2).join('/')}
+                      onClick={() => setIsDrawerOpen(false)}
                     >
                       {item.name}
                     </InternalLink>
@@ -313,6 +315,7 @@ export function Header() {
                       appearance="straight"
                       inline
                       active={account.to === pathname.split('/').slice(0, 2).join('/')}
+                      onClick={() => setIsDrawerOpen(false)}
                     >
                       {account.name}
                     </InternalLink>

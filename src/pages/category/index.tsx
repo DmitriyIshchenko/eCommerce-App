@@ -113,7 +113,7 @@ export default function CategoryPage({
     <div className={styles.wrapper}>
       <div className={styles.separate}>
         <div className={styles.title}>
-          <LargeTitle style={{ padding: '0 20px' }} as="h1">
+          <LargeTitle align="center" style={{ padding: '0 20px' }} as="h1">
             {title}
           </LargeTitle>
         </div>
