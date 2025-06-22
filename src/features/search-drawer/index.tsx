@@ -160,7 +160,10 @@ export default function SearchDrawer({ open, onOpenChange }: SearchDrawerProps) 
 
                 return (
                   <MiniProductCard
-                    onClick={() => onOpenChange(false)}
+                    onClick={() => {
+                      onOpenChange(false);
+                      document.body.style.overflowY = '';
+                    }}
                     key={product.id}
                     value={product.slug?.['en-US']}
                     name={product.name?.['en-US']}
