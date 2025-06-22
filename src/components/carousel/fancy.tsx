@@ -73,7 +73,7 @@ interface ProductCarouselProps {
   id?: string;
 }
 
-export function ProductFancyCarousel({ images = [], style, id }: ProductCarouselProps) {
+export function ProductFancyGallery({ images = [], style, id }: ProductCarouselProps) {
   const classes = useCarouselStyles();
   const [fancyboxRef] = useFancybox({
     Hash: false,
@@ -135,13 +135,13 @@ export function ProductFancyCarousel({ images = [], style, id }: ProductCarousel
             }}
           >
             {(index) => (
-              <a href={images[index].url} data-fancybox="gallery">
+              <div data-fancybox="gallery">
                 <CarouselNavImageButton
                   image={{ src: images[index].url }}
                   aria-label={`Carousel Nav Button ${index}`}
                   className={classes.navButton}
                 />
-              </a>
+              </div>
             )}
           </CarouselNav>
         </CarouselNavContainer>

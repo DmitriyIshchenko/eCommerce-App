@@ -17,6 +17,7 @@ import { useState } from 'react';
 import useMatchMediaQuery from '../../hooks/use-match-media';
 import { allColors, allMaterials } from '../../lib/constants/constants';
 import type { ProductInfoProps } from '../../lib/types';
+import { ProductFancyCarousel } from '../carousel/fancy';
 import CustomButton from '../ui/buttons/custom';
 import CustomSpinButton from '../ui/buttons/custom-spin';
 import FacebookIcon from '../ui/icons/facebook';
@@ -27,14 +28,10 @@ import CustomSpinner from '../ui/spinners/custom';
 import ImageSwatchPicker from '../ui/swatch-picker/image';
 import LargeSwatchPicker from '../ui/swatch-picker/large';
 import { AccordionProductInfo } from './accordion';
-import { ProductFancyCarousel } from '../carousel/fancy';
 
 const BASE_URL = 'https://celestia-art.netlify.app';
 
 const useStyles = makeStyles({
-  root: {
-    '@media (max-width: 1024px)': {},
-  },
   left: {
     display: 'inline-block',
     verticalAlign: 'top',
@@ -155,7 +152,7 @@ export function ProductInfo({
   const matchMobileWidth = useMatchMediaQuery('(max-width: 1024px)');
 
   return (
-    <div className={styles.root}>
+    <div>
       <div className={styles.left}>
         {matchMobileWidth && (
           <div className={styles.mobileHeading}>
