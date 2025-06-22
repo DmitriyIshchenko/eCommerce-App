@@ -113,7 +113,9 @@ export function ProductCarousel({ images = [], style, id }: ProductCarouselProps
                     className={classes.image}
                     src={image.url}
                     role="presentation"
-                    style={{ viewTransitionName: index === 0 ? `product-image-${id}` : '' }}
+                    style={{
+                      viewTransitionName: index === 0 ? `product-image-${id}` : '',
+                    }}
                   />
                 </CarouselCard>
               ))}

@@ -2,10 +2,10 @@ import { FluentProvider, type Theme, Toaster, makeStaticStyles } from '@fluentui
 import { RouterProvider } from '@tanstack/react-router';
 import { useEffect, useState } from 'react';
 import { TOASTER_ID } from '../lib/constants/constants.ts';
+import { router } from '../main.tsx';
 import { LoadingContextProvider } from './contexts/loading/context-provider';
 import { useThemeContext } from './contexts/theme/context.tsx';
 import { UserContextProvider } from './contexts/user/context-provider';
-import { router } from '../main.tsx';
 
 const useStaticCss = makeStaticStyles({
   body: {
@@ -28,17 +28,25 @@ function App() {
         if (mode === 'light') {
           const themeModule = await import('./theme/light.ts');
           setCurrentTheme(themeModule.lightTheme);
-          document.body.style.setProperty(
+          document.documentElement.style.setProperty(
             '--body-bg',
             themeModule.lightTheme.colorNeutralBackground1,
+          );
+          document.documentElement.style.setProperty(
+            '--thumb-bg',
+            themeModule.lightTheme.colorNeutralForeground4,
           );
         }
         if (mode === 'dark') {
           const themeModule = await import('./theme/darks.ts');
           setCurrentTheme(themeModule.darkTheme);
-          document.body.style.setProperty(
+          document.documentElement.style.setProperty(
             '--body-bg',
             themeModule.darkTheme.colorNeutralBackground1,
+          );
+          document.documentElement.style.setProperty(
+            '--thumb-bg',
+            themeModule.darkTheme.colorNeutralForeground4,
           );
         }
       } catch (e) {

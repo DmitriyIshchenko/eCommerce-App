@@ -13,11 +13,10 @@ import {
 } from '@fluentui/react-components';
 import { ChevronDownRegular } from '@fluentui/react-icons';
 import { useLocation } from '@tanstack/react-router';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import useMatchMediaQuery from '../../hooks/use-match-media';
 import { allColors, allMaterials } from '../../lib/constants/constants';
 import type { ProductInfoProps } from '../../lib/types';
-import { ProductCarousel } from '../carousel';
 import CustomButton from '../ui/buttons/custom';
 import CustomSpinButton from '../ui/buttons/custom-spin';
 import FacebookIcon from '../ui/icons/facebook';
@@ -28,6 +27,7 @@ import CustomSpinner from '../ui/spinners/custom';
 import ImageSwatchPicker from '../ui/swatch-picker/image';
 import LargeSwatchPicker from '../ui/swatch-picker/large';
 import { AccordionProductInfo } from './accordion';
+import { ProductFancyCarousel } from '../carousel/fancy';
 
 const BASE_URL = 'https://celestia-art.netlify.app';
 
@@ -185,7 +185,11 @@ export function ProductInfo({
             <Divider style={{ width: '200%', marginLeft: '-50%' }} />
           </div>
         )}
-        <ProductCarousel images={images} style={{ width: '100%', position: 'relative' }} id={id} />
+        <ProductFancyCarousel
+          images={images}
+          style={{ width: '100%', position: 'relative' }}
+          id={id}
+        />
       </div>
       <div className={styles.right}>
         <div className={styles.productInfo}>

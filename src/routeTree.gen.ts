@@ -18,9 +18,13 @@ import { Route as IndexImport } from './routes/index'
 import { Route as CatalogIndexImport } from './routes/catalog/index'
 import { Route as AccountIndexImport } from './routes/account/index'
 import { Route as PagesWhereToBuyFramesImport } from './routes/pages/where-to-buy-frames'
+import { Route as PagesTermsOfServiceImport } from './routes/pages/terms-of-service'
 import { Route as PagesStyleDifferencesImport } from './routes/pages/style-differences'
+import { Route as PagesShippingReturnsImport } from './routes/pages/shipping-returns'
 import { Route as PagesShippingImport } from './routes/pages/shipping'
+import { Route as PagesSearchImport } from './routes/pages/search'
 import { Route as PagesReturnsImport } from './routes/pages/returns'
+import { Route as PagesPrivacyPolicyImport } from './routes/pages/privacy-policy'
 import { Route as PagesMaterialDifferencesImport } from './routes/pages/material-differences'
 import { Route as PagesFaqsImport } from './routes/pages/faqs'
 import { Route as PagesDeliveryImport } from './routes/pages/delivery'
@@ -75,9 +79,21 @@ const PagesWhereToBuyFramesRoute = PagesWhereToBuyFramesImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const PagesTermsOfServiceRoute = PagesTermsOfServiceImport.update({
+  id: '/pages/terms-of-service',
+  path: '/pages/terms-of-service',
+  getParentRoute: () => rootRoute,
+} as any)
+
 const PagesStyleDifferencesRoute = PagesStyleDifferencesImport.update({
   id: '/pages/style-differences',
   path: '/pages/style-differences',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const PagesShippingReturnsRoute = PagesShippingReturnsImport.update({
+  id: '/pages/shipping-returns',
+  path: '/pages/shipping-returns',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -87,9 +103,21 @@ const PagesShippingRoute = PagesShippingImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const PagesSearchRoute = PagesSearchImport.update({
+  id: '/pages/search',
+  path: '/pages/search',
+  getParentRoute: () => rootRoute,
+} as any)
+
 const PagesReturnsRoute = PagesReturnsImport.update({
   id: '/pages/returns',
   path: '/pages/returns',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const PagesPrivacyPolicyRoute = PagesPrivacyPolicyImport.update({
+  id: '/pages/privacy-policy',
+  path: '/pages/privacy-policy',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -229,11 +257,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PagesMaterialDifferencesImport
       parentRoute: typeof rootRoute
     }
+    '/pages/privacy-policy': {
+      id: '/pages/privacy-policy'
+      path: '/pages/privacy-policy'
+      fullPath: '/pages/privacy-policy'
+      preLoaderRoute: typeof PagesPrivacyPolicyImport
+      parentRoute: typeof rootRoute
+    }
     '/pages/returns': {
       id: '/pages/returns'
       path: '/pages/returns'
       fullPath: '/pages/returns'
       preLoaderRoute: typeof PagesReturnsImport
+      parentRoute: typeof rootRoute
+    }
+    '/pages/search': {
+      id: '/pages/search'
+      path: '/pages/search'
+      fullPath: '/pages/search'
+      preLoaderRoute: typeof PagesSearchImport
       parentRoute: typeof rootRoute
     }
     '/pages/shipping': {
@@ -243,11 +285,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PagesShippingImport
       parentRoute: typeof rootRoute
     }
+    '/pages/shipping-returns': {
+      id: '/pages/shipping-returns'
+      path: '/pages/shipping-returns'
+      fullPath: '/pages/shipping-returns'
+      preLoaderRoute: typeof PagesShippingReturnsImport
+      parentRoute: typeof rootRoute
+    }
     '/pages/style-differences': {
       id: '/pages/style-differences'
       path: '/pages/style-differences'
       fullPath: '/pages/style-differences'
       preLoaderRoute: typeof PagesStyleDifferencesImport
+      parentRoute: typeof rootRoute
+    }
+    '/pages/terms-of-service': {
+      id: '/pages/terms-of-service'
+      path: '/pages/terms-of-service'
+      fullPath: '/pages/terms-of-service'
+      preLoaderRoute: typeof PagesTermsOfServiceImport
       parentRoute: typeof rootRoute
     }
     '/pages/where-to-buy-frames': {
@@ -302,9 +358,13 @@ export interface FileRoutesByFullPath {
   '/pages/delivery': typeof PagesDeliveryRoute
   '/pages/faqs': typeof PagesFaqsRoute
   '/pages/material-differences': typeof PagesMaterialDifferencesRoute
+  '/pages/privacy-policy': typeof PagesPrivacyPolicyRoute
   '/pages/returns': typeof PagesReturnsRoute
+  '/pages/search': typeof PagesSearchRoute
   '/pages/shipping': typeof PagesShippingRoute
+  '/pages/shipping-returns': typeof PagesShippingReturnsRoute
   '/pages/style-differences': typeof PagesStyleDifferencesRoute
+  '/pages/terms-of-service': typeof PagesTermsOfServiceRoute
   '/pages/where-to-buy-frames': typeof PagesWhereToBuyFramesRoute
   '/account': typeof AccountIndexRoute
   '/catalog': typeof CatalogIndexRoute
@@ -324,9 +384,13 @@ export interface FileRoutesByTo {
   '/pages/delivery': typeof PagesDeliveryRoute
   '/pages/faqs': typeof PagesFaqsRoute
   '/pages/material-differences': typeof PagesMaterialDifferencesRoute
+  '/pages/privacy-policy': typeof PagesPrivacyPolicyRoute
   '/pages/returns': typeof PagesReturnsRoute
+  '/pages/search': typeof PagesSearchRoute
   '/pages/shipping': typeof PagesShippingRoute
+  '/pages/shipping-returns': typeof PagesShippingReturnsRoute
   '/pages/style-differences': typeof PagesStyleDifferencesRoute
+  '/pages/terms-of-service': typeof PagesTermsOfServiceRoute
   '/pages/where-to-buy-frames': typeof PagesWhereToBuyFramesRoute
   '/account': typeof AccountIndexRoute
   '/catalog': typeof CatalogIndexRoute
@@ -347,9 +411,13 @@ export interface FileRoutesById {
   '/pages/delivery': typeof PagesDeliveryRoute
   '/pages/faqs': typeof PagesFaqsRoute
   '/pages/material-differences': typeof PagesMaterialDifferencesRoute
+  '/pages/privacy-policy': typeof PagesPrivacyPolicyRoute
   '/pages/returns': typeof PagesReturnsRoute
+  '/pages/search': typeof PagesSearchRoute
   '/pages/shipping': typeof PagesShippingRoute
+  '/pages/shipping-returns': typeof PagesShippingReturnsRoute
   '/pages/style-differences': typeof PagesStyleDifferencesRoute
+  '/pages/terms-of-service': typeof PagesTermsOfServiceRoute
   '/pages/where-to-buy-frames': typeof PagesWhereToBuyFramesRoute
   '/account/': typeof AccountIndexRoute
   '/catalog/': typeof CatalogIndexRoute
@@ -371,9 +439,13 @@ export interface FileRouteTypes {
     | '/pages/delivery'
     | '/pages/faqs'
     | '/pages/material-differences'
+    | '/pages/privacy-policy'
     | '/pages/returns'
+    | '/pages/search'
     | '/pages/shipping'
+    | '/pages/shipping-returns'
     | '/pages/style-differences'
+    | '/pages/terms-of-service'
     | '/pages/where-to-buy-frames'
     | '/account'
     | '/catalog'
@@ -392,9 +464,13 @@ export interface FileRouteTypes {
     | '/pages/delivery'
     | '/pages/faqs'
     | '/pages/material-differences'
+    | '/pages/privacy-policy'
     | '/pages/returns'
+    | '/pages/search'
     | '/pages/shipping'
+    | '/pages/shipping-returns'
     | '/pages/style-differences'
+    | '/pages/terms-of-service'
     | '/pages/where-to-buy-frames'
     | '/account'
     | '/catalog'
@@ -413,9 +489,13 @@ export interface FileRouteTypes {
     | '/pages/delivery'
     | '/pages/faqs'
     | '/pages/material-differences'
+    | '/pages/privacy-policy'
     | '/pages/returns'
+    | '/pages/search'
     | '/pages/shipping'
+    | '/pages/shipping-returns'
     | '/pages/style-differences'
+    | '/pages/terms-of-service'
     | '/pages/where-to-buy-frames'
     | '/account/'
     | '/catalog/'
@@ -436,9 +516,13 @@ export interface RootRouteChildren {
   PagesDeliveryRoute: typeof PagesDeliveryRoute
   PagesFaqsRoute: typeof PagesFaqsRoute
   PagesMaterialDifferencesRoute: typeof PagesMaterialDifferencesRoute
+  PagesPrivacyPolicyRoute: typeof PagesPrivacyPolicyRoute
   PagesReturnsRoute: typeof PagesReturnsRoute
+  PagesSearchRoute: typeof PagesSearchRoute
   PagesShippingRoute: typeof PagesShippingRoute
+  PagesShippingReturnsRoute: typeof PagesShippingReturnsRoute
   PagesStyleDifferencesRoute: typeof PagesStyleDifferencesRoute
+  PagesTermsOfServiceRoute: typeof PagesTermsOfServiceRoute
   PagesWhereToBuyFramesRoute: typeof PagesWhereToBuyFramesRoute
   AccountIndexRoute: typeof AccountIndexRoute
   CatalogIndexRoute: typeof CatalogIndexRoute
@@ -458,9 +542,13 @@ const rootRouteChildren: RootRouteChildren = {
   PagesDeliveryRoute: PagesDeliveryRoute,
   PagesFaqsRoute: PagesFaqsRoute,
   PagesMaterialDifferencesRoute: PagesMaterialDifferencesRoute,
+  PagesPrivacyPolicyRoute: PagesPrivacyPolicyRoute,
   PagesReturnsRoute: PagesReturnsRoute,
+  PagesSearchRoute: PagesSearchRoute,
   PagesShippingRoute: PagesShippingRoute,
+  PagesShippingReturnsRoute: PagesShippingReturnsRoute,
   PagesStyleDifferencesRoute: PagesStyleDifferencesRoute,
+  PagesTermsOfServiceRoute: PagesTermsOfServiceRoute,
   PagesWhereToBuyFramesRoute: PagesWhereToBuyFramesRoute,
   AccountIndexRoute: AccountIndexRoute,
   CatalogIndexRoute: CatalogIndexRoute,
@@ -489,9 +577,13 @@ export const routeTree = rootRoute
         "/pages/delivery",
         "/pages/faqs",
         "/pages/material-differences",
+        "/pages/privacy-policy",
         "/pages/returns",
+        "/pages/search",
         "/pages/shipping",
+        "/pages/shipping-returns",
         "/pages/style-differences",
+        "/pages/terms-of-service",
         "/pages/where-to-buy-frames",
         "/account/",
         "/catalog/",
@@ -532,14 +624,26 @@ export const routeTree = rootRoute
     "/pages/material-differences": {
       "filePath": "pages/material-differences.tsx"
     },
+    "/pages/privacy-policy": {
+      "filePath": "pages/privacy-policy.tsx"
+    },
     "/pages/returns": {
       "filePath": "pages/returns.tsx"
+    },
+    "/pages/search": {
+      "filePath": "pages/search.tsx"
     },
     "/pages/shipping": {
       "filePath": "pages/shipping.tsx"
     },
+    "/pages/shipping-returns": {
+      "filePath": "pages/shipping-returns.tsx"
+    },
     "/pages/style-differences": {
       "filePath": "pages/style-differences.tsx"
+    },
+    "/pages/terms-of-service": {
+      "filePath": "pages/terms-of-service.tsx"
     },
     "/pages/where-to-buy-frames": {
       "filePath": "pages/where-to-buy-frames.tsx"

@@ -10,7 +10,6 @@ import {
   Option,
   Subtitle2,
   makeStyles,
-  tokens,
   useRestoreFocusSource,
   useRestoreFocusTarget,
 } from '@fluentui/react-components';
@@ -39,6 +38,18 @@ import CategoryPage from '../../pages/category';
 type Filter = ProductSearchSchema;
 
 const LIMIT_PER_PAGE = 8;
+
+const useCss = makeStyles({
+  filter: {
+    position: 'fixed',
+    insetBlockStart: 'anchor(end)',
+    positionAnchor: '--headerAnchor',
+    insetInlineStart: 'anchor(self-end)',
+    marginLeft: '-60px',
+    marginTop: '-56px',
+    zIndex: 99,
+  },
+});
 
 export const Route = createFileRoute('/catalog/$category/$')({
   component: RouteComponent,
@@ -276,9 +287,238 @@ function RouteComponent() {
     setComboInput(ev.target.value);
   };
 
+  const css = useCss();
+
   return (
-    <main style={{ viewTransitionName: 'warp-content' }}>
-      <CustomBreadcrumb links={links} />
+    <main style={{ viewTransitionName: 'warp-content', position: 'relative' }}>
+      <div>
+        <CustomBreadcrumb links={links} />
+        <div className={css.filter}>
+          {pathname !== '/catalog' && (
+            <>
+              <FilterButton
+                onClick={() => {
+                  setOpen(true);
+                  document.body.style.overflowY = 'clip';
+                }}
+                {...restoreFocusTargetAttributes}
+              />
+              <Drawer
+                separator
+                open={open}
+                position="end"
+                {...restoreFocusSourceAttribute}
+                onOpenChange={(_, { open }) => {
+                  setOpen(open);
+                  document.body.style.overflowY = open ? 'clip' : '';
+                }}
+                style={{ padding: '5px 0' }}
+              >
+                <DrawerHeader style={{ padding: 0, gap: 0 }}>
+                  <DrawerHeaderTitle
+                    style={{ padding: '8px 20px', height: 54 }}
+                    action={
+                      <StyledTooltip contentChildren="Close" positioning={'before'}>
+                        <div>
+                          <CustomButton
+                            appearance="subtle"
+                            aria-label="Close"
+                            shape="circular"
+                            icon={<DismissRegular />}
+                            onClick={() => {
+                              setOpen(false);
+                              document.body.style.overflowY = '';
+                            }}
+                          />
+                        </div>
+                      </StyledTooltip>
+                    }
+                  >
+                    Refine results
+                  </DrawerHeaderTitle>
+                  <div>
+                    <Divider />
+                    <div style={{ padding: '16px 20px' }}>
+                      <Body2>
+                        {`${filteredTotal} of `}
+                        {categoryTotal} products
+                      </Body2>
+                    </div>
+                    <Divider />
+                  </div>
+                  <div
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: 5,
+                      padding: '12px 20px',
+                      scrollbarGutter: 'stable',
+                      overflowY: 'auto',
+                    }}
+                  >
+                    <Subtitle2>SORT BY:</Subtitle2>
+                    <Combobox
+                      style={{ borderRadius: 0 }}
+                      placeholder="Select a sort"
+                      value={comboInput}
+                      clearable
+                      freeform
+                      selectedOptions={filter.sort ? [filter.sort] : []}
+                      size="large"
+                      onOptionSelect={(_, d) => {
+                        handleSortChange(d.optionValue);
+                        setComboInput(
+                          sortOptions.find((v) => v.value === d.optionValue)?.option ?? '',
+                        );
+                      }}
+                      onInput={onInput}
+                    >
+                      {sortOptions.map((v) => (
+                        <Option
+                          text={v.option}
+                          key={v.value}
+                          value={v.value}
+                          style={{
+                            minHeight: 38,
+                            paddingLeft: 15,
+                            borderRadius: 0,
+                          }}
+                        >
+                          <span
+                            style={{
+                              display: 'flex',
+                              justifyContent: 'space-between',
+                              flexGrow: 1,
+                              paddingRight: 5,
+                              paddingLeft: 5,
+                            }}
+                          >
+                            {v.option} {v.icon}
+                          </span>
+                        </Option>
+                      ))}
+                    </Combobox>
+                  </div>
+                  <Divider />
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
+                    <div style={{ padding: '12px 20px 0' }}>
+                      <Subtitle2>FILTER</Subtitle2>
+                    </div>
+                    <div
+                      style={{
+                        height: 53,
+                        overflowY: 'auto',
+                        padding: '0 20px',
+                      }}
+                    >
+                      <DismissWithInteractionTags tags={filter} onDismiss={handleDismissFilter} />
+                    </div>
+                    <div
+                      style={{
+                        display: 'flex',
+                        gap: '20px',
+                        padding: '12px 20px',
+                      }}
+                    >
+                      <CustomButton
+                        onClick={() => {
+                          applyFilter();
+                        }}
+                        shape="circular"
+                        size="medium"
+                        icon={<CheckmarkFilled />}
+                        disabled={filteredTotal === 0 || isStringifyEqual(initialFilter, filter)}
+                      >
+                        Apply
+                      </CustomButton>
+                      <CustomButton
+                        onClick={() => {
+                          setFilter({});
+                        }}
+                        shape="circular"
+                        size="medium"
+                        appearance="inverted"
+                        icon={<DismissFilled />}
+                        disabled={!Object.keys(filter).length}
+                      >
+                        Reset
+                      </CustomButton>
+                    </div>
+                  </div>
+                </DrawerHeader>
+                <DrawerBody
+                  style={{
+                    padding: '10px 20px',
+                    scrollbarGutter: 'stable',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: 20,
+                  }}
+                >
+                  <div>
+                    <RangeInputField
+                      onChange={handleMinMaxChange}
+                      prefix="$"
+                      min={minCategoryPrice}
+                      max={maxCategoryPrice}
+                      values={[
+                        filter.minPrice ?? minCategoryPrice,
+                        filter.maxPrice ?? maxCategoryPrice,
+                      ]}
+                    />
+                  </div>
+                  <div>
+                    <div>
+                      <Label>Colors</Label>
+                    </div>
+                    <div
+                      style={{
+                        display: 'flex',
+                        gap: 6.7,
+                        flexWrap: 'wrap',
+                        minHeight: 72,
+                        marginTop: 5,
+                      }}
+                    >
+                      {categoryColors.map((v) => (
+                        <SingleSwatchPicker
+                          value={filter.colors?.find((c) => c === v.value)}
+                          color={v}
+                          key={v.value}
+                          onChange={handleColorChange}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                  <div>
+                    <div>
+                      <Label>Materials</Label>
+                    </div>
+                    <div
+                      style={{
+                        display: 'flex',
+                        gap: 8,
+                        width: '100%',
+                        marginTop: 5,
+                      }}
+                    >
+                      {categoryMaterials.map((v) => (
+                        <SingleImageSwatchPicker
+                          key={v.value}
+                          value={filter.materials?.find((m) => m === v.value)}
+                          image={v}
+                          onChange={handleMaterialChange}
+                          ariaLabel={v.label}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                </DrawerBody>
+              </Drawer>
+            </>
+          )}
+        </div>
+      </div>
       <div>
         <CategoryPage
           products={results}
@@ -288,226 +528,6 @@ function RouteComponent() {
       </div>
       <div style={{ display: 'flex', justifyContent: 'center', margin: 30 }}>
         <Pagination total={totalPages} searchParamName="page" />
-      </div>
-      <div style={{ position: 'fixed', top: 110, right: 20 }}>
-        {pathname !== '/catalog' && (
-          <>
-            <FilterButton
-              onClick={() => {
-                setOpen(true);
-                document.body.style.overflowY = 'clip';
-              }}
-              {...restoreFocusTargetAttributes}
-            />
-            <Drawer
-              separator
-              open={open}
-              position="end"
-              {...restoreFocusSourceAttribute}
-              onOpenChange={(_, { open }) => {
-                setOpen(open);
-                document.body.style.overflowY = open ? 'clip' : '';
-              }}
-              style={{ padding: '5px 0' }}
-            >
-              <DrawerHeader style={{ padding: 0, gap: 0 }}>
-                <DrawerHeaderTitle
-                  style={{ padding: '8px 20px', height: 54 }}
-                  action={
-                    <StyledTooltip contentChildren="Close" positioning={'before'}>
-                      <div>
-                        <CustomButton
-                          appearance="subtle"
-                          aria-label="Close"
-                          shape="circular"
-                          icon={<DismissRegular />}
-                          onClick={() => {
-                            setOpen(false);
-                            document.body.style.overflowY = '';
-                          }}
-                        />
-                      </div>
-                    </StyledTooltip>
-                  }
-                >
-                  Refine results
-                </DrawerHeaderTitle>
-                <div>
-                  <Divider />
-                  <div style={{ padding: '16px 20px' }}>
-                    <Body2>
-                      {`${filteredTotal} of `}
-                      {categoryTotal} products
-                    </Body2>
-                  </div>
-                  <Divider />
-                </div>
-                <div
-                  style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: 5,
-                    padding: '12px 20px',
-                    scrollbarGutter: 'stable',
-                    overflowY: 'auto',
-                  }}
-                >
-                  <Subtitle2>SORT BY:</Subtitle2>
-                  <Combobox
-                    style={{ borderRadius: 0 }}
-                    placeholder="Select a sort"
-                    value={comboInput}
-                    clearable
-                    freeform
-                    selectedOptions={filter.sort ? [filter.sort] : []}
-                    size="large"
-                    onOptionSelect={(_, d) => {
-                      handleSortChange(d.optionValue);
-                      setComboInput(
-                        sortOptions.find((v) => v.value === d.optionValue)?.option ?? '',
-                      );
-                    }}
-                    onInput={onInput}
-                  >
-                    {sortOptions.map((v) => (
-                      <Option
-                        text={v.option}
-                        key={v.value}
-                        value={v.value}
-                        style={{
-                          minHeight: 38,
-                          paddingLeft: 15,
-                          borderRadius: 0,
-                        }}
-                      >
-                        <span
-                          style={{
-                            display: 'flex',
-                            justifyContent: 'space-between',
-                            flexGrow: 1,
-                            paddingRight: 5,
-                            paddingLeft: 5,
-                          }}
-                        >
-                          {v.option} {v.icon}
-                        </span>
-                      </Option>
-                    ))}
-                  </Combobox>
-                </div>
-                <Divider />
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
-                  <div style={{ padding: '12px 20px 0' }}>
-                    <Subtitle2>FILTER</Subtitle2>
-                  </div>
-                  <div style={{ height: 53, overflowY: 'auto', padding: '0 20px' }}>
-                    <DismissWithInteractionTags tags={filter} onDismiss={handleDismissFilter} />
-                  </div>
-                  <div
-                    style={{
-                      display: 'flex',
-                      gap: '20px',
-                      padding: '12px 20px',
-                    }}
-                  >
-                    <CustomButton
-                      onClick={() => {
-                        applyFilter();
-                      }}
-                      shape="circular"
-                      size="medium"
-                      icon={<CheckmarkFilled />}
-                      disabled={filteredTotal === 0 || isStringifyEqual(initialFilter, filter)}
-                    >
-                      Apply
-                    </CustomButton>
-                    <CustomButton
-                      onClick={() => {
-                        setFilter({});
-                      }}
-                      shape="circular"
-                      size="medium"
-                      appearance="inverted"
-                      icon={<DismissFilled />}
-                      disabled={!Object.keys(filter).length}
-                    >
-                      Reset
-                    </CustomButton>
-                  </div>
-                </div>
-              </DrawerHeader>
-
-              <DrawerBody
-                style={{
-                  padding: '10px 20px',
-                  scrollbarGutter: 'stable',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: 20,
-                }}
-              >
-                <div>
-                  <RangeInputField
-                    onChange={handleMinMaxChange}
-                    prefix="$"
-                    min={minCategoryPrice}
-                    max={maxCategoryPrice}
-                    values={[
-                      filter.minPrice ?? minCategoryPrice,
-                      filter.maxPrice ?? maxCategoryPrice,
-                    ]}
-                  />
-                </div>
-                <div>
-                  <div>
-                    <Label>Colors</Label>
-                  </div>
-                  <div
-                    style={{
-                      display: 'flex',
-                      gap: 6.7,
-                      flexWrap: 'wrap',
-                      minHeight: 72,
-                      marginTop: 5,
-                    }}
-                  >
-                    {categoryColors.map((v) => (
-                      <SingleSwatchPicker
-                        value={filter.colors?.find((c) => c === v.value)}
-                        color={v}
-                        key={v.value}
-                        onChange={handleColorChange}
-                      />
-                    ))}
-                  </div>
-                </div>
-                <div>
-                  <div>
-                    <Label>Materials</Label>
-                  </div>
-                  <div
-                    style={{
-                      display: 'flex',
-                      gap: 8,
-                      width: '100%',
-                      marginTop: 5,
-                    }}
-                  >
-                    {categoryMaterials.map((v) => (
-                      <SingleImageSwatchPicker
-                        key={v.value}
-                        value={filter.materials?.find((m) => m === v.value)}
-                        image={v}
-                        onChange={handleMaterialChange}
-                        ariaLabel={v.label}
-                      />
-                    ))}
-                  </div>
-                </div>
-              </DrawerBody>
-            </Drawer>
-          </>
-        )}
       </div>
     </main>
   );

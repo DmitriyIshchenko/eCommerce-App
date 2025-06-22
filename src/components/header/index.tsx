@@ -26,13 +26,17 @@ import SplitLinkMenu from '../ui/menu/split-link';
 const useClasses = makeStyles({
   header: {
     display: 'flex',
-    justifyContent: 'center',
-    padding: `${tokens.spacingVerticalXXL}`,
-    width: '100%',
-    margin: '0 auto',
-    boxSizing: 'border-box',
-    borderTop: `1px solid ${tokens.colorNeutralStroke1}`,
+    justifyContent: 'space-between',
+    padding: '6px 20px',
+    backgroundColor: tokens.colorNeutralBackground1,
+    top: 0,
+    zIndex: 10,
     borderBottom: `1px solid ${tokens.colorNeutralStroke1}`,
+    position: 'sticky',
+    transition: `transform ${tokens.durationSlow}`,
+    willChange: 'transform',
+    transformOrigin: 'top center',
+    anchorName: '--headerAnchor',
   },
   title: {
     marginRight: tokens.spacingHorizontalMNudge,
@@ -191,19 +195,9 @@ export function Header() {
 
   return (
     <header
+      className={classes.header}
       style={{
-        display: 'flex',
-        justifyContent: 'space-between',
-        padding: '6px 20px',
-        backgroundColor: tokens.colorNeutralBackground1,
-        top: 0,
-        zIndex: 10,
-        borderBottom: `1px solid ${tokens.colorNeutralStroke1}`,
-        position: 'sticky',
-        transition: `transform ${tokens.durationSlow}`,
-        willChange: 'transform',
         transform: scrollDirection === 'down' ? 'scale(1, 0)' : 'scale(1, 1)',
-        transformOrigin: 'top center',
       }}
     >
       <InternalLink to="/" appearance="stickless">

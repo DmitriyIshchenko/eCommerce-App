@@ -18,6 +18,10 @@
   box-sizing: border-box;
 }
 
+html {
+  scrollbar-color: var(--thumb-bg) var(--body-bg);
+}
+
 html,
 body {
   height: 100%;
