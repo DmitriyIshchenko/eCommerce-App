@@ -26,7 +26,7 @@ const useStyles = makeStyles({
   right: {
     width: '50%',
     marginLeft: '50%',
-    padding: '40px',
+    padding: '60px',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -35,6 +35,7 @@ const useStyles = makeStyles({
       width: '100%',
       marginLeft: 0,
       minHeight: '35vh',
+      padding: '40px',
     },
   },
   title: typographyStyles.largeTitle,

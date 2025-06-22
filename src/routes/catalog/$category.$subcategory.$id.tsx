@@ -1,11 +1,11 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { getProductById } from '../../lib/api/get-product';
+import { getProductBySlug } from '../../lib/api/get-product';
 import ProductPage from '../../pages/product';
 
 export const Route = createFileRoute('/catalog/$category/$subcategory/$id')({
   component: RouteComponent,
   loader: async ({ params: { id } }) => {
-    const product = await getProductById(id);
+    const product = await getProductBySlug(id);
     return product;
   },
 });

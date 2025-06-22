@@ -133,7 +133,7 @@ export default function CartItem({ item }: Props) {
           params={{
             category: categories.category,
             subcategory: categories.subCategory,
-            id: item.productId,
+            id: item.productSlug ? item.productSlug['en-US'] : '',
           }}
           preload={false}
         >
