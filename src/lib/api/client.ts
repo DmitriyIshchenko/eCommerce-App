@@ -53,7 +53,6 @@ export function createAnonymousClient() {
     .withProjectKey(projectKey)
     .withAnonymousSessionFlow(options)
     .withHttpMiddleware(httpMiddlewareOptions)
-    .withLoggerMiddleware()
     .build();
 
   return client;
@@ -102,7 +101,6 @@ export function createPasswordClient(data: LoginSchema) {
     .withProjectKey(projectKey)
     .withPasswordFlow(options)
     .withHttpMiddleware(httpMiddlewareOptions)
-    .withLoggerMiddleware()
     .build();
 
   return client;
