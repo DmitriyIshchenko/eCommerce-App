@@ -122,9 +122,10 @@ export default function CategoryPage({
             ?.slice(0, 4)
             .map((product) => (
               <ProductCard
-                id={product.slug['en-US']}
+                id={product.id}
+                slug={product.slug['en-US']}
                 key={product.id}
-                onCartClick={(id) => void handleCartClick(id)}
+                onCartClick={(slug) => void handleCartClick(slug)}
                 value={product.slug?.['en-US']}
                 name={product.name?.['en-US']}
                 description={product.description?.['en-US']}
@@ -143,9 +144,10 @@ export default function CategoryPage({
           ?.slice(4)
           .map((product) => (
             <ProductCard
-              id={product.slug['en-US']}
+              id={product.id}
+              slug={product.slug['en-US']}
               key={product.id}
-              onCartClick={(id) => void handleCartClick(id)}
+              onCartClick={(slug) => void handleCartClick(slug)}
               value={product.slug?.['en-US']}
               name={product.name?.['en-US']}
               description={product.description?.['en-US']}

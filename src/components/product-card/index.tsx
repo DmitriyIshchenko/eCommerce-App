@@ -55,11 +55,11 @@ export function ProductCard(props: ProductCardProps) {
   return (
     <Card className={styles.card}>
       <InternalLink
-        to="/catalog/$category/$subcategory/$id"
+        to="/catalog/$category/$subcategory/$slug"
         appearance="stickless"
         viewTransition
         params={{
-          id: props.id,
+          slug: props.slug,
           category: props.category ?? 'all',
           subcategory: props.subCategory ?? 'whole',
         }}

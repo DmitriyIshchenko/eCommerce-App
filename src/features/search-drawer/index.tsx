@@ -152,7 +152,8 @@ export default function SearchDrawer({ open, onOpenChange }: SearchDrawerProps) 
                     price={formatPrice(product.masterVariant.prices?.[0]?.value)}
                     discount={formatPrice(product.masterVariant.prices?.[0]?.discounted?.value)}
                     image={product.masterVariant.images?.[0]?.url}
-                    id={product.slug['en-US']}
+                    id={product.id}
+                    slug={product.slug['en-US']}
                     category={categories.category.toLowerCase().replace(/\s+/g, '-')}
                     subCategory={categories.subCategory.toLowerCase().replace(/\s+/g, '-')}
                   />
