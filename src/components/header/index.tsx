@@ -8,6 +8,7 @@ import {
   DrawerBody,
   DrawerHeader,
   DrawerHeaderTitle,
+  useRestoreFocusTarget,
 } from '@fluentui/react-components';
 import { DismissRegular } from '@fluentui/react-icons';
 import { createLink, useLocation, useNavigate, useRouteContext } from '@tanstack/react-router';
@@ -110,6 +111,7 @@ export function Header() {
   const [isSearchDrawerOpen, setIsSearchDrawerOpen] = useState(false);
   const { cart } = useCart();
   const { loading } = useLoading();
+  const restoreFocusTargetAttributes = useRestoreFocusTarget();
 
   const { pathname } = useLocation();
   const { categories } = useRouteContext({
@@ -239,7 +241,13 @@ export function Header() {
           </ul>
 
           <div style={{ display: 'flex', alignItems: 'center' }}>
-            <SearchButton onClick={() => setIsSearchDrawerOpen(true)} />
+            <SearchButton
+              onClick={() => {
+                setIsSearchDrawerOpen(true);
+                document.body.style.overflowY = 'clip';
+              }}
+              {...restoreFocusTargetAttributes}
+            />
             <CartLink to="/cart" loading={loading} size={30} goods={cart?.totalLineItemQuantity} />
             <BurgerButton
               className={classes.burgerButton}
