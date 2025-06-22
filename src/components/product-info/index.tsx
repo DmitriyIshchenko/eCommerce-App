@@ -12,7 +12,7 @@ import {
   typographyStyles,
 } from '@fluentui/react-components';
 import { ChevronDownRegular } from '@fluentui/react-icons';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import useMatchMediaQuery from '../../hooks/use-match-media';
 import { allColors, allMaterials } from '../../lib/constants';
 import type { ProductInfoProps } from '../../lib/types';
@@ -24,6 +24,7 @@ import ImageSwatchPicker from '../ui/swatch-picker/image';
 import LargeSwatchPicker from '../ui/swatch-picker/large';
 import { useLoading } from '../../hooks/use-loading';
 import { getActiveCart } from '../../lib/api/cart';
+import formatPrice from '../../lib/utils/format-price';
 
 interface ProductAttribute {
   value: string | { key: string; label?: string };
@@ -126,11 +127,17 @@ export function ProductInfo({
   const [currentColor, setCurrentColor] = useState<string | null>(colors?.[0] ?? null);
   const [currentMaterial, setCurrentMaterial] = useState<string | null>(materials?.[0] ?? null);
   const [quantity, setQuantity] = useState(Math.max(1, inCart ?? 0));
+  const [currentPrice, setCurrentPrice] = useState(price);
+  const [currentDiscount, setCurrentDiscount] = useState(discount);
 
   const [addLoading, setAddLoading] = useState(false);
   const [removeLoading, setRemoveLoading] = useState(false);
   const [, setLoading] = useState(false);
   const { setLoading: setCartLoading } = useLoading();
+
+  const initialPriceRef = useRef(price);
+  const initialDiscountRef = useRef(discount);
+  const initialVariantsRef = useRef(variants);
 
   const variantId =
     variants?.find((v: { attributes?: ProductAttribute[] }): boolean => {
@@ -212,6 +219,20 @@ export function ProductInfo({
     setLoading(false);
   }, [inCart]);
 
+  useEffect(() => {
+    let newPrice = initialPriceRef.current;
+    let newDiscount = initialDiscountRef.current;
+    if (initialVariantsRef.current) {
+      const currentVariant = initialVariantsRef.current.find((v) => v.id === variantId);
+      if (currentVariant) {
+        newPrice = formatPrice(currentVariant?.prices?.[0]?.value) || newPrice;
+        newDiscount = formatPrice(currentVariant?.prices?.[0]?.discounted?.value) || newDiscount;
+      }
+    }
+    setCurrentPrice(newPrice);
+    setCurrentDiscount(newDiscount);
+  }, [variantId, currentSize, currentColor, currentMaterial]);
+
   const matchMobileWidth = useMatchMediaQuery('(max-width: 1024px)');
 
   return (
@@ -233,13 +254,13 @@ export function ProductInfo({
                 viewTransitionName: `product-price-${id}`,
               }}
             >
-              {discount && <Text className={styles.productSubtitle}>{discount}</Text>}
+              {currentDiscount && <Text className={styles.productSubtitle}>{currentDiscount}</Text>}
               <Text
                 className={styles.productSubtitle}
-                strikethrough={!!discount}
+                strikethrough={!!currentDiscount}
                 style={{ marginRight: '5px' }}
               >
-                {price}
+                {currentPrice}
               </Text>
             </p>
             <Divider style={{ width: '200%', marginLeft: '-50%' }} />
@@ -265,13 +286,15 @@ export function ProductInfo({
                   viewTransitionName: `product-price-${id}`,
                 }}
               >
-                {discount && <Text className={styles.productSubtitle}>{discount}</Text>}
+                {currentDiscount && (
+                  <Text className={styles.productSubtitle}>{currentDiscount}</Text>
+                )}
                 <Text
                   className={styles.productSubtitle}
-                  strikethrough={!!discount}
+                  strikethrough={!!currentDiscount}
                   style={{ marginRight: '5px' }}
                 >
-                  {price}
+                  {currentPrice}
                 </Text>
               </p>
             </div>

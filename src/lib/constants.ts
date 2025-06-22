@@ -68,13 +68,13 @@ export const allColors: Color[] = [
 export const allMaterials: Material[] = [
   {
     swatchSrc: canvasLqip,
-    value: 'Canvas',
+    value: 'canvas',
     label: 'Canvas',
     fullImageSrc: canvas,
   },
   {
     swatchSrc: gicleeLqip,
-    value: 'Giclee',
+    value: 'giclee',
     label: 'Giclee',
     fullImageSrc: giclee,
   },
