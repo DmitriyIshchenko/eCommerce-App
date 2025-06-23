@@ -58,6 +58,15 @@ const useStyles = makeStyles({
       backgroundColor: tokens.colorPaletteRoyalBlueForeground2,
     },
   },
+  filter: {
+    position: 'fixed',
+    insetBlockStart: 'anchor(end)',
+    positionAnchor: '--headerAnchor',
+    insetInlineStart: 'anchor(self-end)',
+    marginLeft: '-60px',
+    marginTop: '23px',
+    zIndex: 99,
+  },
 });
 
 export const Route = createFileRoute('/catalog/$category/$')({
@@ -262,7 +271,7 @@ function RouteComponent() {
       <div className={styles.paginationContainer}>
         <Pagination total={totalPages} searchParamName="page" />
       </div>
-      <div style={{ position: 'fixed', top: 110, right: 20 }}>
+      <div className={styles.filter} style={{ position: 'fixed', top: 110, right: 20 }}>
         {pathname !== '/catalog' && (
           <>
             <FilterButton

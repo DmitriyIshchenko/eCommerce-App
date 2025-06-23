@@ -1,6 +1,5 @@
 import {
   Button,
-  LargeTitle,
   Link,
   makeStyles,
   tokens,
@@ -23,17 +22,23 @@ import SearchDrawer from '../../features/search-drawer';
 import CartLink from '../ui/cart/link';
 import { useCart } from '../../hooks/use-cart';
 import { useLoading } from '../../hooks/use-loading';
+import useScrollDirection from '../../hooks/use-scroll-direction';
+import title from '../../assets/images/title.svg';
 import { FlatTreeMenu } from '../ui/menu/flat-tree';
 
 const useClasses = makeStyles({
   header: {
     display: 'flex',
     justifyContent: 'center',
-    padding: `${tokens.spacingVerticalXXL}`,
+    padding: `${tokens.spacingVerticalXXL} ${tokens.spacingVerticalXXXL}`,
     width: '100%',
     margin: '0 auto',
     boxSizing: 'border-box',
     borderBottom: `1px solid ${tokens.colorNeutralStroke1}`,
+    position: 'sticky',
+    top: 0,
+    zIndex: 100,
+    backgroundColor: tokens.colorNeutralBackground1,
   },
   title: {
     marginRight: tokens.spacingHorizontalMNudge,
@@ -50,7 +55,6 @@ const useClasses = makeStyles({
   },
   headerContainer: {
     width: '100%',
-    maxWidth: '1440px',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -175,11 +179,19 @@ export function Header() {
     }
   }, [isDrawerOpen]);
 
+  const scrollDirection = useScrollDirection();
+
   return (
-    <header className={classes.header}>
+    <header
+      className={classes.header}
+      style={{
+        transform: scrollDirection === 'down' ? 'translateY(-100%)' : 'translateY(0)',
+        transition: 'transform 0.3s ease',
+      }}
+    >
       <div className={classes.headerContainer}>
         <CustomLink className={classes.title} aria-label="Celestia Art - Home" to="/">
-          <LargeTitle className={classes.title}>Celestia Art</LargeTitle>
+          <img src={title} />
         </CustomLink>
 
         <div style={{ display: 'flex' }}>
