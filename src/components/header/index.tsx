@@ -29,7 +29,7 @@ const useClasses = makeStyles({
   header: {
     display: 'flex',
     justifyContent: 'center',
-    padding: `${tokens.spacingVerticalXXL}`,
+    padding: `${tokens.spacingVerticalXXL} ${tokens.spacingVerticalXXXL}`,
     width: '100%',
     margin: '0 auto',
     boxSizing: 'border-box',
@@ -54,7 +54,6 @@ const useClasses = makeStyles({
   },
   headerContainer: {
     width: '100%',
-    maxWidth: '1440px',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',

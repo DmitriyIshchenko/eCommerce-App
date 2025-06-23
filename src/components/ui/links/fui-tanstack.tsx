@@ -7,6 +7,7 @@ import {
 } from '@fluentui/react-components';
 import { type LinkComponent, createLink } from '@tanstack/react-router';
 import { forwardRef } from 'react';
+import { customTheme } from '../../../styles/theme';
 
 const useCss = makeStyles({
   base: {
@@ -49,13 +50,13 @@ const useCss = makeStyles({
   },
   inverted: {
     '::after': {
-      backgroundColor: tokens.colorBrandBackgroundInvertedSelected,
+      backgroundColor: customTheme.colorBrandForeground1,
     },
-    color: tokens.colorBrandBackgroundInvertedPressed,
+    color: customTheme.colorBrandForeground1,
     ':hover': {
-      color: tokens.colorBrandBackgroundInvertedSelected,
+      color: customTheme.colorBrandForeground1,
     },
-    ':active': { color: tokens.colorBrandBackgroundInvertedHover },
+    ':active': { color: customTheme.colorBrandForeground1 },
   },
   muted: {
     color: tokens.colorNeutralForeground4,
