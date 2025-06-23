@@ -70,18 +70,27 @@ Get the project up and running in just a few steps:
 
 The following scripts are available in the project and can be run using `npm run <script>`:
 
-| Script          | Description                                              |
-| --------------- | -------------------------------------------------------- |
-| `dev`           | Starts Vite for development.                             |
-| `build`         | Builds the project for production using Vite.            |
-| `format`        | Formats files using Prettier.                            |
-| `ci:format`     | Checks code formatting with Prettier.                    |
-| `preview`       | Previews the project using Vite.                         |
-| `ci:lint`       | Runs ESLint to check for linting errors.                 |
-| `lint`          | Runs ESLint and automatically fixes fixable issues.      |
-| `prepare`       | Installs Husky in the project directory.                 |
-| `test`          | Runs tests using Vitest.                                 |
-| `coverage:test` | Runs tests and generates a coverage report using Vitest. |
+| Script      | Description                                              |
+| ----------- | -------------------------------------------------------- |
+| `dev`       | Starts Vite for development.                             |
+| `build`     | Builds the project for production using Vite.            |
+| `format`    | Formats files using Prettier.                            |
+| `ci:format` | Checks code formatting with Prettier.                    |
+| `preview`   | Previews the project using Vite.                         |
+| `ci:lint`   | Runs ESLint to check for linting errors.                 |
+| `lint`      | Runs ESLint and automatically fixes fixable issues.      |
+| `prepare`   | Installs Husky in the project directory.                 |
+| `test`      | Runs tests using Vitest.                                 |
+| `coverage`  | Runs tests and generates a coverage report using Vitest. |
+
+## 🤝 Contributing
+
+Do you want to be a part of the project? That's great! Just follow these steps:
+
+- Pick an issue or create a new one
+- Implement a solution
+- Make sure it is tested
+- Open a pull request using our template
 
 ## 🐾 Authors
 
