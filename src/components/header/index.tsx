@@ -7,7 +7,6 @@ import {
   DrawerBody,
   DrawerHeader,
   DrawerHeaderTitle,
-  LargeTitle,
 } from '@fluentui/react-components';
 import { DismissRegular } from '@fluentui/react-icons';
 import { createLink, useLocation, useNavigate, useRouteContext } from '@tanstack/react-router';
@@ -24,6 +23,7 @@ import CartLink from '../ui/cart/link';
 import { useCart } from '../../hooks/use-cart';
 import { useLoading } from '../../hooks/use-loading';
 import useScrollDirection from '../../hooks/use-scroll-direction';
+import title from '../../assets/images/title.svg';
 
 const useClasses = makeStyles({
   header: {
@@ -190,7 +190,7 @@ export function Header() {
     >
       <div className={classes.headerContainer}>
         <CustomLink className={classes.title} aria-label="Celestia Art - Home" to="/">
-          <LargeTitle className={classes.title}>Celestia Art</LargeTitle>
+          <img src={title} />
         </CustomLink>
 
         <div style={{ display: 'flex' }}>
