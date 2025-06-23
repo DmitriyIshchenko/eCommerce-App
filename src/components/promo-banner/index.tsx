@@ -14,6 +14,7 @@ const useStyles = makeStyles({
     backgroundColor: tokens.colorNeutralForeground1,
   },
   text: {
+    padding: `${tokens.spacingVerticalNone} ${tokens.spacingHorizontalSNudge}`,
     color: tokens.colorNeutralForegroundInverted,
     fontSize: tokens.fontSizeBase200,
     cursor: 'default',
@@ -22,9 +23,16 @@ const useStyles = makeStyles({
     display: 'flex',
     alignItems: 'center',
   },
+  promoCode: {
+    paddingRight: tokens.spacingHorizontalSNudge,
+    color: tokens.colorNeutralForegroundInverted,
+    fontSize: tokens.fontSizeBase200,
+    cursor: 'default',
+  },
   divider: {
     padding: `${tokens.spacingVerticalNone} ${tokens.spacingHorizontalSNudge}`,
     color: tokens.colorNeutralForegroundInverted,
+    cursor: 'default',
   },
 });
 
@@ -57,7 +65,7 @@ export function PromoBanner() {
 
       <div className={styles.promoContainer}>
         <CopyButton onClick={() => void handleCopy(textRefTotal, setCopyTotal)} copy={copyTotal} />
-        <Text className={styles.text} ref={textRefTotal}>
+        <Text className={styles.promoCode} ref={textRefTotal}>
           {PROMO_CODE_TOTAL}
         </Text>
       </div>
@@ -75,7 +83,7 @@ export function PromoBanner() {
           onClick={() => void handleCopy(textRefBigPrice, setCopyBigPrice)}
           copy={copyBigPrice}
         />
-        <Text className={styles.text} ref={textRefBigPrice}>
+        <Text className={styles.promoCode} ref={textRefBigPrice}>
           {PROMO_CODE_BIG_PRICE}
         </Text>
       </div>

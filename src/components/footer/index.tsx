@@ -10,7 +10,7 @@ const quickLinks = [
   { href: '/about', text: 'Contact us' },
   { href: '/catalog/all', text: 'Shop' },
   { href: '/about', text: 'About' },
-  { href: '/pages/terms-of-service', text: 'Terms & conditions' },
+  { href: '/pages/custom-framing', text: 'Terms & conditions' },
   { href: '', text: 'Shipping & returns' },
   { href: '', text: 'Privacy policy' },
   { href: '/catalog/all', text: 'Search' },

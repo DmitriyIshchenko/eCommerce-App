@@ -113,7 +113,7 @@ export default function CategoryPage({
     <div className={styles.wrapper}>
       <div className={styles.separate}>
         <div className={styles.title}>
-          <LargeTitle style={{ padding: '0 20px' }} as="h1">
+          <LargeTitle align="center" style={{ padding: '0 20px' }} as="h1">
             {title}
           </LargeTitle>
         </div>
@@ -123,8 +123,9 @@ export default function CategoryPage({
             .map((product) => (
               <ProductCard
                 id={product.id}
+                slug={product.slug['en-US']}
                 key={product.id}
-                onCartClick={(id) => void handleCartClick(id)}
+                onCartClick={(slug) => void handleCartClick(slug)}
                 value={product.slug?.['en-US']}
                 name={product.name?.['en-US']}
                 description={product.description?.['en-US']}
@@ -144,8 +145,9 @@ export default function CategoryPage({
           .map((product) => (
             <ProductCard
               id={product.id}
+              slug={product.slug['en-US']}
               key={product.id}
-              onCartClick={(id) => void handleCartClick(id)}
+              onCartClick={(slug) => void handleCartClick(slug)}
               value={product.slug?.['en-US']}
               name={product.name?.['en-US']}
               description={product.description?.['en-US']}

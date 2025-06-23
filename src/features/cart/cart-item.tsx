@@ -129,11 +129,11 @@ export default function CartItem({ item }: Props) {
 
       <div className={styles.info}>
         <InternalLink
-          to="/catalog/$category/$subcategory/$id"
+          to="/catalog/$category/$subcategory/$slug"
           params={{
             category: categories.category,
             subcategory: categories.subCategory,
-            id: item.productId,
+            slug: item.productSlug ? item.productSlug['en-US'] : '',
           }}
           preload={false}
         >

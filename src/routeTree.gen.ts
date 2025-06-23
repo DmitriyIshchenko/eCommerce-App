@@ -18,11 +18,15 @@ import { Route as AboutImport } from './routes/about'
 import { Route as IndexImport } from './routes/index'
 import { Route as CatalogIndexImport } from './routes/catalog/index'
 import { Route as AccountIndexImport } from './routes/account/index'
+import { Route as PagesWhereToBuyFramesImport } from './routes/pages/where-to-buy-frames'
+import { Route as PagesStyleDifferencesImport } from './routes/pages/style-differences'
+import { Route as PagesMaterialDifferencesImport } from './routes/pages/material-differences'
+import { Route as PagesCustomFramingImport } from './routes/pages/custom-framing'
 import { Route as AccountManageAddressesImport } from './routes/account/manage-addresses'
 import { Route as AccountEditImport } from './routes/account/edit'
 import { Route as AccountChangePasswordImport } from './routes/account/change-password'
 import { Route as CatalogCategorySplatImport } from './routes/catalog/$category.$'
-import { Route as CatalogCategorySubcategoryIdImport } from './routes/catalog/$category.$subcategory.$id'
+import { Route as CatalogCategorySubcategorySlugImport } from './routes/catalog/$category.$subcategory.$slug'
 
 // Create/Update Routes
 
@@ -68,6 +72,30 @@ const AccountIndexRoute = AccountIndexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const PagesWhereToBuyFramesRoute = PagesWhereToBuyFramesImport.update({
+  id: '/pages/where-to-buy-frames',
+  path: '/pages/where-to-buy-frames',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const PagesStyleDifferencesRoute = PagesStyleDifferencesImport.update({
+  id: '/pages/style-differences',
+  path: '/pages/style-differences',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const PagesMaterialDifferencesRoute = PagesMaterialDifferencesImport.update({
+  id: '/pages/material-differences',
+  path: '/pages/material-differences',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const PagesCustomFramingRoute = PagesCustomFramingImport.update({
+  id: '/pages/custom-framing',
+  path: '/pages/custom-framing',
+  getParentRoute: () => rootRoute,
+} as any)
+
 const AccountManageAddressesRoute = AccountManageAddressesImport.update({
   id: '/account/manage-addresses',
   path: '/account/manage-addresses',
@@ -92,10 +120,10 @@ const CatalogCategorySplatRoute = CatalogCategorySplatImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const CatalogCategorySubcategoryIdRoute =
-  CatalogCategorySubcategoryIdImport.update({
-    id: '/catalog/$category/$subcategory/$id',
-    path: '/catalog/$category/$subcategory/$id',
+const CatalogCategorySubcategorySlugRoute =
+  CatalogCategorySubcategorySlugImport.update({
+    id: '/catalog/$category/$subcategory/$slug',
+    path: '/catalog/$category/$subcategory/$slug',
     getParentRoute: () => rootRoute,
   } as any)
 
@@ -159,6 +187,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AccountManageAddressesImport
       parentRoute: typeof rootRoute
     }
+    '/pages/custom-framing': {
+      id: '/pages/custom-framing'
+      path: '/pages/custom-framing'
+      fullPath: '/pages/custom-framing'
+      preLoaderRoute: typeof PagesCustomFramingImport
+      parentRoute: typeof rootRoute
+    }
+    '/pages/material-differences': {
+      id: '/pages/material-differences'
+      path: '/pages/material-differences'
+      fullPath: '/pages/material-differences'
+      preLoaderRoute: typeof PagesMaterialDifferencesImport
+      parentRoute: typeof rootRoute
+    }
+    '/pages/style-differences': {
+      id: '/pages/style-differences'
+      path: '/pages/style-differences'
+      fullPath: '/pages/style-differences'
+      preLoaderRoute: typeof PagesStyleDifferencesImport
+      parentRoute: typeof rootRoute
+    }
+    '/pages/where-to-buy-frames': {
+      id: '/pages/where-to-buy-frames'
+      path: '/pages/where-to-buy-frames'
+      fullPath: '/pages/where-to-buy-frames'
+      preLoaderRoute: typeof PagesWhereToBuyFramesImport
+      parentRoute: typeof rootRoute
+    }
     '/account/': {
       id: '/account/'
       path: '/account'
@@ -180,11 +236,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CatalogCategorySplatImport
       parentRoute: typeof rootRoute
     }
-    '/catalog/$category/$subcategory/$id': {
-      id: '/catalog/$category/$subcategory/$id'
-      path: '/catalog/$category/$subcategory/$id'
-      fullPath: '/catalog/$category/$subcategory/$id'
-      preLoaderRoute: typeof CatalogCategorySubcategoryIdImport
+    '/catalog/$category/$subcategory/$slug': {
+      id: '/catalog/$category/$subcategory/$slug'
+      path: '/catalog/$category/$subcategory/$slug'
+      fullPath: '/catalog/$category/$subcategory/$slug'
+      preLoaderRoute: typeof CatalogCategorySubcategorySlugImport
       parentRoute: typeof rootRoute
     }
   }
@@ -201,10 +257,14 @@ export interface FileRoutesByFullPath {
   '/account/change-password': typeof AccountChangePasswordRoute
   '/account/edit': typeof AccountEditRoute
   '/account/manage-addresses': typeof AccountManageAddressesRoute
+  '/pages/custom-framing': typeof PagesCustomFramingRoute
+  '/pages/material-differences': typeof PagesMaterialDifferencesRoute
+  '/pages/style-differences': typeof PagesStyleDifferencesRoute
+  '/pages/where-to-buy-frames': typeof PagesWhereToBuyFramesRoute
   '/account': typeof AccountIndexRoute
   '/catalog': typeof CatalogIndexRoute
   '/catalog/$category/$': typeof CatalogCategorySplatRoute
-  '/catalog/$category/$subcategory/$id': typeof CatalogCategorySubcategoryIdRoute
+  '/catalog/$category/$subcategory/$slug': typeof CatalogCategorySubcategorySlugRoute
 }
 
 export interface FileRoutesByTo {
@@ -216,10 +276,14 @@ export interface FileRoutesByTo {
   '/account/change-password': typeof AccountChangePasswordRoute
   '/account/edit': typeof AccountEditRoute
   '/account/manage-addresses': typeof AccountManageAddressesRoute
+  '/pages/custom-framing': typeof PagesCustomFramingRoute
+  '/pages/material-differences': typeof PagesMaterialDifferencesRoute
+  '/pages/style-differences': typeof PagesStyleDifferencesRoute
+  '/pages/where-to-buy-frames': typeof PagesWhereToBuyFramesRoute
   '/account': typeof AccountIndexRoute
   '/catalog': typeof CatalogIndexRoute
   '/catalog/$category/$': typeof CatalogCategorySplatRoute
-  '/catalog/$category/$subcategory/$id': typeof CatalogCategorySubcategoryIdRoute
+  '/catalog/$category/$subcategory/$slug': typeof CatalogCategorySubcategorySlugRoute
 }
 
 export interface FileRoutesById {
@@ -232,10 +296,14 @@ export interface FileRoutesById {
   '/account/change-password': typeof AccountChangePasswordRoute
   '/account/edit': typeof AccountEditRoute
   '/account/manage-addresses': typeof AccountManageAddressesRoute
+  '/pages/custom-framing': typeof PagesCustomFramingRoute
+  '/pages/material-differences': typeof PagesMaterialDifferencesRoute
+  '/pages/style-differences': typeof PagesStyleDifferencesRoute
+  '/pages/where-to-buy-frames': typeof PagesWhereToBuyFramesRoute
   '/account/': typeof AccountIndexRoute
   '/catalog/': typeof CatalogIndexRoute
   '/catalog/$category/$': typeof CatalogCategorySplatRoute
-  '/catalog/$category/$subcategory/$id': typeof CatalogCategorySubcategoryIdRoute
+  '/catalog/$category/$subcategory/$slug': typeof CatalogCategorySubcategorySlugRoute
 }
 
 export interface FileRouteTypes {
@@ -249,10 +317,14 @@ export interface FileRouteTypes {
     | '/account/change-password'
     | '/account/edit'
     | '/account/manage-addresses'
+    | '/pages/custom-framing'
+    | '/pages/material-differences'
+    | '/pages/style-differences'
+    | '/pages/where-to-buy-frames'
     | '/account'
     | '/catalog'
     | '/catalog/$category/$'
-    | '/catalog/$category/$subcategory/$id'
+    | '/catalog/$category/$subcategory/$slug'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -263,10 +335,14 @@ export interface FileRouteTypes {
     | '/account/change-password'
     | '/account/edit'
     | '/account/manage-addresses'
+    | '/pages/custom-framing'
+    | '/pages/material-differences'
+    | '/pages/style-differences'
+    | '/pages/where-to-buy-frames'
     | '/account'
     | '/catalog'
     | '/catalog/$category/$'
-    | '/catalog/$category/$subcategory/$id'
+    | '/catalog/$category/$subcategory/$slug'
   id:
     | '__root__'
     | '/'
@@ -277,10 +353,14 @@ export interface FileRouteTypes {
     | '/account/change-password'
     | '/account/edit'
     | '/account/manage-addresses'
+    | '/pages/custom-framing'
+    | '/pages/material-differences'
+    | '/pages/style-differences'
+    | '/pages/where-to-buy-frames'
     | '/account/'
     | '/catalog/'
     | '/catalog/$category/$'
-    | '/catalog/$category/$subcategory/$id'
+    | '/catalog/$category/$subcategory/$slug'
   fileRoutesById: FileRoutesById
 }
 
@@ -293,10 +373,14 @@ export interface RootRouteChildren {
   AccountChangePasswordRoute: typeof AccountChangePasswordRoute
   AccountEditRoute: typeof AccountEditRoute
   AccountManageAddressesRoute: typeof AccountManageAddressesRoute
+  PagesCustomFramingRoute: typeof PagesCustomFramingRoute
+  PagesMaterialDifferencesRoute: typeof PagesMaterialDifferencesRoute
+  PagesStyleDifferencesRoute: typeof PagesStyleDifferencesRoute
+  PagesWhereToBuyFramesRoute: typeof PagesWhereToBuyFramesRoute
   AccountIndexRoute: typeof AccountIndexRoute
   CatalogIndexRoute: typeof CatalogIndexRoute
   CatalogCategorySplatRoute: typeof CatalogCategorySplatRoute
-  CatalogCategorySubcategoryIdRoute: typeof CatalogCategorySubcategoryIdRoute
+  CatalogCategorySubcategorySlugRoute: typeof CatalogCategorySubcategorySlugRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
@@ -308,10 +392,14 @@ const rootRouteChildren: RootRouteChildren = {
   AccountChangePasswordRoute: AccountChangePasswordRoute,
   AccountEditRoute: AccountEditRoute,
   AccountManageAddressesRoute: AccountManageAddressesRoute,
+  PagesCustomFramingRoute: PagesCustomFramingRoute,
+  PagesMaterialDifferencesRoute: PagesMaterialDifferencesRoute,
+  PagesStyleDifferencesRoute: PagesStyleDifferencesRoute,
+  PagesWhereToBuyFramesRoute: PagesWhereToBuyFramesRoute,
   AccountIndexRoute: AccountIndexRoute,
   CatalogIndexRoute: CatalogIndexRoute,
   CatalogCategorySplatRoute: CatalogCategorySplatRoute,
-  CatalogCategorySubcategoryIdRoute: CatalogCategorySubcategoryIdRoute,
+  CatalogCategorySubcategorySlugRoute: CatalogCategorySubcategorySlugRoute,
 }
 
 export const routeTree = rootRoute
@@ -332,10 +420,14 @@ export const routeTree = rootRoute
         "/account/change-password",
         "/account/edit",
         "/account/manage-addresses",
+        "/pages/custom-framing",
+        "/pages/material-differences",
+        "/pages/style-differences",
+        "/pages/where-to-buy-frames",
         "/account/",
         "/catalog/",
         "/catalog/$category/$",
-        "/catalog/$category/$subcategory/$id"
+        "/catalog/$category/$subcategory/$slug"
       ]
     },
     "/": {
@@ -362,6 +454,18 @@ export const routeTree = rootRoute
     "/account/manage-addresses": {
       "filePath": "account/manage-addresses.tsx"
     },
+    "/pages/custom-framing": {
+      "filePath": "pages/custom-framing.tsx"
+    },
+    "/pages/material-differences": {
+      "filePath": "pages/material-differences.tsx"
+    },
+    "/pages/style-differences": {
+      "filePath": "pages/style-differences.tsx"
+    },
+    "/pages/where-to-buy-frames": {
+      "filePath": "pages/where-to-buy-frames.tsx"
+    },
     "/account/": {
       "filePath": "account/index.tsx"
     },
@@ -371,8 +475,8 @@ export const routeTree = rootRoute
     "/catalog/$category/$": {
       "filePath": "catalog/$category.$.tsx"
     },
-    "/catalog/$category/$subcategory/$id": {
-      "filePath": "catalog/$category.$subcategory.$id.tsx"
+    "/catalog/$category/$subcategory/$slug": {
+      "filePath": "catalog/$category.$subcategory.$slug.tsx"
     }
   }
 }

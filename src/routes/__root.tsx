@@ -1,4 +1,4 @@
-import { Outlet, createRootRouteWithContext } from '@tanstack/react-router';
+import { Outlet, createRootRouteWithContext, useLocation } from '@tanstack/react-router';
 import { Header } from '../components/header';
 import { Footer } from '../components/footer';
 import ErrorPage from '../pages/error-page';
@@ -7,6 +7,9 @@ import type { Category } from '@commercetools/platform-sdk';
 import { isTokenValid } from '../lib/api/token-storage';
 import { createCartForCurrentCustomer } from '../lib/api/cart';
 import { PromoBanner } from '../components/promo-banner';
+import CustomBreadcrumb from '../components/ui/breadcrumb';
+import type { Link } from '../lib/types';
+import { formatString } from '../lib/utils/format-string';
 
 interface RouterContext {
   categories: Category[];
@@ -36,10 +39,24 @@ export const Route = createRootRouteWithContext<RouterContext>()({
 });
 
 function RootComponent() {
+  const { pathname } = useLocation();
+  const pathnames = pathname
+    .split('/')
+    .slice(1)
+    .filter((v) => v && v !== 'whole' && v !== 'pages');
+  const links: Link[] = pathnames.reduce((a: Link[], v) => {
+    const current: Link = {
+      text: formatString(v),
+      to: a.length ? `${a.at(-1)?.to}/${v}` : `/${v}`,
+    };
+    return [...a, current];
+  }, []);
+
   return (
     <>
       <PromoBanner />
       <Header />
+      <CustomBreadcrumb links={links} truncate={12} />
       <Outlet />
       <Footer />
     </>

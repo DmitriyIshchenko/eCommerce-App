@@ -2,9 +2,7 @@ import { createFileRoute, useLocation } from '@tanstack/react-router';
 import { productSearchSchema, type ProductSearchSchema } from '../../lib/schemas/products-search';
 import { getCategoryProductsFacets, getProductsBySearch } from '../../lib/api/get-products';
 import { getCategoryBySlug } from '../../lib/api/get-categories';
-import type { Link } from '../../lib/types';
 import { formatString } from '../../lib/utils/format-string';
-import CustomBreadcrumb from '../../components/ui/breadcrumb';
 import {
   Body2,
   Divider,
@@ -144,8 +142,6 @@ function RouteComponent() {
     categoryMaterials,
     minCategoryPrice,
     maxCategoryPrice,
-    // categoryTotal,
-    // categoryId,
   } = Route.useLoaderData();
 
   const { category, _splat } = Route.useParams();
@@ -180,15 +176,6 @@ function RouteComponent() {
 
   const categoryName = formatString(category);
   const subcategoryName = _splat ? formatString(_splat) : undefined;
-
-  const pathnames = pathname.split('/').slice(1);
-  const links: Link[] = pathnames.reduce((a: Link[], v) => {
-    const current: Link = {
-      text: formatString(v),
-      to: a.length ? `${a.at(-1)?.to}/${v}` : `/${v}`,
-    };
-    return [...a, current];
-  }, []);
 
   const handleMinMaxChange = (minPrice: number, maxPrice: number) => {
     setFilter({ ...filter, minPrice, maxPrice });
@@ -276,9 +263,6 @@ function RouteComponent() {
 
   return (
     <main>
-      <div className={styles.breadContainer}>
-        <CustomBreadcrumb links={links} />
-      </div>
       <CategoryPage
         products={filteredProducts}
         categoryName={categoryName}

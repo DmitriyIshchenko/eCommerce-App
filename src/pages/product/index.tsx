@@ -1,11 +1,6 @@
 import type { Cart, ProductProjection } from '@commercetools/platform-sdk';
 import { ProductInfo } from '../../components/product-info';
 import formatPrice from '../../lib/utils/format-price';
-import CustomBreadcrumb from '../../components/ui/breadcrumb';
-import { tokens } from '@fluentui/react-components';
-import type { Link } from '../../lib/types';
-import { kebabToCapitalizedSpacedString } from '../../lib/utils/kebab-to-capitalized-spaced-string';
-import { useLocation } from '@tanstack/react-router';
 import { keyLabelSchema } from '../../lib/schemas/user';
 import { useCart } from '../../hooks/use-cart';
 import { useEffect, useState } from 'react';
@@ -60,20 +55,6 @@ export default function ProductPage({
         .filter((v) => v !== ''),
     ),
   ];
-
-  const links: Link[] = useLocation()
-    .pathname.split('/')
-    .slice(1)
-    .filter((v) => v !== 'whole')
-    .reduce((a: Link[], v, i, arr) => {
-      const text =
-        i === arr.length - 1 ? product.name?.['en-US'] : kebabToCapitalizedSpacedString(v);
-      const current: Link = {
-        text,
-        to: a.length ? `${a.at(-1)?.to}/${v}` : `/${v}`,
-      };
-      return [...a, current];
-    }, []);
 
   function getCartGoodsMap(cart: Cart) {
     const goodsMap: Record<string, number> = {};
@@ -141,14 +122,6 @@ export default function ProductPage({
 
   return (
     <>
-      <div
-        style={{
-          padding: `var(--spacingVerticalL) var(--spacingHorizontalXL)`,
-          borderBottom: `1px solid ${tokens.colorNeutralStroke1}`,
-        }}
-      >
-        <CustomBreadcrumb links={links} truncate={10} />
-      </div>
       <main>
         {product && (
           <ProductInfo

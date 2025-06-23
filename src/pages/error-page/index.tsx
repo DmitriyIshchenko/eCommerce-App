@@ -1,5 +1,6 @@
-import { Button, LargeTitle, makeStyles, tokens } from '@fluentui/react-components';
-import { useNavigate } from '@tanstack/react-router';
+import { LargeTitle, makeStyles, tokens } from '@fluentui/react-components';
+import ButtonLink from '../../components/ui/links/button';
+import { ArrowRightFilled } from '@fluentui/react-icons';
 
 const useClasses = makeStyles({
   errorPageContainer: {
@@ -15,6 +16,7 @@ const useClasses = makeStyles({
     boxSizing: 'border-box',
     '@media(width<620px)': {
       flexDirection: 'column',
+      padding: '40px',
     },
   },
   errorWrapper: {
@@ -52,30 +54,18 @@ const useClasses = makeStyles({
 
 export default function ErrorPage() {
   const classes = useClasses();
-  const navigate = useNavigate();
-
-  const handleGoHome = () => {
-    void navigate({ to: '/' });
-  };
 
   return (
     <div className={classes.errorPageContainer}>
       <div className={classes.textBlock}>
-        <LargeTitle as="h1">Page not found</LargeTitle>
+        <LargeTitle align="center" as="h1">
+          Page not found
+        </LargeTitle>
       </div>
       <div className={classes.divider}></div>
       <div className={`${classes.textBlock} ${classes.errorWrapper}`}>
         <p className={classes.text}>The page you are looking for cannot be found</p>
-        <Button
-          className={classes.button}
-          type="button"
-          size="large"
-          appearance="primary"
-          shape="circular"
-          onClick={handleGoHome}
-        >
-          GO TO HOMEPAGE
-        </Button>
+        <ButtonLink text="GO TO HOME PAGE" to="/" icon={<ArrowRightFilled />} />
       </div>
     </div>
   );
