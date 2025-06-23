@@ -143,9 +143,8 @@ export default function ProductPage({
     <>
       <div
         style={{
-          padding: 20,
+          padding: `var(--spacingVerticalL) var(--spacingHorizontalXL)`,
           borderBottom: `1px solid ${tokens.colorNeutralStroke1}`,
-          borderTop: `1px solid ${tokens.colorNeutralStroke1}`,
         }}
       >
         <CustomBreadcrumb links={links} truncate={10} />
