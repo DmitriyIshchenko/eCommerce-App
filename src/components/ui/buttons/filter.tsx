@@ -1,4 +1,4 @@
-import { makeStyles, tokens } from '@fluentui/react-components';
+import { makeStyles, mergeClasses, tokens } from '@fluentui/react-components';
 import FilterIcon from '../icons/filter';
 import StyledTooltip from '../tooltips/styled';
 import type { CustomButtonProps } from './custom';
@@ -40,7 +40,9 @@ const useCss = makeStyles({
 });
 
 export default function FilterButton(
-  props: Omit<CustomButtonProps, 'icon' | 'appearance' | 'className' | 'size'>,
+  props: Omit<CustomButtonProps, 'icon' | 'appearance' | 'className' | 'size'> & {
+    className?: string;
+  },
 ) {
   const css = useCss();
   return (
@@ -50,7 +52,7 @@ export default function FilterButton(
           {...props}
           icon={<FilterIcon width={24} height={24} />}
           shape="circular"
-          className={css.animate}
+          className={mergeClasses(css.animate, props.className)}
         />
       </div>
     </StyledTooltip>
