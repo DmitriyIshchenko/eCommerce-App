@@ -26,6 +26,11 @@ const useStyles = makeStyles({
       flexWrap: 'wrap',
     },
   },
+  wrapper: {
+    width: '100%',
+    padding: `${tokens.spacingVerticalL} ${tokens.spacingHorizontalXL}`,
+    borderBottom: `1px solid ${tokens.colorNeutralStroke1}`,
+  },
 });
 
 const Item = ({
@@ -74,31 +79,34 @@ const TruncatedItem = ({
 
 export default function CustomBreadcrumb({ links, truncate }: Props) {
   const styles = useStyles();
+  if (!links?.length) return null;
   return (
-    <Breadcrumb aria-label="Catalog Breadcrumb" className={styles.breadcrumb}>
-      <BreadcrumbItem>
-        <InternalLink to="/" appearance="muted" asBlock>
-          Home
-        </InternalLink>
-      </BreadcrumbItem>
-      {links?.map((v, i, a) => {
-        const isLast = i === a.length - 1;
-        return (
-          <Fragment key={v.to}>
-            {truncate && isTruncatableBreadcrumbContent(v.text, truncate) ? (
-              <TruncatedItem
-                text={v.text}
-                to={v.to}
-                truncateTo={truncate}
-                className={styles.divider}
-                isLast={isLast}
-              />
-            ) : (
-              <Item text={v.text} to={v.to} className={styles.divider} isLast={isLast} />
-            )}
-          </Fragment>
-        );
-      })}
-    </Breadcrumb>
+    <div className={styles.wrapper}>
+      <Breadcrumb aria-label="Catalog Breadcrumb" className={styles.breadcrumb}>
+        <BreadcrumbItem>
+          <InternalLink to="/" appearance="muted" asBlock>
+            Home
+          </InternalLink>
+        </BreadcrumbItem>
+        {links?.map((v, i, a) => {
+          const isLast = i === a.length - 1;
+          return (
+            <Fragment key={v.to}>
+              {truncate && isTruncatableBreadcrumbContent(v.text, truncate) ? (
+                <TruncatedItem
+                  text={v.text}
+                  to={v.to}
+                  truncateTo={truncate}
+                  className={styles.divider}
+                  isLast={isLast}
+                />
+              ) : (
+                <Item text={v.text} to={v.to} className={styles.divider} isLast={isLast} />
+              )}
+            </Fragment>
+          );
+        })}
+      </Breadcrumb>
+    </div>
   );
 }

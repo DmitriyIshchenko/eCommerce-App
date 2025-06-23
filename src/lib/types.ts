@@ -3,6 +3,7 @@ import type { ToPathOption } from '@tanstack/react-router';
 
 export interface ProductCardProps {
   id: string;
+  slug: string;
   value: string;
   name: string;
   category: string;

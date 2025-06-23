@@ -8,6 +8,7 @@ import {
   DrawerBody,
   DrawerHeader,
   DrawerHeaderTitle,
+  useRestoreFocusTarget,
 } from '@fluentui/react-components';
 import { DismissRegular } from '@fluentui/react-icons';
 import { createLink, useLocation, useNavigate, useRouteContext } from '@tanstack/react-router';
@@ -18,11 +19,11 @@ import BurgerButton from '../ui/buttons/burger';
 import SplitLinkMenu from '../ui/menu/split-link';
 import adaptCategoriesToSplitLinkMenuItemProp from '../../lib/utils/adapt-categories';
 import { InternalLink } from '../ui/links/fui-tanstack';
-import { CatalogTree } from '../../features/catalog-tree';
 import SearchDrawer from '../../features/search-drawer';
 import CartLink from '../ui/cart/link';
 import { useCart } from '../../hooks/use-cart';
 import { useLoading } from '../../hooks/use-loading';
+import { FlatTreeMenu } from '../ui/menu/flat-tree';
 
 const useClasses = makeStyles({
   header: {
@@ -110,6 +111,7 @@ export function Header() {
   const [isSearchDrawerOpen, setIsSearchDrawerOpen] = useState(false);
   const { cart } = useCart();
   const { loading } = useLoading();
+  const restoreFocusTargetAttributes = useRestoreFocusTarget();
 
   const { pathname } = useLocation();
   const { categories } = useRouteContext({
@@ -239,7 +241,13 @@ export function Header() {
           </ul>
 
           <div style={{ display: 'flex', alignItems: 'center' }}>
-            <SearchButton onClick={() => setIsSearchDrawerOpen(true)} />
+            <SearchButton
+              onClick={() => {
+                setIsSearchDrawerOpen(true);
+                document.body.style.overflowY = 'clip';
+              }}
+              {...restoreFocusTargetAttributes}
+            />
             <CartLink to="/cart" loading={loading} size={30} goods={cart?.totalLineItemQuantity} />
             <BurgerButton
               className={classes.burgerButton}
@@ -276,7 +284,7 @@ export function Header() {
           <DrawerBody>
             <ul className={classes.drawerMenu}>
               <li>
-                <CatalogTree />
+                <FlatTreeMenu onClick={() => setIsDrawerOpen(false)} />
               </li>
               <li>
                 <InternalLink
@@ -285,6 +293,7 @@ export function Header() {
                   appearance="straight"
                   inline
                   active={about.to === pathname.split('/').slice(0, 2).join('/')}
+                  onClick={() => setIsDrawerOpen(false)}
                 >
                   {about.name}
                 </InternalLink>
@@ -299,6 +308,7 @@ export function Header() {
                       appearance="straight"
                       inline
                       active={item.to === pathname.split('/').slice(0, 2).join('/')}
+                      onClick={() => setIsDrawerOpen(false)}
                     >
                       {item.name}
                     </InternalLink>
@@ -313,6 +323,7 @@ export function Header() {
                       appearance="straight"
                       inline
                       active={account.to === pathname.split('/').slice(0, 2).join('/')}
+                      onClick={() => setIsDrawerOpen(false)}
                     >
                       {account.name}
                     </InternalLink>

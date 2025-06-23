@@ -1,67 +1,61 @@
-import { Divider, LargeTitle, makeStyles, tokens } from '@fluentui/react-components';
+import { makeStyles, Text, tokens, typographyStyles } from '@fluentui/react-components';
 import LoginForm from '../../features/login-form';
 
-const useClasses = makeStyles({
-  login: {
-    position: 'relative',
-    maxWidth: '1440px',
-    margin: '0 auto',
-    height: '100vh',
+const useStyles = makeStyles({
+  left: {
+    padding: '40px',
+    width: '50%',
+    minHeight: '100vh',
+    float: 'left',
+    position: 'sticky',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  loginContainer: {
-    width: '100%',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: '9vw',
-    '@media(width<690px)': {
-      flexWrap: 'wrap',
-    },
-  },
-  titleContainer: {
-    padding: `${tokens.spacingVerticalNone} ${tokens.spacingHorizontalSNudge}`,
-    flexGrow: 1,
-    textAlign: 'center',
-  },
-  formContainer: {
-    padding: `${tokens.spacingVerticalNone} ${tokens.spacingHorizontalSNudge}`,
-    flexGrow: 1,
-  },
-  verticalDivider: {
-    position: 'absolute',
-    height: '100%',
-    left: '50%',
     top: 0,
-    '@media(width<690px)': {
-      display: 'none',
+    gap: '16px',
+    borderRight: `1px solid ${tokens.colorNeutralStroke1}`,
+    '@media (max-width: 768px)': {
+      position: 'static',
+      width: '100%',
+      float: 'unset',
+      minHeight: '35vh',
+      borderBottom: `1px solid ${tokens.colorNeutralStroke1}`,
+      borderRight: 0,
     },
   },
-  horizontalDivider: {
-    display: 'none',
-    '@media(width<690px)': {
-      display: 'block',
+  right: {
+    width: '50%',
+    marginLeft: '50%',
+    padding: '60px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: '100vh',
+    '@media (max-width: 768px)': {
+      width: '100%',
+      marginLeft: 0,
+      minHeight: '35vh',
+      padding: '40px',
     },
   },
+  title: typographyStyles.largeTitle,
 });
 
 export default function LoginPage() {
-  const classes = useClasses();
+  const styles = useStyles();
 
   return (
-    <div className={classes.login}>
-      <div className={classes.loginContainer}>
-        <div className={classes.titleContainer}>
-          <LargeTitle as="h1">Customer Login</LargeTitle>
-        </div>
-        <Divider className={classes.horizontalDivider}></Divider>
-        <div className={classes.formContainer}>
+    <div>
+      <div className={styles.left}>
+        <Text align="center" as="h2" className={styles.title}>
+          Customer Login
+        </Text>
+      </div>
+      <div className={styles.right}>
+        <div style={{ width: '100%' }}>
           <LoginForm />
         </div>
       </div>
-      <Divider className={classes.verticalDivider} vertical></Divider>
     </div>
   );
 }

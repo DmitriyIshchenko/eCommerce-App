@@ -78,6 +78,9 @@ const useCss = makeStyles({
   notInteractive: {
     pointerEvents: 'none',
   },
+  interactive: {
+    pointerEvents: 'auto',
+  },
   block: {
     display: 'flex',
     flexDirection: 'column',
@@ -110,11 +113,21 @@ type StyledLinkProps = Omit<FluentLinkProps, 'appearance' | 'as'> &
     asBlock: boolean;
     notInteractive: boolean;
     active: boolean;
+    interactive: boolean;
   }>;
 
 export const ExternalLink = forwardRef<HTMLAnchorElement, StyledLinkProps>(
   (
-    { appearance = 'straight', accent, active, asBlock, notInteractive, disabled, ...props },
+    {
+      appearance = 'straight',
+      accent,
+      active,
+      asBlock,
+      notInteractive,
+      interactive,
+      disabled,
+      ...props
+    },
     ref,
   ) => {
     const css = useCss();
@@ -140,6 +153,7 @@ export const ExternalLink = forwardRef<HTMLAnchorElement, StyledLinkProps>(
           notInteractive && css.notInteractive,
           disabled && css.disabled,
           active && css.active,
+          interactive && css.interactive,
           props.className,
         )}
       >

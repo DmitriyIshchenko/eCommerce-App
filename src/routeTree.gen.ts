@@ -22,7 +22,7 @@ import { Route as AccountManageAddressesImport } from './routes/account/manage-a
 import { Route as AccountEditImport } from './routes/account/edit'
 import { Route as AccountChangePasswordImport } from './routes/account/change-password'
 import { Route as CatalogCategorySplatImport } from './routes/catalog/$category.$'
-import { Route as CatalogCategorySubcategoryIdImport } from './routes/catalog/$category.$subcategory.$id'
+import { Route as CatalogCategorySubcategorySlugImport } from './routes/catalog/$category.$subcategory.$slug'
 
 // Create/Update Routes
 
@@ -92,10 +92,10 @@ const CatalogCategorySplatRoute = CatalogCategorySplatImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const CatalogCategorySubcategoryIdRoute =
-  CatalogCategorySubcategoryIdImport.update({
-    id: '/catalog/$category/$subcategory/$id',
-    path: '/catalog/$category/$subcategory/$id',
+const CatalogCategorySubcategorySlugRoute =
+  CatalogCategorySubcategorySlugImport.update({
+    id: '/catalog/$category/$subcategory/$slug',
+    path: '/catalog/$category/$subcategory/$slug',
     getParentRoute: () => rootRoute,
   } as any)
 
@@ -180,11 +180,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CatalogCategorySplatImport
       parentRoute: typeof rootRoute
     }
-    '/catalog/$category/$subcategory/$id': {
-      id: '/catalog/$category/$subcategory/$id'
-      path: '/catalog/$category/$subcategory/$id'
-      fullPath: '/catalog/$category/$subcategory/$id'
-      preLoaderRoute: typeof CatalogCategorySubcategoryIdImport
+    '/catalog/$category/$subcategory/$slug': {
+      id: '/catalog/$category/$subcategory/$slug'
+      path: '/catalog/$category/$subcategory/$slug'
+      fullPath: '/catalog/$category/$subcategory/$slug'
+      preLoaderRoute: typeof CatalogCategorySubcategorySlugImport
       parentRoute: typeof rootRoute
     }
   }
@@ -204,7 +204,7 @@ export interface FileRoutesByFullPath {
   '/account': typeof AccountIndexRoute
   '/catalog': typeof CatalogIndexRoute
   '/catalog/$category/$': typeof CatalogCategorySplatRoute
-  '/catalog/$category/$subcategory/$id': typeof CatalogCategorySubcategoryIdRoute
+  '/catalog/$category/$subcategory/$slug': typeof CatalogCategorySubcategorySlugRoute
 }
 
 export interface FileRoutesByTo {
@@ -219,7 +219,7 @@ export interface FileRoutesByTo {
   '/account': typeof AccountIndexRoute
   '/catalog': typeof CatalogIndexRoute
   '/catalog/$category/$': typeof CatalogCategorySplatRoute
-  '/catalog/$category/$subcategory/$id': typeof CatalogCategorySubcategoryIdRoute
+  '/catalog/$category/$subcategory/$slug': typeof CatalogCategorySubcategorySlugRoute
 }
 
 export interface FileRoutesById {
@@ -235,7 +235,7 @@ export interface FileRoutesById {
   '/account/': typeof AccountIndexRoute
   '/catalog/': typeof CatalogIndexRoute
   '/catalog/$category/$': typeof CatalogCategorySplatRoute
-  '/catalog/$category/$subcategory/$id': typeof CatalogCategorySubcategoryIdRoute
+  '/catalog/$category/$subcategory/$slug': typeof CatalogCategorySubcategorySlugRoute
 }
 
 export interface FileRouteTypes {
@@ -252,7 +252,7 @@ export interface FileRouteTypes {
     | '/account'
     | '/catalog'
     | '/catalog/$category/$'
-    | '/catalog/$category/$subcategory/$id'
+    | '/catalog/$category/$subcategory/$slug'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -266,7 +266,7 @@ export interface FileRouteTypes {
     | '/account'
     | '/catalog'
     | '/catalog/$category/$'
-    | '/catalog/$category/$subcategory/$id'
+    | '/catalog/$category/$subcategory/$slug'
   id:
     | '__root__'
     | '/'
@@ -280,7 +280,7 @@ export interface FileRouteTypes {
     | '/account/'
     | '/catalog/'
     | '/catalog/$category/$'
-    | '/catalog/$category/$subcategory/$id'
+    | '/catalog/$category/$subcategory/$slug'
   fileRoutesById: FileRoutesById
 }
 
@@ -296,7 +296,7 @@ export interface RootRouteChildren {
   AccountIndexRoute: typeof AccountIndexRoute
   CatalogIndexRoute: typeof CatalogIndexRoute
   CatalogCategorySplatRoute: typeof CatalogCategorySplatRoute
-  CatalogCategorySubcategoryIdRoute: typeof CatalogCategorySubcategoryIdRoute
+  CatalogCategorySubcategorySlugRoute: typeof CatalogCategorySubcategorySlugRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
@@ -311,7 +311,7 @@ const rootRouteChildren: RootRouteChildren = {
   AccountIndexRoute: AccountIndexRoute,
   CatalogIndexRoute: CatalogIndexRoute,
   CatalogCategorySplatRoute: CatalogCategorySplatRoute,
-  CatalogCategorySubcategoryIdRoute: CatalogCategorySubcategoryIdRoute,
+  CatalogCategorySubcategorySlugRoute: CatalogCategorySubcategorySlugRoute,
 }
 
 export const routeTree = rootRoute
@@ -335,7 +335,7 @@ export const routeTree = rootRoute
         "/account/",
         "/catalog/",
         "/catalog/$category/$",
-        "/catalog/$category/$subcategory/$id"
+        "/catalog/$category/$subcategory/$slug"
       ]
     },
     "/": {
@@ -371,8 +371,8 @@ export const routeTree = rootRoute
     "/catalog/$category/$": {
       "filePath": "catalog/$category.$.tsx"
     },
-    "/catalog/$category/$subcategory/$id": {
-      "filePath": "catalog/$category.$subcategory.$id.tsx"
+    "/catalog/$category/$subcategory/$slug": {
+      "filePath": "catalog/$category.$subcategory.$slug.tsx"
     }
   }
 }

@@ -23,14 +23,15 @@ export function MiniProductCard(props: MiniProductCardProps) {
   return (
     <Card className={styles.card}>
       <InternalLink
-        to="/catalog/$category/$subcategory/$id"
+        to="/catalog/$category/$subcategory/$slug"
         appearance="stickless"
         viewTransition
         params={{
-          id: props.id,
+          slug: props.slug,
           category: props.category,
           subcategory: props.subCategory,
         }}
+        onClick={props.onClick}
         style={{
           position: 'absolute',
           display: 'block',

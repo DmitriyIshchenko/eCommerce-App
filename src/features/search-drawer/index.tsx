@@ -1,6 +1,5 @@
 import {
   Body2,
-  Button,
   Drawer,
   DrawerBody,
   DrawerHeader,
@@ -8,6 +7,7 @@ import {
   Input,
   makeStyles,
   tokens,
+  useRestoreFocusSource,
   type InputOnChangeData,
 } from '@fluentui/react-components';
 import { DismissRegular } from '@fluentui/react-icons';
@@ -20,6 +20,8 @@ import { getProductCategories } from '../../lib/api/get-categories';
 import { Route } from '../../routes/catalog/$category.$';
 import { useMatchRoute } from '@tanstack/react-router';
 import type { ProductSearchSchema } from '../../lib/schemas/products-search';
+import CustomButton from '../../components/ui/buttons/custom';
+import StyledTooltip from '../../components/ui/tooltips/styled';
 
 const useStyles = makeStyles({
   header: {
@@ -48,6 +50,7 @@ const DRAWER_SUBTITLE = 'ALL PRODUCTS';
 export default function SearchDrawer({ open, onOpenChange }: SearchDrawerProps) {
   const styles = useStyles();
   const matchRoute = useMatchRoute();
+  const restoreFocusSourceAttributes = useRestoreFocusSource();
   const [value, setValue] = useState('');
   const [products, setProducts] = useState<ProductProjection[]>([]);
   const [categoriesCache, setCategoriesCache] = useState<
@@ -103,18 +106,30 @@ export default function SearchDrawer({ open, onOpenChange }: SearchDrawerProps) 
       type="overlay"
       separator
       open={open}
-      onOpenChange={(_, { open }) => onOpenChange(open)}
+      {...restoreFocusSourceAttributes}
+      onOpenChange={(_, { open }) => {
+        onOpenChange(open);
+        document.body.style.overflowY = open ? 'clip' : '';
+      }}
       position="end"
     >
       <DrawerHeader className={styles.header}>
         <DrawerHeaderTitle
           action={
-            <Button
-              appearance="subtle"
-              aria-label="Close"
-              icon={<DismissRegular />}
-              onClick={() => onOpenChange(false)}
-            />
+            <StyledTooltip contentChildren="Close" positioning={'before'}>
+              <div>
+                <CustomButton
+                  appearance="subtle"
+                  aria-label="Close"
+                  shape="circular"
+                  icon={<DismissRegular />}
+                  onClick={() => {
+                    onOpenChange(false);
+                    document.body.style.overflowY = '';
+                  }}
+                />
+              </div>
+            </StyledTooltip>
           }
         >
           {DRAWER_TITLE}
@@ -145,7 +160,10 @@ export default function SearchDrawer({ open, onOpenChange }: SearchDrawerProps) 
 
                 return (
                   <MiniProductCard
-                    onClick={() => onOpenChange(false)}
+                    onClick={() => {
+                      onOpenChange(false);
+                      document.body.style.overflowY = '';
+                    }}
                     key={product.id}
                     value={product.slug?.['en-US']}
                     name={product.name?.['en-US']}
@@ -153,6 +171,7 @@ export default function SearchDrawer({ open, onOpenChange }: SearchDrawerProps) 
                     discount={formatPrice(product.masterVariant.prices?.[0]?.discounted?.value)}
                     image={product.masterVariant.images?.[0]?.url}
                     id={product.id}
+                    slug={product.slug['en-US']}
                     category={categories.category.toLowerCase().replace(/\s+/g, '-')}
                     subCategory={categories.subCategory.toLowerCase().replace(/\s+/g, '-')}
                   />
