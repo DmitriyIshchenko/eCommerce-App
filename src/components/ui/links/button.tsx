@@ -76,6 +76,16 @@ const useCss = makeStyles({
       },
     },
   },
+  staticWhite: {
+    color: tokens.colorNeutralForegroundStaticInverted,
+    ...shorthands.borderColor(tokens.colorNeutralForegroundStaticInverted),
+    ':hover': {
+      color: tokens.colorNeutralForegroundStaticInverted,
+      ':active': {
+        color: tokens.colorNeutralForegroundStaticInverted,
+      },
+    },
+  },
 });
 
 export default function ButtonLink({
@@ -85,13 +95,15 @@ export default function ButtonLink({
   icon,
   appearance = 'outline',
   inverted = false,
+  staticWhite = false,
 }: {
   to: Pick<LinkComponentProps, 'to'>['to'];
-  params: Pick<LinkComponentProps, 'params'>['params'];
+  params?: Pick<LinkComponentProps, 'params'>['params'];
   text: string;
   icon?: ReactNode;
   appearance?: 'outline' | 'filled';
   inverted?: boolean;
+  staticWhite?: boolean;
 }) {
   const css = useCss();
   return (
@@ -106,6 +118,7 @@ export default function ButtonLink({
         appearance === 'outline' && css.outline,
         appearance === 'outline' && !inverted && css.outlineStraight,
         appearance === 'outline' && inverted && css.outlineInverted,
+        appearance === 'outline' && staticWhite && css.staticWhite,
       )}
       appearance="muted"
     >

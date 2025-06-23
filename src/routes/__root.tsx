@@ -43,7 +43,7 @@ function RootComponent() {
   const pathnames = pathname
     .split('/')
     .slice(1)
-    .filter((v) => v && v !== 'whole');
+    .filter((v) => v && v !== 'whole' && v !== 'pages');
   const links: Link[] = pathnames.reduce((a: Link[], v) => {
     const current: Link = {
       text: formatString(v),
