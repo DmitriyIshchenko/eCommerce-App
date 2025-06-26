@@ -15,8 +15,8 @@ const useStyles = makeStyles({
     display: 'grid',
     gap: tokens.spacingVerticalM,
     borderBottom: `1px solid ${tokens.colorNeutralStroke1}`,
-    paddingInline: tokens.spacingHorizontalXXL,
-    paddingBlock: tokens.spacingVerticalXXL,
+    paddingInline: tokens.spacingHorizontalXXXL,
+    paddingBlock: tokens.spacingVerticalXXXL,
   },
   responsibilities: {
     display: 'flex',
