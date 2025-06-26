@@ -52,9 +52,7 @@ export default function LoginPage() {
         </Text>
       </div>
       <div className={styles.right}>
-        <div style={{ width: '100%' }}>
-          <LoginForm />
-        </div>
+        <LoginForm />
       </div>
     </div>
   );

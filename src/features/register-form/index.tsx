@@ -14,7 +14,6 @@ import {
   type CheckboxProps,
   type ToastIntent,
 } from '@fluentui/react-components';
-import { makeStyles } from '@fluentui/react-components';
 import { useEffect, useState } from 'react';
 import { FormProvider, useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -29,6 +28,7 @@ import { useUser } from '../../hooks/use-user';
 import { createLink, useNavigate } from '@tanstack/react-router';
 import AddressFieldset from '../../components/ui/address-fieldset';
 import { useLoading } from '../../hooks/use-loading';
+import { useFormStyles } from '../../styles/forms';
 
 interface NotifyOptions {
   title: string;
@@ -37,30 +37,8 @@ interface NotifyOptions {
   timeout: number;
 }
 
-const useStyles = makeStyles({
-  buttonContainer: {
-    display: 'flex',
-    flexWrap: 'wrap',
-    alignItems: 'center',
-    gap: tokens.spacingHorizontalXL,
-    marginTop: tokens.spacingVerticalM,
-  },
-  label: {
-    display: 'block',
-    marginBlock: tokens.spacingVerticalM,
-    textTransform: 'capitalize',
-  },
-  eye: {
-    padding: `${tokens.spacingVerticalNone} ${tokens.spacingHorizontalNone}`,
-  },
-  confetti: {
-    width: '100%',
-    height: '100%',
-  },
-});
-
 export default function RegisterForm() {
-  const styles = useStyles();
+  const styles = useFormStyles();
 
   const [show, setShow] = useState(false);
   const [isDefaultShippingAddress, setIsDefaultShippingAddress] =
@@ -164,8 +142,8 @@ export default function RegisterForm() {
 
   return (
     <FormProvider {...methods}>
-      <form onSubmit={(e) => void handleSubmit(onSubmit)(e)}>
-        <Label weight="semibold" size="large" className={styles.label}>
+      <form onSubmit={(e) => void handleSubmit(onSubmit)(e)} className={styles.form}>
+        <Label weight="semibold" size="large" className={styles.fieldsetLabel}>
           Personal information
         </Label>
 
