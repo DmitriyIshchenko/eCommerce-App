@@ -1,29 +1,27 @@
 import { KeyRegular, MailRegular } from '@fluentui/react-icons';
 import {
   Spinner,
-  Text,
   Toast,
   ToastBody,
   ToastTitle,
-  tokens,
   useId,
   useToastController,
   type ToastIntent,
 } from '@fluentui/react-components';
 import { useNavigate } from '@tanstack/react-router';
-import InputField from '../../components/ui/input-field';
-import ShowHideButton from '../../components/ui/buttons/show-hide';
+import InputField from '../../../components/ui/input-field';
+import ShowHideButton from '../../../components/ui/buttons/show-hide';
 import { useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { loginSchema, type LoginSchema } from '../../lib/schemas/user';
-import { useUser } from '../../hooks/use-user';
-import { TOASTER_ID } from '../../lib/constants';
+import { loginSchema, type LoginSchema } from '../../../lib/schemas/user';
+import { useUser } from '../../../hooks/use-user';
+import { TOASTER_ID } from '../../../lib/constants';
 import Confetti from 'react-confetti';
-import { useLoading } from '../../hooks/use-loading';
-import CustomButton from '../../components/ui/buttons/custom';
-import { InternalLink } from '../../components/ui/links/fui-tanstack';
-import { useFormStyles } from '../../styles/forms';
+import { useLoading } from '../../../hooks/use-loading';
+import CustomButton from '../../../components/ui/buttons/custom';
+import { useFormStyles } from '../../../styles/forms';
+import FormRedirectLink from '../form-redirect-link';
 
 interface notifyOptions {
   title: string;
@@ -143,18 +141,8 @@ export default function LoginForm() {
           >
             Login
           </CustomButton>
-          <div>
-            <Text
-              size={400}
-              style={{
-                color: tokens.colorNeutralForeground4,
-                marginRight: tokens.spacingHorizontalSNudge,
-              }}
-            >
-              New customer?
-            </Text>
-            <InternalLink to="/register">Sign up</InternalLink>
-          </div>
+
+          <FormRedirectLink messageText="New customer?" linkText="Sign up" to="/register" />
         </div>
 
         {authorized && (

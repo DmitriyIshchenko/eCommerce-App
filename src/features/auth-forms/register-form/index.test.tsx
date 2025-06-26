@@ -10,9 +10,9 @@ import { render, waitFor, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import RegisterForm from './index';
-import { UserContextProvider } from '../../components/contexts/user/context-provider';
-import { LoadingContextProvider } from '../../components/contexts/loading/context-provider';
-import { CartContextProvider } from '../../components/contexts/cart/context-provider';
+import { UserContextProvider } from '../../../components/contexts/user/context-provider';
+import { LoadingContextProvider } from '../../../components/contexts/loading/context-provider';
+import { CartContextProvider } from '../../../components/contexts/cart/context-provider';
 
 describe('Ensure that input validation checks are performed in real-time when the user enters their information.', () => {
   let emailField: HTMLInputElement;

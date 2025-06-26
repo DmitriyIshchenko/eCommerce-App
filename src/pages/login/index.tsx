@@ -1,5 +1,5 @@
 import { makeStyles, Text, tokens, typographyStyles } from '@fluentui/react-components';
-import LoginForm from '../../features/login-form';
+import LoginForm from '../../features/auth-forms/login-form';
 
 const useStyles = makeStyles({
   left: {

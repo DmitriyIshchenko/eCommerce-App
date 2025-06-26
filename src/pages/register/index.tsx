@@ -1,5 +1,5 @@
 import { LargeTitle, makeStyles, tokens } from '@fluentui/react-components';
-import RegisterForm from '../../features/register-form';
+import RegisterForm from '../../features/auth-forms/register-form';
 
 // const useStyles = makeStyles({
 //   page: {
