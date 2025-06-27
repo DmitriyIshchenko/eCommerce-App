@@ -13,7 +13,7 @@ export const useColumnsStyles = makeStyles({
   left: {
     position: 'sticky',
     top: 0,
-    height: '80vh',
+    height: '100vh',
     overflowY: 'auto',
 
     display: 'grid',
