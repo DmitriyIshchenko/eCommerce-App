@@ -10,7 +10,7 @@ export default function AccountPage({ children }: Props) {
   const styles = useColumnsStyles();
 
   return (
-    <div>
+    <div className={styles.page}>
       <div className={styles.left}>
         <LargeTitle as="h1" align="center">
           Account

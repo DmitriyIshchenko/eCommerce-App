@@ -12,7 +12,7 @@ export default function CartPage() {
   const { isCartEmpty } = useCart();
 
   return (
-    <div>
+    <div className={styles.page}>
       <div className={styles.left}>
         <LargeTitle as="h1" align="center">
           Shopping cart

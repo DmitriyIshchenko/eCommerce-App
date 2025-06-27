@@ -6,7 +6,7 @@ export default function LoginPage() {
   const styles = useColumnsStyles();
 
   return (
-    <div>
+    <div className={styles.page}>
       <div className={styles.left}>
         <LargeTitle align="center" as="h2">
           Customer Login

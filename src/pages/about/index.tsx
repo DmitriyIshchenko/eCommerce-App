@@ -29,7 +29,7 @@ export default function AboutPage() {
   const pageStyles = usePageStyles();
 
   return (
-    <div>
+    <div className={columnsStyles.page}>
       <div className={columnsStyles.left}>
         <LargeTitle as="h1" align="center">
           Meet our team!
