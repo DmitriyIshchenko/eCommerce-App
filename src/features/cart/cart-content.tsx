@@ -15,6 +15,9 @@ const useStyles = makeStyles({
       },
     },
   },
+  content: {
+    alignSelf: 'start',
+  },
 });
 
 export default function CartContent() {
@@ -40,7 +43,7 @@ export default function CartContent() {
   };
 
   return (
-    <div>
+    <div className={styles.content}>
       {items.map((item) => (
         <CartItem item={item} key={item.id} />
       ))}

@@ -13,7 +13,7 @@ export default function CartPage() {
 
   return (
     <div className={styles.page}>
-      <div className={styles.title}>
+      <div className={styles.left}>
         <LargeTitle as="h1" align="center">
           Shopping cart
         </LargeTitle>
@@ -25,7 +25,7 @@ export default function CartPage() {
           </>
         )}
       </div>
-      <div className={styles.content}>{isCartEmpty() ? <EmptyCartMessage /> : <CartContent />}</div>
+      <div className={styles.right}>{isCartEmpty() ? <EmptyCartMessage /> : <CartContent />}</div>
     </div>
   );
 }

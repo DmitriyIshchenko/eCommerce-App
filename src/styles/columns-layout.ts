@@ -2,8 +2,6 @@ import { makeStyles, tokens } from '@fluentui/react-components';
 
 export const useColumnsStyles = makeStyles({
   page: {
-    maxWidth: '1440px',
-    margin: '0 auto',
     display: 'grid',
     gridTemplateColumns: '1fr 1fr',
 
@@ -12,7 +10,7 @@ export const useColumnsStyles = makeStyles({
     },
   },
 
-  title: {
+  left: {
     position: 'sticky',
     top: 0,
     height: '100vh',
@@ -32,9 +30,12 @@ export const useColumnsStyles = makeStyles({
     },
   },
 
-  content: {
+  right: {
     padding: tokens.spacingHorizontalXXXL,
     minHeight: '80vh',
+
+    display: 'grid',
+    alignItems: 'center',
 
     '@media(width<768px)': {
       overflowY: 'visible',

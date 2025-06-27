@@ -2,7 +2,8 @@ import { useUser } from '../../../hooks/use-user';
 import AddressBox from '../address-box';
 import LabelBox from '../label-box';
 import { Label, makeStyles, tokens } from '@fluentui/react-components';
-import { InternalLink } from '../links/fui-tanstack';
+import ButtonLink from '../links/button';
+import { ArrowRightRegular } from '@fluentui/react-icons';
 
 const useStyles = makeStyles({
   personal: {
@@ -16,6 +17,7 @@ const useStyles = makeStyles({
   info: {
     display: 'grid',
     gap: tokens.spacingVerticalL,
+    width: '100%',
   },
 });
 
@@ -61,9 +63,17 @@ export default function AccountInfo() {
         <AddressBox key={address.streetName} title="Address" address={address} />
       ))}
 
-      <InternalLink to="/account/edit">Edit personal info</InternalLink>
-      <InternalLink to="/account/manage-addresses">Manage addresses</InternalLink>
-      <InternalLink to="/account/change-password">Change password</InternalLink>
+      <ButtonLink to="/account/edit" text="Edit personal info" icon={<ArrowRightRegular />} />
+      <ButtonLink
+        to="/account/manage-addresses"
+        text="Manage addresses"
+        icon={<ArrowRightRegular />}
+      />
+      <ButtonLink
+        to="/account/change-password"
+        text="Change password"
+        icon={<ArrowRightRegular />}
+      />
     </div>
   );
 }

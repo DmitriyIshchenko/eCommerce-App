@@ -1,9 +1,7 @@
 import { KeyRegular, MailRegular, Person24Regular } from '@fluentui/react-icons';
 import {
-  Button,
   Checkbox,
   Label,
-  Link,
   Spinner,
   Toast,
   ToastBody,
@@ -14,21 +12,23 @@ import {
   type CheckboxProps,
   type ToastIntent,
 } from '@fluentui/react-components';
-import { makeStyles } from '@fluentui/react-components';
 import { useEffect, useState } from 'react';
 import { FormProvider, useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { registerSchema, type RegisterSchema } from '../../lib/schemas/user';
+import { registerSchema, type RegisterSchema } from '../../../lib/schemas/user';
 import Confetti from 'react-confetti';
 
-import InputField from '../../components/ui/input-field';
-import ShowHideButton from '../../components/ui/buttons/show-hide';
-import DatePickerField from '../../components/ui/date-picker-field';
-import { DEFAULT_ADDRESS, TOASTER_ID } from '../../lib/constants';
-import { useUser } from '../../hooks/use-user';
-import { createLink, useNavigate } from '@tanstack/react-router';
-import AddressFieldset from '../../components/ui/address-fieldset';
-import { useLoading } from '../../hooks/use-loading';
+import InputField from '../../../components/ui/input-field';
+import ShowHideButton from '../../../components/ui/buttons/show-hide';
+import DatePickerField from '../../../components/ui/date-picker-field';
+import { DEFAULT_ADDRESS, TOASTER_ID } from '../../../lib/constants';
+import { useUser } from '../../../hooks/use-user';
+import { useNavigate } from '@tanstack/react-router';
+import AddressFieldset from '../../../components/ui/address-fieldset';
+import { useLoading } from '../../../hooks/use-loading';
+import { useFormStyles } from '../../../styles/forms';
+import CustomButton from '../../../components/ui/buttons/custom';
+import FormRedirectLink from '../form-redirect-link';
 
 interface NotifyOptions {
   title: string;
@@ -37,30 +37,8 @@ interface NotifyOptions {
   timeout: number;
 }
 
-const useStyles = makeStyles({
-  buttonContainer: {
-    display: 'flex',
-    flexWrap: 'wrap',
-    alignItems: 'center',
-    gap: tokens.spacingHorizontalXL,
-    marginTop: tokens.spacingVerticalM,
-  },
-  label: {
-    display: 'block',
-    marginBlock: tokens.spacingVerticalM,
-    textTransform: 'capitalize',
-  },
-  eye: {
-    padding: `${tokens.spacingVerticalNone} ${tokens.spacingHorizontalNone}`,
-  },
-  confetti: {
-    width: '100%',
-    height: '100%',
-  },
-});
-
 export default function RegisterForm() {
-  const styles = useStyles();
+  const styles = useFormStyles();
 
   const [show, setShow] = useState(false);
   const [isDefaultShippingAddress, setIsDefaultShippingAddress] =
@@ -73,7 +51,6 @@ export default function RegisterForm() {
   const { loading, setLoading } = useLoading();
   const progressToastId = useId('progress');
 
-  const CustomLink = createLink(Link);
   const navigate = useNavigate({ from: '/register' });
   const { dispatchToast, dismissToast } = useToastController(TOASTER_ID);
 
@@ -164,8 +141,8 @@ export default function RegisterForm() {
 
   return (
     <FormProvider {...methods}>
-      <form onSubmit={(e) => void handleSubmit(onSubmit)(e)}>
-        <Label weight="semibold" size="large" className={styles.label}>
+      <form onSubmit={(e) => void handleSubmit(onSubmit)(e)} className={styles.form}>
+        <Label weight="semibold" size="large" className={styles.fieldsetLabel}>
           Personal information
         </Label>
 
@@ -237,19 +214,11 @@ export default function RegisterForm() {
         />
 
         <div className={styles.buttonContainer}>
-          <Button
-            type="submit"
-            size="large"
-            appearance="primary"
-            shape="circular"
-            disabled={loading}
-          >
+          <CustomButton type="submit" size="large" shape="circular" disabled={loading}>
             Submit
-          </Button>
+          </CustomButton>
 
-          <div>
-            Already have an account? <CustomLink to="/login">Sign in</CustomLink>
-          </div>
+          <FormRedirectLink messageText="Already have an account?" linkText="Log in" to="/login" />
         </div>
 
         {authorized && (

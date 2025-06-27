@@ -1,29 +1,27 @@
 import { KeyRegular, MailRegular } from '@fluentui/react-icons';
 import {
   Spinner,
-  Text,
   Toast,
   ToastBody,
   ToastTitle,
-  tokens,
   useId,
   useToastController,
   type ToastIntent,
 } from '@fluentui/react-components';
-import { makeStyles } from '@fluentui/react-components';
 import { useNavigate } from '@tanstack/react-router';
-import InputField from '../../components/ui/input-field';
-import ShowHideButton from '../../components/ui/buttons/show-hide';
+import InputField from '../../../components/ui/input-field';
+import ShowHideButton from '../../../components/ui/buttons/show-hide';
 import { useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { loginSchema, type LoginSchema } from '../../lib/schemas/user';
-import { useUser } from '../../hooks/use-user';
-import { TOASTER_ID } from '../../lib/constants';
+import { loginSchema, type LoginSchema } from '../../../lib/schemas/user';
+import { useUser } from '../../../hooks/use-user';
+import { TOASTER_ID } from '../../../lib/constants';
 import Confetti from 'react-confetti';
-import { useLoading } from '../../hooks/use-loading';
-import CustomButton from '../../components/ui/buttons/custom';
-import { InternalLink } from '../../components/ui/links/fui-tanstack';
+import { useLoading } from '../../../hooks/use-loading';
+import CustomButton from '../../../components/ui/buttons/custom';
+import { useFormStyles } from '../../../styles/forms';
+import FormRedirectLink from '../form-redirect-link';
 
 interface notifyOptions {
   title: string;
@@ -32,24 +30,8 @@ interface notifyOptions {
   timeout: number;
 }
 
-const useStyles = makeStyles({
-  buttonContainer: {
-    display: 'flex',
-    flexWrap: 'wrap',
-    alignItems: 'center',
-    gap: tokens.spacingHorizontalXL,
-  },
-  eye: {
-    padding: `${tokens.spacingVerticalNone} ${tokens.spacingHorizontalNone}`,
-  },
-  confetti: {
-    width: '100%',
-    height: '100%',
-  },
-});
-
 export default function LoginForm() {
-  const styles = useStyles();
+  const styles = useFormStyles();
   const [show, setShow] = useState(false);
   const { authorized, login } = useUser();
   const { loading, setLoading } = useLoading();
@@ -128,7 +110,7 @@ export default function LoginForm() {
 
   return (
     <FormProvider {...methods}>
-      <form onSubmit={(e) => void handleSubmit(onSubmit)(e)}>
+      <form onSubmit={(e) => void handleSubmit(onSubmit)(e)} className={styles.form}>
         <InputField
           label="Email"
           placeholder="you@example.com"
@@ -159,18 +141,8 @@ export default function LoginForm() {
           >
             Login
           </CustomButton>
-          <div>
-            <Text
-              size={400}
-              style={{
-                color: tokens.colorNeutralForeground4,
-                marginRight: tokens.spacingHorizontalSNudge,
-              }}
-            >
-              New customer?
-            </Text>
-            <InternalLink to="/register">Sign up</InternalLink>
-          </div>
+
+          <FormRedirectLink messageText="New customer?" linkText="Sign up" to="/register" />
         </div>
 
         {authorized && (
