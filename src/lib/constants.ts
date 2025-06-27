@@ -1,8 +1,125 @@
-export const TOASTER_ID = 'toasterId';
+import canvasLqip from '../assets/images/material-canvas-lqip.webp';
+import canvas from '../assets/images/material-canvas.png';
+import gicleeLqip from '../assets/images/material-giclee-lqip.webp';
+import giclee from '../assets/images/material-giclee.webp';
+import photoragLqip from '../assets/images/material-photorag-lqip.webp';
+import photorag from '../assets/images/material-photorag.webp';
+import type { TeamMemberData } from '../pages/about/team-member';
 
+export interface Color {
+  color: string;
+  value: string;
+  'aria-label': string;
+}
+export interface Material {
+  swatchSrc: string;
+  value: string;
+  label: string;
+  fullImageSrc: string;
+}
+
+export const TOASTER_ID = 'toasterId';
 export const DEFAULT_ADDRESS = {
   city: '',
   streetName: '',
   postalCode: '',
   country: 'BY',
 };
+
+export interface Color {
+  color: string;
+  value: string;
+  'aria-label': string;
+}
+export interface SwatchImg {
+  swatchSrc: string;
+  value: string;
+  label: string;
+  fullImageSrc: string;
+}
+
+export const PRODUCTS_LIMIT = 12;
+
+export const allColors: Color[] = [
+  { color: '#E9E9E9', value: 'Original', 'aria-label': 'Original' },
+  { color: '#FFFFFF', value: 'White', 'aria-label': 'White' },
+  { color: '#3057E1', value: 'Blueprint', 'aria-label': 'Blueprint' },
+  { color: '#EEEEE0', value: 'Ivory', 'aria-label': 'Ivory' },
+  { color: '#0000FF', value: 'Blue', 'aria-label': 'Blue' },
+  { color: '#727B89', value: 'Raven', 'aria-label': 'Raven' },
+  { color: '#000080', value: 'Navy', 'aria-label': 'Navy' },
+  { color: '#604224', value: 'Sepia', 'aria-label': 'Sepia' },
+  { color: '#000000', value: 'Black', 'aria-label': 'Black' },
+  { color: '#191970', value: 'Midnight', 'aria-label': 'Midnight' },
+  { color: '#DECCA6', value: 'Natural', 'aria-label': 'Natural' },
+  { color: '#5F7492', value: 'Tide', 'aria-label': 'Tide' },
+  {
+    color: 'linear-gradient(to right, white, black)',
+    value: 'Black & White',
+    'aria-label': 'Black & White',
+  },
+  {
+    color: 'linear-gradient(to right, red, orange, green, blue)',
+    value: 'Color',
+    'aria-label': 'Color',
+  },
+];
+
+export const allMaterials: Material[] = [
+  {
+    swatchSrc: canvasLqip,
+    value: 'canvas',
+    label: 'Canvas',
+    fullImageSrc: canvas,
+  },
+  {
+    swatchSrc: gicleeLqip,
+    value: 'giclee',
+    label: 'Giclee',
+    fullImageSrc: giclee,
+  },
+  {
+    swatchSrc: photoragLqip,
+    value: 'photo-rag',
+    label: 'Photo Rag',
+    fullImageSrc: photorag,
+  },
+];
+
+export const TEAM_MEMBERS: TeamMemberData[] = [
+  {
+    name: 'Dmitriy Ishchenko',
+    role: 'Team Lead',
+    bio: `Hi, I'm Dmitriy! I've always had a passion for automating things. I also love seeing my code turn into something visual and interactive. That's why I think that frontend development is a perfect fit for me. It feels amazing to reach the finish line of this course after pushing through so many challenges. I'm so grateful for this community and the opportunity to work on this project not alone, but as part of an amazing team!
+    `,
+    imageSrc: 'https://i.imgur.com/6CXhngR.jpeg',
+    responsibilities: [
+      'Data scraping',
+      'Deployment',
+      'Sign up form',
+      'User profile page',
+      'Cart page',
+    ],
+    githubLink: 'https://github.com/DmitriyIshchenko',
+  },
+  {
+    name: 'Olga Dubodel',
+    role: 'Developer',
+    bio: `Hi, I'm Olya! When I first started learning frontend, everything felt new and a bit overwhelming. But step by step, things began to make sense, and I started to really enjoy building things with code. I love that feeling when something finally works — even after a few failed tries. I've learned so much during this project, not just about coding, but also about working in a team and solving problems together. Being part of this project has been such a rewarding experience, and I'm proud of everything our team has accomplished together.
+    `,
+    imageSrc: 'https://i.imgur.com/dVDlGXg.jpeg',
+    responsibilities: ['Login form', 'Catalog page', 'Product filter / sort', 'Product search'],
+    githubLink: 'https://github.com/olydbd',
+  },
+  {
+    name: 'Ekaterina Gribova',
+    role: 'Developer',
+    bio: `Hi, I'm Katya! Since school, I've loved two seemingly different things—math and drawing. In frontend development, I unexpectedly found what combines both logic and creativity. Not everything came easily: some projects on the course left me stumped, and some tasks had to be redone multiple times. But that's what hooked me—every time I figured something out, I felt real progress. Working with the team on this project became a valuable experience for me. I learned not just about code, but also how to blend different ideas into one product. Seeing our efforts turn into something tangible—that's what's truly awesome.`,
+    imageSrc: 'https://i.imgur.com/imP51O6.jpeg',
+    responsibilities: ['Navigation', 'Product page', 'Project setup'],
+    githubLink: 'https://github.com/KateGribova',
+  },
+];
+
+export const PROMO_CODE_TOTAL = 'FINE-ART-15';
+export const PROMO_CODE_BIG_PRICE = 'GALLERY-GOALS';

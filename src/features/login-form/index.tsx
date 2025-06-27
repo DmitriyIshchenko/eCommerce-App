@@ -1,8 +1,7 @@
 import { KeyRegular, MailRegular } from '@fluentui/react-icons';
 import {
-  Button,
-  Link,
   Spinner,
+  Text,
   Toast,
   ToastBody,
   ToastTitle,
@@ -12,7 +11,7 @@ import {
   type ToastIntent,
 } from '@fluentui/react-components';
 import { makeStyles } from '@fluentui/react-components';
-import { createLink, useNavigate } from '@tanstack/react-router';
+import { useNavigate } from '@tanstack/react-router';
 import InputField from '../../components/ui/input-field';
 import ShowHideButton from '../../components/ui/buttons/show-hide';
 import { useState } from 'react';
@@ -23,6 +22,8 @@ import { useUser } from '../../hooks/use-user';
 import { TOASTER_ID } from '../../lib/constants';
 import Confetti from 'react-confetti';
 import { useLoading } from '../../hooks/use-loading';
+import CustomButton from '../../components/ui/buttons/custom';
+import { InternalLink } from '../../components/ui/links/fui-tanstack';
 
 interface notifyOptions {
   title: string;
@@ -48,7 +49,6 @@ const useStyles = makeStyles({
 });
 
 export default function LoginForm() {
-  const CustomLink = createLink(Link);
   const styles = useStyles();
   const [show, setShow] = useState(false);
   const { authorized, login } = useUser();
@@ -151,17 +151,25 @@ export default function LoginForm() {
         />
 
         <div className={styles.buttonContainer}>
-          <Button
+          <CustomButton
             type="submit"
             size="large"
-            appearance="primary"
             shape="circular"
             disabled={loading || authorized}
           >
             Login
-          </Button>
+          </CustomButton>
           <div>
-            New customer? <CustomLink to="/register">Sign up</CustomLink>
+            <Text
+              size={400}
+              style={{
+                color: tokens.colorNeutralForeground4,
+                marginRight: tokens.spacingHorizontalSNudge,
+              }}
+            >
+              New customer?
+            </Text>
+            <InternalLink to="/register">Sign up</InternalLink>
           </div>
         </div>
 

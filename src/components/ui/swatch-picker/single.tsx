@@ -1,4 +1,4 @@
-import { ColorSwatch, SwatchPicker } from '@fluentui/react-components';
+import { ColorSwatch, SwatchPicker, tokens } from '@fluentui/react-components';
 import StyledTooltip from '../tooltips/styled';
 
 export default function SingleSwatchPicker({
@@ -20,8 +20,8 @@ export default function SingleSwatchPicker({
         if (onChange) onChange(d.selectedValue);
       }}
     >
-      <StyledTooltip text={color['aria-label']} key={color.value}>
-        <ColorSwatch {...color} />
+      <StyledTooltip contentChildren={color['aria-label']} key={color.value}>
+        <ColorSwatch {...color} style={{ border: `1px solid ${tokens.colorNeutralForeground4}` }} />
       </StyledTooltip>
     </SwatchPicker>
   );

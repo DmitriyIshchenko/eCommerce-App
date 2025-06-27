@@ -6,12 +6,13 @@ export type CustomButtonProps = Omit<ButtonProps, 'appearance' | 'as'> &
   Partial<{
     as: 'button';
     type: 'button' | 'submit' | 'reset';
-    appearance: 'straight' | 'inverted' | 'subtle';
+    appearance: 'straight' | 'inverted' | 'subtle' | 'transparent';
+    outlined?: boolean;
   }>;
 
 export default function CustomButton(props: CustomButtonProps) {
   const css = useCustomButtonCss();
-  const { className, appearance, children, size = 'large', ...rest } = props;
+  const { className, appearance, children, size = 'large', outlined, ...rest } = props;
 
   return (
     <Button
@@ -22,7 +23,9 @@ export default function CustomButton(props: CustomButtonProps) {
         css.base,
         appearance === 'inverted' && css.inverted,
         appearance === 'subtle' && css.subtle,
+        appearance === 'transparent' && css.transparent,
         size === 'small' && css.small,
+        outlined && css.outlined,
         className,
       )}
       {...rest}

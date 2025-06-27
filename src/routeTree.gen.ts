@@ -13,15 +13,20 @@
 import { Route as rootRoute } from './routes/__root'
 import { Route as RegisterImport } from './routes/register'
 import { Route as LoginImport } from './routes/login'
+import { Route as CartImport } from './routes/cart'
 import { Route as AboutImport } from './routes/about'
 import { Route as IndexImport } from './routes/index'
 import { Route as CatalogIndexImport } from './routes/catalog/index'
 import { Route as AccountIndexImport } from './routes/account/index'
-import { Route as ProductsIdImport } from './routes/products/$id'
+import { Route as PagesWhereToBuyFramesImport } from './routes/pages/where-to-buy-frames'
+import { Route as PagesStyleDifferencesImport } from './routes/pages/style-differences'
+import { Route as PagesMaterialDifferencesImport } from './routes/pages/material-differences'
+import { Route as PagesCustomFramingImport } from './routes/pages/custom-framing'
 import { Route as AccountManageAddressesImport } from './routes/account/manage-addresses'
 import { Route as AccountEditImport } from './routes/account/edit'
 import { Route as AccountChangePasswordImport } from './routes/account/change-password'
 import { Route as CatalogCategorySplatImport } from './routes/catalog/$category.$'
+import { Route as CatalogCategorySubcategorySlugImport } from './routes/catalog/$category.$subcategory.$slug'
 
 // Create/Update Routes
 
@@ -34,6 +39,12 @@ const RegisterRoute = RegisterImport.update({
 const LoginRoute = LoginImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const CartRoute = CartImport.update({
+  id: '/cart',
+  path: '/cart',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -61,9 +72,27 @@ const AccountIndexRoute = AccountIndexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const ProductsIdRoute = ProductsIdImport.update({
-  id: '/products/$id',
-  path: '/products/$id',
+const PagesWhereToBuyFramesRoute = PagesWhereToBuyFramesImport.update({
+  id: '/pages/where-to-buy-frames',
+  path: '/pages/where-to-buy-frames',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const PagesStyleDifferencesRoute = PagesStyleDifferencesImport.update({
+  id: '/pages/style-differences',
+  path: '/pages/style-differences',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const PagesMaterialDifferencesRoute = PagesMaterialDifferencesImport.update({
+  id: '/pages/material-differences',
+  path: '/pages/material-differences',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const PagesCustomFramingRoute = PagesCustomFramingImport.update({
+  id: '/pages/custom-framing',
+  path: '/pages/custom-framing',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -91,6 +120,13 @@ const CatalogCategorySplatRoute = CatalogCategorySplatImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const CatalogCategorySubcategorySlugRoute =
+  CatalogCategorySubcategorySlugImport.update({
+    id: '/catalog/$category/$subcategory/$slug',
+    path: '/catalog/$category/$subcategory/$slug',
+    getParentRoute: () => rootRoute,
+  } as any)
+
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
@@ -107,6 +143,13 @@ declare module '@tanstack/react-router' {
       path: '/about'
       fullPath: '/about'
       preLoaderRoute: typeof AboutImport
+      parentRoute: typeof rootRoute
+    }
+    '/cart': {
+      id: '/cart'
+      path: '/cart'
+      fullPath: '/cart'
+      preLoaderRoute: typeof CartImport
       parentRoute: typeof rootRoute
     }
     '/login': {
@@ -144,11 +187,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AccountManageAddressesImport
       parentRoute: typeof rootRoute
     }
-    '/products/$id': {
-      id: '/products/$id'
-      path: '/products/$id'
-      fullPath: '/products/$id'
-      preLoaderRoute: typeof ProductsIdImport
+    '/pages/custom-framing': {
+      id: '/pages/custom-framing'
+      path: '/pages/custom-framing'
+      fullPath: '/pages/custom-framing'
+      preLoaderRoute: typeof PagesCustomFramingImport
+      parentRoute: typeof rootRoute
+    }
+    '/pages/material-differences': {
+      id: '/pages/material-differences'
+      path: '/pages/material-differences'
+      fullPath: '/pages/material-differences'
+      preLoaderRoute: typeof PagesMaterialDifferencesImport
+      parentRoute: typeof rootRoute
+    }
+    '/pages/style-differences': {
+      id: '/pages/style-differences'
+      path: '/pages/style-differences'
+      fullPath: '/pages/style-differences'
+      preLoaderRoute: typeof PagesStyleDifferencesImport
+      parentRoute: typeof rootRoute
+    }
+    '/pages/where-to-buy-frames': {
+      id: '/pages/where-to-buy-frames'
+      path: '/pages/where-to-buy-frames'
+      fullPath: '/pages/where-to-buy-frames'
+      preLoaderRoute: typeof PagesWhereToBuyFramesImport
       parentRoute: typeof rootRoute
     }
     '/account/': {
@@ -172,6 +236,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CatalogCategorySplatImport
       parentRoute: typeof rootRoute
     }
+    '/catalog/$category/$subcategory/$slug': {
+      id: '/catalog/$category/$subcategory/$slug'
+      path: '/catalog/$category/$subcategory/$slug'
+      fullPath: '/catalog/$category/$subcategory/$slug'
+      preLoaderRoute: typeof CatalogCategorySubcategorySlugImport
+      parentRoute: typeof rootRoute
+    }
   }
 }
 
@@ -180,44 +251,59 @@ declare module '@tanstack/react-router' {
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/cart': typeof CartRoute
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
   '/account/change-password': typeof AccountChangePasswordRoute
   '/account/edit': typeof AccountEditRoute
   '/account/manage-addresses': typeof AccountManageAddressesRoute
-  '/products/$id': typeof ProductsIdRoute
+  '/pages/custom-framing': typeof PagesCustomFramingRoute
+  '/pages/material-differences': typeof PagesMaterialDifferencesRoute
+  '/pages/style-differences': typeof PagesStyleDifferencesRoute
+  '/pages/where-to-buy-frames': typeof PagesWhereToBuyFramesRoute
   '/account': typeof AccountIndexRoute
   '/catalog': typeof CatalogIndexRoute
   '/catalog/$category/$': typeof CatalogCategorySplatRoute
+  '/catalog/$category/$subcategory/$slug': typeof CatalogCategorySubcategorySlugRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/cart': typeof CartRoute
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
   '/account/change-password': typeof AccountChangePasswordRoute
   '/account/edit': typeof AccountEditRoute
   '/account/manage-addresses': typeof AccountManageAddressesRoute
-  '/products/$id': typeof ProductsIdRoute
+  '/pages/custom-framing': typeof PagesCustomFramingRoute
+  '/pages/material-differences': typeof PagesMaterialDifferencesRoute
+  '/pages/style-differences': typeof PagesStyleDifferencesRoute
+  '/pages/where-to-buy-frames': typeof PagesWhereToBuyFramesRoute
   '/account': typeof AccountIndexRoute
   '/catalog': typeof CatalogIndexRoute
   '/catalog/$category/$': typeof CatalogCategorySplatRoute
+  '/catalog/$category/$subcategory/$slug': typeof CatalogCategorySubcategorySlugRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/cart': typeof CartRoute
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
   '/account/change-password': typeof AccountChangePasswordRoute
   '/account/edit': typeof AccountEditRoute
   '/account/manage-addresses': typeof AccountManageAddressesRoute
-  '/products/$id': typeof ProductsIdRoute
+  '/pages/custom-framing': typeof PagesCustomFramingRoute
+  '/pages/material-differences': typeof PagesMaterialDifferencesRoute
+  '/pages/style-differences': typeof PagesStyleDifferencesRoute
+  '/pages/where-to-buy-frames': typeof PagesWhereToBuyFramesRoute
   '/account/': typeof AccountIndexRoute
   '/catalog/': typeof CatalogIndexRoute
   '/catalog/$category/$': typeof CatalogCategorySplatRoute
+  '/catalog/$category/$subcategory/$slug': typeof CatalogCategorySubcategorySlugRoute
 }
 
 export interface FileRouteTypes {
@@ -225,70 +311,95 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/about'
+    | '/cart'
     | '/login'
     | '/register'
     | '/account/change-password'
     | '/account/edit'
     | '/account/manage-addresses'
-    | '/products/$id'
+    | '/pages/custom-framing'
+    | '/pages/material-differences'
+    | '/pages/style-differences'
+    | '/pages/where-to-buy-frames'
     | '/account'
     | '/catalog'
     | '/catalog/$category/$'
+    | '/catalog/$category/$subcategory/$slug'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/about'
+    | '/cart'
     | '/login'
     | '/register'
     | '/account/change-password'
     | '/account/edit'
     | '/account/manage-addresses'
-    | '/products/$id'
+    | '/pages/custom-framing'
+    | '/pages/material-differences'
+    | '/pages/style-differences'
+    | '/pages/where-to-buy-frames'
     | '/account'
     | '/catalog'
     | '/catalog/$category/$'
+    | '/catalog/$category/$subcategory/$slug'
   id:
     | '__root__'
     | '/'
     | '/about'
+    | '/cart'
     | '/login'
     | '/register'
     | '/account/change-password'
     | '/account/edit'
     | '/account/manage-addresses'
-    | '/products/$id'
+    | '/pages/custom-framing'
+    | '/pages/material-differences'
+    | '/pages/style-differences'
+    | '/pages/where-to-buy-frames'
     | '/account/'
     | '/catalog/'
     | '/catalog/$category/$'
+    | '/catalog/$category/$subcategory/$slug'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
+  CartRoute: typeof CartRoute
   LoginRoute: typeof LoginRoute
   RegisterRoute: typeof RegisterRoute
   AccountChangePasswordRoute: typeof AccountChangePasswordRoute
   AccountEditRoute: typeof AccountEditRoute
   AccountManageAddressesRoute: typeof AccountManageAddressesRoute
-  ProductsIdRoute: typeof ProductsIdRoute
+  PagesCustomFramingRoute: typeof PagesCustomFramingRoute
+  PagesMaterialDifferencesRoute: typeof PagesMaterialDifferencesRoute
+  PagesStyleDifferencesRoute: typeof PagesStyleDifferencesRoute
+  PagesWhereToBuyFramesRoute: typeof PagesWhereToBuyFramesRoute
   AccountIndexRoute: typeof AccountIndexRoute
   CatalogIndexRoute: typeof CatalogIndexRoute
   CatalogCategorySplatRoute: typeof CatalogCategorySplatRoute
+  CatalogCategorySubcategorySlugRoute: typeof CatalogCategorySubcategorySlugRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
+  CartRoute: CartRoute,
   LoginRoute: LoginRoute,
   RegisterRoute: RegisterRoute,
   AccountChangePasswordRoute: AccountChangePasswordRoute,
   AccountEditRoute: AccountEditRoute,
   AccountManageAddressesRoute: AccountManageAddressesRoute,
-  ProductsIdRoute: ProductsIdRoute,
+  PagesCustomFramingRoute: PagesCustomFramingRoute,
+  PagesMaterialDifferencesRoute: PagesMaterialDifferencesRoute,
+  PagesStyleDifferencesRoute: PagesStyleDifferencesRoute,
+  PagesWhereToBuyFramesRoute: PagesWhereToBuyFramesRoute,
   AccountIndexRoute: AccountIndexRoute,
   CatalogIndexRoute: CatalogIndexRoute,
   CatalogCategorySplatRoute: CatalogCategorySplatRoute,
+  CatalogCategorySubcategorySlugRoute: CatalogCategorySubcategorySlugRoute,
 }
 
 export const routeTree = rootRoute
@@ -303,15 +414,20 @@ export const routeTree = rootRoute
       "children": [
         "/",
         "/about",
+        "/cart",
         "/login",
         "/register",
         "/account/change-password",
         "/account/edit",
         "/account/manage-addresses",
-        "/products/$id",
+        "/pages/custom-framing",
+        "/pages/material-differences",
+        "/pages/style-differences",
+        "/pages/where-to-buy-frames",
         "/account/",
         "/catalog/",
-        "/catalog/$category/$"
+        "/catalog/$category/$",
+        "/catalog/$category/$subcategory/$slug"
       ]
     },
     "/": {
@@ -319,6 +435,9 @@ export const routeTree = rootRoute
     },
     "/about": {
       "filePath": "about.tsx"
+    },
+    "/cart": {
+      "filePath": "cart.tsx"
     },
     "/login": {
       "filePath": "login.tsx"
@@ -335,8 +454,17 @@ export const routeTree = rootRoute
     "/account/manage-addresses": {
       "filePath": "account/manage-addresses.tsx"
     },
-    "/products/$id": {
-      "filePath": "products/$id.tsx"
+    "/pages/custom-framing": {
+      "filePath": "pages/custom-framing.tsx"
+    },
+    "/pages/material-differences": {
+      "filePath": "pages/material-differences.tsx"
+    },
+    "/pages/style-differences": {
+      "filePath": "pages/style-differences.tsx"
+    },
+    "/pages/where-to-buy-frames": {
+      "filePath": "pages/where-to-buy-frames.tsx"
     },
     "/account/": {
       "filePath": "account/index.tsx"
@@ -346,6 +474,9 @@ export const routeTree = rootRoute
     },
     "/catalog/$category/$": {
       "filePath": "catalog/$category.$.tsx"
+    },
+    "/catalog/$category/$subcategory/$slug": {
+      "filePath": "catalog/$category.$subcategory.$slug.tsx"
     }
   }
 }

@@ -1,6 +1,5 @@
 import {
   Button,
-  LargeTitle,
   Link,
   makeStyles,
   tokens,
@@ -8,6 +7,7 @@ import {
   DrawerBody,
   DrawerHeader,
   DrawerHeaderTitle,
+  useRestoreFocusTarget,
 } from '@fluentui/react-components';
 import { DismissRegular } from '@fluentui/react-icons';
 import { createLink, useLocation, useNavigate, useRouteContext } from '@tanstack/react-router';
@@ -18,18 +18,27 @@ import BurgerButton from '../ui/buttons/burger';
 import SplitLinkMenu from '../ui/menu/split-link';
 import adaptCategoriesToSplitLinkMenuItemProp from '../../lib/utils/adapt-categories';
 import { InternalLink } from '../ui/links/fui-tanstack';
-import { CatalogTree } from '../../features/catalog-tree';
 import SearchDrawer from '../../features/search-drawer';
+import CartLink from '../ui/cart/link';
+import { useCart } from '../../hooks/use-cart';
+import { useLoading } from '../../hooks/use-loading';
+import useScrollDirection from '../../hooks/use-scroll-direction';
+import title from '../../assets/images/title.svg';
+import { FlatTreeMenu } from '../ui/menu/flat-tree';
 
 const useClasses = makeStyles({
   header: {
     display: 'flex',
     justifyContent: 'center',
-    padding: `${tokens.spacingVerticalXXL}`,
+    padding: `${tokens.spacingVerticalXXL} ${tokens.spacingVerticalXXXL}`,
     width: '100%',
     margin: '0 auto',
     boxSizing: 'border-box',
     borderBottom: `1px solid ${tokens.colorNeutralStroke1}`,
+    position: 'sticky',
+    top: 0,
+    zIndex: 100,
+    backgroundColor: tokens.colorNeutralBackground1,
   },
   title: {
     marginRight: tokens.spacingHorizontalMNudge,
@@ -46,7 +55,6 @@ const useClasses = makeStyles({
   },
   headerContainer: {
     width: '100%',
-    maxWidth: '1440px',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -105,6 +113,9 @@ export function Header() {
   const navigate = useNavigate();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isSearchDrawerOpen, setIsSearchDrawerOpen] = useState(false);
+  const { cart } = useCart();
+  const { loading } = useLoading();
+  const restoreFocusTargetAttributes = useRestoreFocusTarget();
 
   const { pathname } = useLocation();
   const { categories } = useRouteContext({
@@ -141,7 +152,7 @@ export function Header() {
   };
 
   const handleLogout = () => {
-    logout();
+    void logout();
     setIsDrawerOpen(false);
     void navigate({ to: '/login' });
   };
@@ -168,11 +179,19 @@ export function Header() {
     }
   }, [isDrawerOpen]);
 
+  const scrollDirection = useScrollDirection();
+
   return (
-    <header className={classes.header}>
+    <header
+      className={classes.header}
+      style={{
+        transform: scrollDirection === 'down' ? 'translateY(-100%)' : 'translateY(0)',
+        transition: 'transform 0.3s ease',
+      }}
+    >
       <div className={classes.headerContainer}>
         <CustomLink className={classes.title} aria-label="Celestia Art - Home" to="/">
-          <LargeTitle className={classes.title}>Celestia Art</LargeTitle>
+          <img src={title} />
         </CustomLink>
 
         <div style={{ display: 'flex' }}>
@@ -233,9 +252,15 @@ export function Header() {
             )}
           </ul>
 
-          <div style={{ display: 'flex' }}>
-            <SearchButton onClick={() => setIsSearchDrawerOpen(true)} />
-
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <SearchButton
+              onClick={() => {
+                setIsSearchDrawerOpen(true);
+                document.body.style.overflowY = 'clip';
+              }}
+              {...restoreFocusTargetAttributes}
+            />
+            <CartLink to="/cart" loading={loading} size={30} goods={cart?.totalLineItemQuantity} />
             <BurgerButton
               className={classes.burgerButton}
               onClick={() => setIsDrawerOpen(true)}
@@ -271,7 +296,7 @@ export function Header() {
           <DrawerBody>
             <ul className={classes.drawerMenu}>
               <li>
-                <CatalogTree />
+                <FlatTreeMenu onClick={() => setIsDrawerOpen(false)} />
               </li>
               <li>
                 <InternalLink
@@ -280,6 +305,7 @@ export function Header() {
                   appearance="straight"
                   inline
                   active={about.to === pathname.split('/').slice(0, 2).join('/')}
+                  onClick={() => setIsDrawerOpen(false)}
                 >
                   {about.name}
                 </InternalLink>
@@ -294,6 +320,7 @@ export function Header() {
                       appearance="straight"
                       inline
                       active={item.to === pathname.split('/').slice(0, 2).join('/')}
+                      onClick={() => setIsDrawerOpen(false)}
                     >
                       {item.name}
                     </InternalLink>
@@ -308,6 +335,7 @@ export function Header() {
                       appearance="straight"
                       inline
                       active={account.to === pathname.split('/').slice(0, 2).join('/')}
+                      onClick={() => setIsDrawerOpen(false)}
                     >
                       {account.name}
                     </InternalLink>

@@ -1,7 +1,8 @@
 import { createApiBuilderFromCtpClient } from '@commercetools/platform-sdk';
 import { ClientBuilder, type Client, type TokenStore } from '@commercetools/sdk-client-v2';
 import type { LoginSchema } from '../schemas/user';
-import { getStoredTokens, storeTokens } from './token-storage';
+import { getStoredTokens, isTokenValid, storeTokens } from './token-storage';
+import type { ClientType } from '../types';
 
 const projectKey = import.meta.env.VITE_CTP_PROJECT_KEY;
 const clientId = import.meta.env.VITE_CTP_CLIENT_ID;
@@ -25,13 +26,33 @@ export function createAnonymousClient() {
     },
     scopes: scopes,
     httpClient: fetch,
+    tokenCache: {
+      get: () => {
+        const tokens = getStoredTokens('anonymous');
+
+        return {
+          token: tokens?.access_token ?? '',
+          expirationTime: tokens ? tokens.expiresAt - Date.now() : 0,
+        };
+      },
+      set: (cache: TokenStore) => {
+        storeTokens(
+          {
+            access_token: cache.token,
+            expires_in: Math.floor(cache.expirationTime / 1000),
+            token_type: 'Bearer',
+            scope: scopes.join(' '),
+          },
+          'anonymous',
+        );
+      },
+    },
   };
 
   const client = new ClientBuilder()
     .withProjectKey(projectKey)
     .withAnonymousSessionFlow(options)
     .withHttpMiddleware(httpMiddlewareOptions)
-    .withLoggerMiddleware()
     .build();
 
   return client;
@@ -55,7 +76,7 @@ export function createPasswordClient(data: LoginSchema) {
     httpClient: fetch,
     tokenCache: {
       get: () => {
-        const tokens = getStoredTokens();
+        const tokens = getStoredTokens('customer');
 
         return {
           token: tokens?.access_token ?? '',
@@ -63,12 +84,15 @@ export function createPasswordClient(data: LoginSchema) {
         };
       },
       set: (cache: TokenStore) => {
-        storeTokens({
-          access_token: cache.token,
-          expires_in: Math.floor(cache.expirationTime / 1000),
-          token_type: 'Bearer',
-          scope: scopes.join(' '),
-        });
+        storeTokens(
+          {
+            access_token: cache.token,
+            expires_in: Math.floor(cache.expirationTime / 1000),
+            token_type: 'Bearer',
+            scope: scopes.join(' '),
+          },
+          'customer',
+        );
       },
     },
   };
@@ -77,14 +101,13 @@ export function createPasswordClient(data: LoginSchema) {
     .withProjectKey(projectKey)
     .withPasswordFlow(options)
     .withHttpMiddleware(httpMiddlewareOptions)
-    .withLoggerMiddleware()
     .build();
 
   return client;
 }
 
-export function createClientWithToken() {
-  const tokens = getStoredTokens();
+export function createClientWithToken(type: ClientType) {
+  const tokens = getStoredTokens(type);
   if (!tokens?.access_token) throw new Error('No access token available');
 
   return new ClientBuilder()
@@ -96,4 +119,14 @@ export function createClientWithToken() {
 
 export function getApiRoot(client: Client) {
   return createApiBuilderFromCtpClient(client).withProjectKey({ projectKey: projectKey });
+}
+
+export function getApiRootSmart() {
+  if (isTokenValid('customer')) {
+    return getApiRoot(createClientWithToken('customer'));
+  }
+  if (isTokenValid('anonymous')) {
+    return getApiRoot(createClientWithToken('anonymous'));
+  }
+  return getApiRoot(createAnonymousClient());
 }

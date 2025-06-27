@@ -3,19 +3,29 @@ import {
   type CarouselAnnouncerFunction,
   CarouselCard,
   CarouselNav,
-  CarouselNavButton,
   CarouselNavContainer,
+  CarouselNavImageButton,
   CarouselSlider,
   CarouselViewport,
+  Dialog,
+  DialogActions,
+  DialogBody,
+  DialogContent,
+  DialogSurface,
+  DialogTrigger,
   Image,
   makeStyles,
   tokens,
 } from '@fluentui/react-components';
+import { DismissRegular } from '@fluentui/react-icons';
+import { type CSSProperties, useState } from 'react';
+import CustomButton from '../ui/buttons/custom';
+import StyledTooltip from '../ui/tooltips/styled';
+import { getSizedImageUrl } from '../../lib/utils/get-sized-image-url';
 
 const useCarouselStyles = makeStyles({
   carouselCard: {
     borderRadius: tokens.borderRadiusLarge,
-    height: '100%',
     width: '100%',
   },
   carouselImage: {
@@ -25,7 +35,41 @@ const useCarouselStyles = makeStyles({
     cursor: 'pointer',
     margin: '0 auto',
   },
-  navContainer: {},
+  card: {
+    boxSizing: 'border-box',
+    width: '100%',
+    overflow: 'hidden',
+  },
+  image: {
+    width: '100%',
+    height: '100%',
+    objectFit: 'contain',
+  },
+  modalImage: {
+    width: '100%',
+    height: '100%',
+    objectFit: 'contain',
+  },
+  viewport: {
+    marginBottom: '0',
+    cursor: 'pointer',
+  },
+  modalViewport: {
+    maxHeight: 'calc(100vh - 96px)',
+  },
+  navButton: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    minWidth: '48px',
+    minHeight: '48px',
+    backgroundColor: 'transparent',
+    border: `1px solid ${tokens.colorNeutralStroke2}`,
+    margin: 0,
+    "[aria-selected='true']": {
+      border: `1px solid ${tokens.colorNeutralForeground4}`,
+    },
+  },
 });
 
 const getAnnouncement: CarouselAnnouncerFunction = (index: number, totalSlides: number) => {
@@ -34,11 +78,13 @@ const getAnnouncement: CarouselAnnouncerFunction = (index: number, totalSlides: 
 
 interface ProductCarouselProps {
   images?: { url: string }[];
-  onImageClick?: () => void;
+  style?: CSSProperties;
+  id?: string;
 }
 
-export function ProductCarousel({ images = [], onImageClick }: ProductCarouselProps) {
+export function ProductCarousel({ images = [], style, id }: ProductCarouselProps) {
   const classes = useCarouselStyles();
+  const [currentIndex, setCurrentIndex] = useState(0);
 
   if (images.length === 0) {
     return null;
@@ -47,39 +93,108 @@ export function ProductCarousel({ images = [], onImageClick }: ProductCarouselPr
   return (
     <Carousel
       groupSize={1}
-      circular
+      align="center"
       announcement={getAnnouncement}
-      motion={'fade'}
-      autoplayInterval={3000}
+      motion={{ kind: 'slide', duration: 40 }}
+      onActiveIndexChange={(_, d) => setCurrentIndex(d.index)}
+      style={style}
+      draggable
     >
-      <CarouselViewport>
-        <CarouselSlider>
-          {images.map((image, index) => (
-            <CarouselCard
-              key={`product-image-${index}`}
-              className={classes.carouselCard}
-              aria-label={`${index + 1} of ${images.length}`}
-            >
-              <Image
-                className={classes.carouselImage}
-                src={image.url}
-                alt={`Product view ${index + 1}`}
-                fit="contain"
-                onClick={onImageClick}
+      <Dialog>
+        <DialogTrigger disableButtonEnhancement>
+          <CarouselViewport className={classes.viewport}>
+            <CarouselSlider style={{ maxHeight: 'calc(100vh - 100px)' }}>
+              {images.map((image, index) => (
+                <CarouselCard
+                  key={image.url}
+                  className={classes.card}
+                  aria-label={`${index + 1} of ${images.length}`}
+                >
+                  <Image
+                    className={classes.image}
+                    src={getSizedImageUrl(image.url, 'large')}
+                    role="presentation"
+                    style={{ viewTransitionName: index === 0 ? `product-image-${id}` : '' }}
+                  />
+                </CarouselCard>
+              ))}
+            </CarouselSlider>
+          </CarouselViewport>
+        </DialogTrigger>
+        <DialogSurface style={{ padding: 12, paddingTop: 48 }}>
+          <DialogActions style={{ position: 'absolute', top: 10, right: 10 }}>
+            <DialogTrigger disableButtonEnhancement>
+              <CustomButton
+                appearance="transparent"
+                icon={
+                  <StyledTooltip contentChildren={'Close'}>
+                    <DismissRegular />
+                  </StyledTooltip>
+                }
               />
-            </CarouselCard>
-          ))}
-        </CarouselSlider>
-      </CarouselViewport>
+            </DialogTrigger>
+          </DialogActions>
+          <DialogBody>
+            <DialogContent>
+              <Carousel
+                groupSize={1}
+                align="center"
+                announcement={getAnnouncement}
+                motion={{ kind: 'slide', duration: 40 }}
+                onActiveIndexChange={(_, d) => setCurrentIndex(d.index)}
+                activeIndex={currentIndex}
+                draggable
+              >
+                <CarouselViewport className={classes.modalViewport} style={{ marginBottom: 0 }}>
+                  <CarouselSlider style={{ maxHeight: 'calc(100vh - 96px)' }}>
+                    {images.map((image, index) => (
+                      <CarouselCard
+                        key={image.url}
+                        className={classes.card}
+                        aria-label={`${index + 1} of ${images.length}`}
+                        style={{ padding: 0 }}
+                      >
+                        <Image
+                          className={classes.modalImage}
+                          src={getSizedImageUrl(image.url, 'zoom')}
+                          role="presentation"
+                        />
+                      </CarouselCard>
+                    ))}
+                  </CarouselSlider>
+                </CarouselViewport>
+                <CarouselNavContainer
+                  next={{ 'aria-label': 'go to next' }}
+                  prev={{ 'aria-label': 'go to prev' }}
+                />
+              </Carousel>
+            </DialogContent>
+          </DialogBody>
+        </DialogSurface>
+      </Dialog>
       <CarouselNavContainer
-        className={classes.navContainer}
-        layout="inline"
-        autoplayTooltip={{ content: 'Autoplay', relationship: 'label' }}
-        nextTooltip={{ content: 'Next image', relationship: 'label' }}
-        prevTooltip={{ content: 'Previous image', relationship: 'label' }}
+        layout="overlay-expanded"
+        next={null}
+        prev={null}
+        style={{ position: 'static', height: 'auto' }}
       >
-        <CarouselNav>
-          {(index) => <CarouselNavButton aria-label={`View image ${index + 1}`} />}
+        <CarouselNav
+          style={{
+            display: 'flex',
+            width: '100%',
+            flexWrap: 'wrap',
+            gap: 8,
+            height: 'auto',
+            position: 'static',
+          }}
+        >
+          {(index) => (
+            <CarouselNavImageButton
+              image={{ src: getSizedImageUrl(images[index].url, 'thumb') }}
+              aria-label={`Carousel Nav Button ${index}`}
+              className={classes.navButton}
+            />
+          )}
         </CarouselNav>
       </CarouselNavContainer>
     </Carousel>

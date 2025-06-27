@@ -7,6 +7,7 @@ import {
 } from '@fluentui/react-components';
 import { type LinkComponent, createLink } from '@tanstack/react-router';
 import { forwardRef } from 'react';
+import { customTheme } from '../../../styles/theme';
 
 const useCss = makeStyles({
   base: {
@@ -16,6 +17,7 @@ const useCss = makeStyles({
     textDecoration: 'none',
     userSelect: 'none',
     display: 'inline-block',
+    lineHeight: 1.1,
     '[data-fui-focus-visible]': {
       textDecoration: 'none',
       '::after': {
@@ -36,6 +38,9 @@ const useCss = makeStyles({
     },
     ':hover::after': { width: '100%' },
   },
+  staticStick: {
+    '::after': { width: '100%' },
+  },
   straight: {
     '::after': {
       backgroundColor: tokens.colorNeutralForeground3Hover,
@@ -48,13 +53,13 @@ const useCss = makeStyles({
   },
   inverted: {
     '::after': {
-      backgroundColor: tokens.colorBrandBackgroundInvertedSelected,
+      backgroundColor: customTheme.colorBrandForeground1,
     },
-    color: tokens.colorBrandBackgroundInvertedPressed,
+    color: customTheme.colorBrandForeground1,
     ':hover': {
-      color: tokens.colorBrandBackgroundInvertedSelected,
+      color: customTheme.colorBrandForeground1,
     },
-    ':active': { color: tokens.colorBrandBackgroundInvertedHover },
+    ':active': { color: customTheme.colorBrandForeground1 },
   },
   muted: {
     color: tokens.colorNeutralForeground4,
@@ -63,12 +68,22 @@ const useCss = makeStyles({
     },
     ':active': { color: tokens.colorNeutralForeground1 },
   },
+  stickless: {
+    color: tokens.colorNeutralForeground1,
+    ':hover': {
+      color: tokens.colorNeutralForeground3Hover,
+    },
+    ':active': { color: tokens.colorNeutralForeground4 },
+  },
   accent: {
     fontWeight: tokens.fontWeightMedium,
     color: tokens.colorNeutralForeground1,
   },
   notInteractive: {
     pointerEvents: 'none',
+  },
+  interactive: {
+    pointerEvents: 'auto',
   },
   block: {
     display: 'flex',
@@ -96,17 +111,29 @@ const useCss = makeStyles({
 type StyledLinkProps = Omit<FluentLinkProps, 'appearance' | 'as'> &
   Omit<React.ComponentPropsWithoutRef<'a'>, 'type'> &
   Partial<{
-    appearance: 'straight' | 'inverted' | 'muted';
+    appearance: 'straight' | 'inverted' | 'muted' | 'stickless';
     as: 'a';
     accent: boolean;
     asBlock: boolean;
     notInteractive: boolean;
     active: boolean;
+    interactive: boolean;
+    staticStick: boolean;
   }>;
 
 export const ExternalLink = forwardRef<HTMLAnchorElement, StyledLinkProps>(
   (
-    { appearance = 'straight', accent, active, asBlock, notInteractive, disabled, ...props },
+    {
+      appearance = 'straight',
+      accent,
+      active,
+      asBlock,
+      notInteractive,
+      interactive,
+      disabled,
+      staticStick,
+      ...props
+    },
     ref,
   ) => {
     const css = useCss();
@@ -126,11 +153,14 @@ export const ExternalLink = forwardRef<HTMLAnchorElement, StyledLinkProps>(
           appearance === 'inverted' && css.inverted,
           appearance === 'inverted' && css.stick,
           appearance === 'muted' && css.muted,
+          appearance === 'stickless' && css.stickless,
+          staticStick && css.staticStick,
           asBlock && css.block,
           accent && css.accent,
           notInteractive && css.notInteractive,
           disabled && css.disabled,
           active && css.active,
+          interactive && css.interactive,
           props.className,
         )}
       >

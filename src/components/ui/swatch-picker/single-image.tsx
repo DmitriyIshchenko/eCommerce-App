@@ -53,7 +53,17 @@ export default function SingleImageSwatchPicker({
         onSelectionChange={handleSelect}
         className={styles.picker}
       >
-        <StyledTooltip key={image.value} text={image.label}>
+        <StyledTooltip
+          key={image.value}
+          contentChildren={
+            <div style={{ display: 'grid', gridTemplateAreas: 'stack', justifyItems: 'end' }}>
+              <img src={image.fullImageSrc} alt="" style={{ width: 214, gridArea: 'stack' }} />
+              <p style={{ gridArea: 'stack', marginTop: 4, marginRight: 5 }}>{image.label}</p>
+            </div>
+          }
+          nonCircular
+          positioning={'above-start'}
+        >
           <ImageSwatch
             className={styles.swatch}
             src={image.swatchSrc}
