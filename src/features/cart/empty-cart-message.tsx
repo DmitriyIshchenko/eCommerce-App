@@ -1,14 +1,24 @@
-import { LargeTitle, makeStyles, tokens } from '@fluentui/react-components';
+import { LargeTitle, makeStyles } from '@fluentui/react-components';
 import ButtonLink from '../../components/ui/links/button';
 import { Cart24Regular } from '@fluentui/react-icons';
 
 const useStyles = makeStyles({
   message: {
+    position: 'relative',
+
     height: '100%',
     display: 'grid',
-    gap: tokens.spacingVerticalXXXL,
     placeContent: 'center',
     textAlign: 'center',
+
+    '& > a': {
+      position: 'absolute',
+      top: '50%',
+      left: '50%',
+      transform: 'translateX(-50%)',
+      marginTop: '70px',
+      width: 'max-content',
+    },
   },
 });
 
@@ -16,7 +26,7 @@ export default function EmptyCartMessage() {
   const styles = useStyles();
   return (
     <div className={styles.message}>
-      <LargeTitle>Your cart is empty!</LargeTitle>
+      <LargeTitle align="center">Your cart is empty!</LargeTitle>
 
       <ButtonLink
         text="Continue shopping"
