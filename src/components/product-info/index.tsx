@@ -25,6 +25,13 @@ import LargeSwatchPicker from '../ui/swatch-picker/large';
 import { useLoading } from '../../hooks/use-loading';
 import { getActiveCart } from '../../lib/api/cart';
 import formatPrice from '../../lib/utils/format-price';
+import { AccordionProductInfo } from './accordion';
+import { ExternalLink } from '../ui/links/fui-tanstack';
+import XIcon from '../ui/icons/x';
+import FacebookIcon from '../ui/icons/facebook';
+import PinterestIcon from '../ui/icons/pinterest';
+
+const BASE_URL = 'https://celestia-art.netlify.app';
 
 interface ProductAttribute {
   value: string | { key: string; label?: string };
@@ -432,13 +439,43 @@ export function ProductInfo({
               />
             </CustomButton>
           </div>
+          <AccordionProductInfo />
           <div
             style={{
               display: 'flex',
               gap: tokens.spacingHorizontalXS,
               alignItems: 'center',
             }}
-          ></div>
+          >
+            <span style={{ lineHeight: 1, fontSize: tokens.fontSizeBase500 }}>Share:</span>
+            <ExternalLink
+              href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(name)}&url=${BASE_URL}${location.pathname}`}
+              appearance="stickless"
+              style={{ fontSize: tokens.fontSizeBase600, lineHeight: 1 }}
+              target="_blank"
+              asBlock
+            >
+              <XIcon />
+            </ExternalLink>
+            <ExternalLink
+              href={`https://www.facebook.com/sharer.php?u=${BASE_URL}${location.pathname}`}
+              appearance="stickless"
+              style={{ fontSize: tokens.fontSizeBase600, lineHeight: 1 }}
+              target="_blank"
+              asBlock
+            >
+              <FacebookIcon />
+            </ExternalLink>
+            <ExternalLink
+              href={`https://pinterest.com/pin/create/button/?url=${BASE_URL}${location.pathname}&media=${images?.[0].url}?description=${encodeURIComponent(name)}`}
+              appearance="stickless"
+              style={{ fontSize: tokens.fontSizeBase600, lineHeight: 1 }}
+              target="_blank"
+              asBlock
+            >
+              <PinterestIcon />
+            </ExternalLink>
+          </div>
         </div>
       </div>
     </div>
