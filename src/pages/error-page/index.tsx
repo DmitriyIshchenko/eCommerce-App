@@ -63,14 +63,16 @@ export default function ErrorPage() {
     <div className={classes.errorPageContainer}>
       <div className={classes.textBlock}>
         <LargeTitle align="center" as="h1">
-          Error
+          Unexpected Error
         </LargeTitle>
       </div>
       <div className={classes.divider}></div>
       <div className={`${classes.textBlock} ${classes.errorWrapper}`}>
-        <p className={classes.text}>Something went wrong. Try again.n</p>
+        <p className={classes.text}>
+          We&apos;re sorry, but it looks like something went wrong while processing your request.
+        </p>
         <CustomButton shape="circular" size="large" onClick={handleClick}>
-          Retry
+          Try Again
         </CustomButton>
       </div>
     </div>

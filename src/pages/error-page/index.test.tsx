@@ -43,7 +43,7 @@ describe('Ensure that page exists', () => {
     await waitFor(() => {
       expect(screen.getByTestId('is-rendered')).toBeInTheDocument();
     });
-    titleElement = screen.getByText(/Error/i);
+    titleElement = screen.getByText(/Unexpected Error/i);
   });
 
   test('Title exist', () => {
