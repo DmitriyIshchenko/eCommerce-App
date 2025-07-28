@@ -44,9 +44,6 @@ interface SearchDrawerProps {
   onOpenChange: (open: boolean) => void;
 }
 
-const DRAWER_TITLE = 'Search';
-const DRAWER_SUBTITLE = 'ALL PRODUCTS';
-
 export default function SearchDrawer({ open, onOpenChange }: SearchDrawerProps) {
   const styles = useStyles();
   const matchRoute = useMatchRoute();
@@ -132,7 +129,7 @@ export default function SearchDrawer({ open, onOpenChange }: SearchDrawerProps) 
             </StyledTooltip>
           }
         >
-          {DRAWER_TITLE}
+          Search
         </DrawerHeaderTitle>
       </DrawerHeader>
 
@@ -147,10 +144,10 @@ export default function SearchDrawer({ open, onOpenChange }: SearchDrawerProps) 
           />
         </div>
         <div>
-          {value && products.length > 0 && (
+          {value && products.length > 0 ? (
             <div>
               <div className={styles.container}>
-                <Body2>{DRAWER_SUBTITLE}</Body2>
+                <Body2>ALL PRODUCTS</Body2>
               </div>
               {products.map((product) => {
                 const categories = categoriesCache[product.id] || {
@@ -178,6 +175,12 @@ export default function SearchDrawer({ open, onOpenChange }: SearchDrawerProps) 
                 );
               })}
             </div>
+          ) : (
+            value.trim() !== '' && (
+              <div className={styles.container}>
+                <Body2>NO PRODUCTS FOUND</Body2>
+              </div>
+            )
           )}
         </div>
       </DrawerBody>
