@@ -33,14 +33,6 @@ import { PRODUCTS_LIMIT } from '../../lib/constants';
 import { isStringifyEqual } from '../../lib/utils/isStringifyEqual';
 import { sortOptions } from '../../lib/sort-options';
 
-const DRAWER_TITLE = 'Refine results';
-const DRAWER_SUBTITLE_FOR_FILTER = 'FILTER';
-const DRAWER_SUBTITLE_FOR_SORT = 'SORT BY:';
-const DRAWER_SUBTITLE_FOR_COLORS = 'Colors';
-const DRAWER_SUBTITLE_FOR_MATERIALS = 'Materials';
-const APPLY_BUTTON_TEXT = 'Apply';
-const RESET_BUTTON_TEXT = 'Reset';
-
 type Filter = ProductSearchSchema;
 
 const useStyles = makeStyles({
@@ -312,7 +304,7 @@ function RouteComponent() {
                     </StyledTooltip>
                   }
                 >
-                  {DRAWER_TITLE}
+                  Refine results
                 </DrawerHeaderTitle>
 
                 <div>
@@ -336,7 +328,7 @@ function RouteComponent() {
                     overflowY: 'auto',
                   }}
                 >
-                  <Subtitle2>{DRAWER_SUBTITLE_FOR_SORT}</Subtitle2>
+                  <Subtitle2>SORT BY:</Subtitle2>
                   <div>
                     <Select
                       size="large"
@@ -356,7 +348,7 @@ function RouteComponent() {
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
                   <div style={{ padding: '12px 20px 0' }}>
-                    <Subtitle2>{DRAWER_SUBTITLE_FOR_FILTER}</Subtitle2>
+                    <Subtitle2>FILTER</Subtitle2>
                   </div>
 
                   <div style={{ maxHeight: 53, overflowY: 'auto', padding: '0 20px' }}>
@@ -375,7 +367,7 @@ function RouteComponent() {
                         filteredProductsCount === 0 || isStringifyEqual(initialFilter, filter)
                       }
                     >
-                      {APPLY_BUTTON_TEXT}
+                      Apply
                     </CustomButton>
                     <CustomButton
                       onClick={() => {
@@ -387,7 +379,7 @@ function RouteComponent() {
                       icon={<DismissFilled />}
                       disabled={!Object.keys(filter).length}
                     >
-                      {RESET_BUTTON_TEXT}
+                      Reset
                     </CustomButton>
                   </div>
                 </div>
@@ -417,7 +409,7 @@ function RouteComponent() {
 
                 <div>
                   <div>
-                    <Label>{DRAWER_SUBTITLE_FOR_COLORS}</Label>
+                    <Label>Colors</Label>
                   </div>
                   <div
                     style={{
@@ -441,7 +433,7 @@ function RouteComponent() {
 
                 <div>
                   <div>
-                    <Label>{DRAWER_SUBTITLE_FOR_MATERIALS}</Label>
+                    <Label>Materials</Label>
                   </div>
                   <div
                     style={{
