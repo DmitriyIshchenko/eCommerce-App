@@ -7,7 +7,7 @@ const useClasses = makeStyles({
     margin: '0 auto',
     width: '100%',
     maxWidth: '1440px',
-    height: '100%',
+    height: '100vh',
     display: 'flex',
     gap: '2rem',
     justifyContent: 'center',
@@ -33,7 +33,7 @@ const useClasses = makeStyles({
     margin: '0 auto',
   },
   divider: {
-    height: 'calc(100vh - 100px)',
+    height: '100%',
     width: '1px',
     backgroundColor: tokens.colorNeutralStroke1,
     '@media(width<620px)': {
