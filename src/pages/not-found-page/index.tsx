@@ -1,8 +1,9 @@
 import { LargeTitle, makeStyles, tokens } from '@fluentui/react-components';
-import CustomButton from '../../components/ui/buttons/custom';
+import ButtonLink from '../../components/ui/links/button';
+import { ArrowRightFilled } from '@fluentui/react-icons';
 
 const useClasses = makeStyles({
-  errorPageContainer: {
+  pageContainer: {
     margin: '0 auto',
     width: '100%',
     maxWidth: '1440px',
@@ -18,7 +19,7 @@ const useClasses = makeStyles({
       padding: '40px',
     },
   },
-  errorWrapper: {
+  wrapper: {
     display: 'flex',
     gap: '20px',
     flexDirection: 'column',
@@ -51,27 +52,20 @@ const useClasses = makeStyles({
   },
 });
 
-export default function ErrorPage() {
+export default function NotFoundPage() {
   const classes = useClasses();
 
-  const handleClick = () => {
-    localStorage.clear();
-    window.location.reload();
-  };
-
   return (
-    <div className={classes.errorPageContainer}>
+    <div className={classes.pageContainer}>
       <div className={classes.textBlock}>
         <LargeTitle align="center" as="h1">
-          Error
+          Page not found
         </LargeTitle>
       </div>
       <div className={classes.divider}></div>
-      <div className={`${classes.textBlock} ${classes.errorWrapper}`}>
-        <p className={classes.text}>Something went wrong. Try again.n</p>
-        <CustomButton shape="circular" size="large" onClick={handleClick}>
-          Retry
-        </CustomButton>
+      <div className={`${classes.textBlock} ${classes.wrapper}`}>
+        <p className={classes.text}>The page you are looking for cannot be found</p>
+        <ButtonLink text="GO TO HOME PAGE" to="/" icon={<ArrowRightFilled />} />
       </div>
     </div>
   );
