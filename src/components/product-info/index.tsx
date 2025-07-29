@@ -16,7 +16,6 @@ import { useEffect, useRef, useState } from 'react';
 import useMatchMediaQuery from '../../hooks/use-match-media';
 import { allColors, allMaterials } from '../../lib/constants';
 import type { ProductInfoProps } from '../../lib/types';
-import { ProductCarousel } from '../carousel';
 import CustomButton from '../ui/buttons/custom';
 import CustomSpinButton from '../ui/buttons/custom-spin';
 import CustomSpinner from '../ui/spinners/custom';
@@ -30,6 +29,7 @@ import { ExternalLink } from '../ui/links/fui-tanstack';
 import XIcon from '../ui/icons/x';
 import FacebookIcon from '../ui/icons/facebook';
 import PinterestIcon from '../ui/icons/pinterest';
+import { ProductFancyCarousel } from '../carousel/fancy';
 
 const BASE_URL = 'https://celestia-art.netlify.app';
 
@@ -273,7 +273,11 @@ export function ProductInfo({
             <Divider style={{ width: '200%', marginLeft: '-50%' }} />
           </div>
         )}
-        <ProductCarousel images={images} style={{ width: '100%', position: 'relative' }} id={id} />
+        <ProductFancyCarousel
+          images={images}
+          style={{ width: '100%', position: 'relative' }}
+          id={id}
+        />
       </div>
       <div className={styles.right}>
         <div className={styles.productInfo}>

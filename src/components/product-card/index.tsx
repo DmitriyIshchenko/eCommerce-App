@@ -82,7 +82,11 @@ export function ProductCard(props: ProductCardProps) {
         }}
       >
         <Image
-          style={{ transition: 'transform 0.4s ease-in-out' }}
+          style={{
+            transition: 'transform 0.4s ease-in-out',
+            aspectRatio: 'auto',
+            objectFit: 'contain',
+          }}
           src={props.image ? getSizedImageUrl(props.image, 'medium') : ''}
           alt={props.value.split('-').join(' ')}
           block
