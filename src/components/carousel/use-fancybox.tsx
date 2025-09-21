@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-import { type FancyboxOptions, Fancybox } from '@fancyapps/ui/dist/fancybox/';
+import { type FancyboxOptions, Fancybox } from '@fancyapps/ui';
 import '@fancyapps/ui/dist/fancybox/fancybox.css';
 
 export default function useFancybox(options: Partial<FancyboxOptions> = {}) {

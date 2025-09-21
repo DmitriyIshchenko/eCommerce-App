@@ -146,6 +146,10 @@ export function ProductInfo({
   const initialDiscountRef = useRef(discount);
   const initialVariantsRef = useRef(variants);
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   const variantId =
     variants?.find((v: { attributes?: ProductAttribute[] }): boolean => {
       const materialAttr = v.attributes?.[0];
