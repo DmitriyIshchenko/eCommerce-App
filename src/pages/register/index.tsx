@@ -35,11 +35,11 @@ const useStyles = makeStyles({
   },
 
   content: {
-    padding: tokens.spacingHorizontalXXXL,
+    padding: '60px',
 
     '@media(max-width: 768px)': {
       overflowY: 'visible',
-      padding: tokens.spacingHorizontalM,
+      padding: '40px',
       border: 'none',
     },
   },
