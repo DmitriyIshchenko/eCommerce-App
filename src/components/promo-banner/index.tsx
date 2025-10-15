@@ -1,7 +1,7 @@
 import { makeStyles, Text, tokens } from '@fluentui/react-components';
 import CopyButton from '../ui/buttons/copy';
-import { useRef, useState } from 'react';
-import { PROMO_CODE_BIG_PRICE, PROMO_CODE_TOTAL } from '../../lib/constants';
+import { useState } from 'react';
+import { PROMO_CODES } from '../../lib/constants';
 
 const useStyles = makeStyles({
   container: {
@@ -41,15 +41,12 @@ export function PromoBanner() {
   const [copyTotal, setCopyTotal] = useState(false);
   const [copyBigPrice, setCopyBigPrice] = useState(false);
 
-  const textRefTotal = useRef<HTMLSpanElement>(null);
-  const textRefBigPrice = useRef<HTMLSpanElement>(null);
-
   const handleCopy = async (
-    ref: React.RefObject<HTMLSpanElement>,
+    text: string,
     setCopy: React.Dispatch<React.SetStateAction<boolean>>,
   ) => {
     try {
-      await navigator.clipboard.writeText(ref.current?.innerText ?? '');
+      await navigator.clipboard.writeText(text);
       setCopy(true);
       setTimeout(() => setCopy(false), 2000);
     } catch {
@@ -64,10 +61,11 @@ export function PromoBanner() {
       </Text>
 
       <div className={styles.promoContainer}>
-        <CopyButton onClick={() => void handleCopy(textRefTotal, setCopyTotal)} copy={copyTotal} />
-        <Text className={styles.promoCode} ref={textRefTotal}>
-          {PROMO_CODE_TOTAL}
-        </Text>
+        <CopyButton
+          onClick={() => void handleCopy(PROMO_CODES.TOTAL, setCopyTotal)}
+          copy={copyTotal}
+        />
+        <Text className={styles.promoCode}>{PROMO_CODES.TOTAL}</Text>
       </div>
 
       <Text className={styles.divider} size={200} align="center">
@@ -80,12 +78,10 @@ export function PromoBanner() {
 
       <div className={styles.promoContainer}>
         <CopyButton
-          onClick={() => void handleCopy(textRefBigPrice, setCopyBigPrice)}
+          onClick={() => void handleCopy(PROMO_CODES.BIG_PRICE, setCopyBigPrice)}
           copy={copyBigPrice}
         />
-        <Text className={styles.promoCode} ref={textRefBigPrice}>
-          {PROMO_CODE_BIG_PRICE}
-        </Text>
+        <Text className={styles.promoCode}>{PROMO_CODES.BIG_PRICE}</Text>
       </div>
     </div>
   );

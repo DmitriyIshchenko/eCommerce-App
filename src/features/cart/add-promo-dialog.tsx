@@ -97,7 +97,7 @@ export default function AddPromoDialog() {
       }
 
       notify({
-        title: `Discount added to your cart! 😄`,
+        title: 'Discount added to your cart! 😄',
         content: 'Great art, even greater price — your cart is now more inspiring.',
         intent: 'success',
         timeout: 4000,
