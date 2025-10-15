@@ -8,7 +8,7 @@ const useStyles = makeStyles({
     display: 'grid',
     gridTemplateColumns: '1fr 1fr',
 
-    '@media(width<768px)': {
+    '@media(max-width: 768px)': {
       gridTemplateColumns: '1fr',
     },
   },
@@ -25,9 +25,10 @@ const useStyles = makeStyles({
     padding: tokens.spacingVerticalXXXL,
     borderRight: `1px solid ${tokens.colorNeutralStroke1}`,
 
-    '@media(width<768px)': {
+    '@media(max-width: 768px)': {
       position: 'static',
       height: 'auto',
+      minHeight: '35vh',
       borderRight: 'none',
       borderBottom: `1px solid ${tokens.colorNeutralStroke1}`,
     },
@@ -36,7 +37,7 @@ const useStyles = makeStyles({
   content: {
     padding: tokens.spacingHorizontalXXXL,
 
-    '@media(width<768px)': {
+    '@media(max-width: 768px)': {
       overflowY: 'visible',
       padding: tokens.spacingHorizontalM,
       border: 'none',

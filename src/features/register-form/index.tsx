@@ -1,6 +1,5 @@
 import { KeyRegular, MailRegular, Person24Regular } from '@fluentui/react-icons';
 import {
-  Button,
   Checkbox,
   Label,
   Link,
@@ -29,6 +28,7 @@ import { useUser } from '../../hooks/use-user';
 import { createLink, useNavigate } from '@tanstack/react-router';
 import AddressFieldset from '../../components/ui/address-fieldset';
 import { useLoading } from '../../hooks/use-loading';
+import CustomButton from '../../components/ui/buttons/custom';
 
 interface NotifyOptions {
   title: string;
@@ -237,15 +237,9 @@ export default function RegisterForm() {
         />
 
         <div className={styles.buttonContainer}>
-          <Button
-            type="submit"
-            size="large"
-            appearance="primary"
-            shape="circular"
-            disabled={loading}
-          >
+          <CustomButton type="submit" size="large" shape="circular" disabled={loading}>
             Submit
-          </Button>
+          </CustomButton>
 
           <div>
             Already have an account? <CustomLink to="/login">Sign in</CustomLink>

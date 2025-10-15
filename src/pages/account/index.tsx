@@ -28,6 +28,7 @@ const useStyles = makeStyles({
     '@media(width<768px)': {
       position: 'static',
       height: 'auto',
+      minHeight: '35vh',
       borderRight: 'none',
       borderBottom: `1px solid ${tokens.colorNeutralStroke1}`,
     },
