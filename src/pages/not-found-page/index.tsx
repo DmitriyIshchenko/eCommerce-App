@@ -48,7 +48,7 @@ const useClasses = makeStyles({
   },
   text: {
     textAlign: 'center',
-    fontSize: `1.1rem`,
+    fontSize: '1.1rem',
   },
 });
 

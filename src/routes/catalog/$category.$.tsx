@@ -78,47 +78,62 @@ export const Route = createFileRoute('/catalog/$category/$')({
     params: { category, _splat },
     context: { categories },
   }) => {
-    const categorySlug = _splat && _splat.length > 0 ? _splat : category;
-    const categoryResponse = await getCategoryBySlug(categorySlug);
-    const categoryId = categoryResponse ? categoryResponse.id : undefined;
+    try {
+      const categorySlug = _splat && _splat.length > 0 ? _splat : category;
+      const categoryResponse = await getCategoryBySlug(categorySlug);
+      const categoryId = categoryResponse ? categoryResponse.id : undefined;
 
-    const filteredProductsResponse = await getProductsBySearch(
-      categoryId,
-      page,
-      q,
-      colors,
-      materials,
-      minPrice,
-      maxPrice,
-      sort,
-    );
+      const filteredProductsResponse = await getProductsBySearch(
+        categoryId,
+        page,
+        q,
+        colors,
+        materials,
+        minPrice,
+        maxPrice,
+        sort,
+      );
 
-    const filteredProducts = filteredProductsResponse.body.results;
-    const filteredProductsCount = filteredProductsResponse.body.total ?? 0;
+      const filteredProducts = filteredProductsResponse.body.results;
+      const filteredProductsCount = filteredProductsResponse.body.total ?? 0;
 
-    const allProductsCount = (await getProductsBySearch(categoryId)).body.total;
+      const allProductsCount = (await getProductsBySearch(categoryId)).body.total;
 
-    const {
-      categoryColors,
-      categoryMaterials,
-      maxCategoryPrice,
-      minCategoryPrice,
-      total: categoryTotal,
-    } = await getCategoryProductsFacets(categoryId);
+      const {
+        categoryColors,
+        categoryMaterials,
+        maxCategoryPrice,
+        minCategoryPrice,
+        total: categoryTotal,
+      } = await getCategoryProductsFacets(categoryId);
 
-    const resultResponse = {
-      filteredProducts,
-      filteredProductsCount,
-      allProductsCount,
-      categories,
-      categoryColors,
-      categoryMaterials,
-      minCategoryPrice,
-      maxCategoryPrice,
-      categoryTotal,
-      categoryId,
-    };
-    return resultResponse;
+      const resultResponse = {
+        filteredProducts,
+        filteredProductsCount,
+        allProductsCount,
+        categories,
+        categoryColors,
+        categoryMaterials,
+        minCategoryPrice,
+        maxCategoryPrice,
+        categoryTotal,
+        categoryId,
+      };
+      return resultResponse;
+    } catch {
+      return {
+        filteredProducts: [],
+        filteredProductsCount: 0,
+        allProductsCount: 0,
+        categories: [],
+        categoryColors: [],
+        categoryMaterials: [],
+        minCategoryPrice: 0,
+        maxCategoryPrice: 0,
+        categoryTotal: 0,
+        categoryId: undefined,
+      };
+    }
   },
 });
 
