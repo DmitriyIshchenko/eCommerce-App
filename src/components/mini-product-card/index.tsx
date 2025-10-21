@@ -44,11 +44,23 @@ export function MiniProductCard(props: MiniProductCardProps) {
       />
       <CardHeader
         image={
-          <img
-            src={props.image ? getSizedImageUrl(props.image, 'thumb') : defaultImage}
-            alt={props.value}
-            style={{ width: '50px' }}
-          />
+          <div
+            style={{
+              width: 50,
+              aspectRatio: '1 / 1',
+              overflow: 'hidden',
+            }}
+          >
+            <img
+              src={props.image ? getSizedImageUrl(props.image, 'thumb') : defaultImage}
+              alt={props.value}
+              style={{
+                width: '100%',
+                height: '100%',
+                objectFit: 'contain',
+              }}
+            />
+          </div>
         }
         header={
           <div>

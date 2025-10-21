@@ -1,7 +1,6 @@
 import { Outlet, createRootRouteWithContext, useLocation } from '@tanstack/react-router';
 import { Header } from '../components/header';
 import { Footer } from '../components/footer';
-import ErrorPage from '../pages/error-page';
 import { getCategories } from '../lib/api/get-categories';
 import type { Category } from '@commercetools/platform-sdk';
 import { isTokenValid } from '../lib/api/token-storage';
@@ -10,6 +9,8 @@ import { PromoBanner } from '../components/promo-banner';
 import CustomBreadcrumb from '../components/ui/breadcrumb';
 import type { Link } from '../lib/types';
 import { formatString } from '../lib/utils/format-string';
+import NotFoundPage from '../pages/not-found-page';
+import ErrorPage from '../pages/error-page';
 
 interface RouterContext {
   categories: Category[];
@@ -21,20 +22,20 @@ export const Route = createRootRouteWithContext<RouterContext>()({
   component: RootComponent,
 
   beforeLoad: async () => {
-    if (!isTokenValid('anonymous') && !isTokenValid('customer')) {
-      await createCartForCurrentCustomer({ currency: 'USD' });
+    try {
+      if (!isTokenValid('anonymous') && !isTokenValid('customer')) {
+        await createCartForCurrentCustomer({ currency: 'USD' });
+      }
+
+      categories ??= await getCategories();
+
+      return { categories: categories ?? [] };
+    } catch {
+      return { categories: [] };
     }
-
-    categories ??= await getCategories();
-
-    if (!categories) {
-      throw new Error('Categories not found');
-    }
-
-    return { categories };
   },
 
-  notFoundComponent: () => <ErrorPage />,
+  notFoundComponent: () => <NotFoundPage />,
   errorComponent: () => <ErrorPage />,
 });
 

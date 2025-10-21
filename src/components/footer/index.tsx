@@ -1,4 +1,4 @@
-import { Divider, makeStyles, tokens, typographyStyles } from '@fluentui/react-components';
+import { makeStyles, Text, tokens, typographyStyles } from '@fluentui/react-components';
 import FacebookIcon from '../ui/icons/facebook';
 import InstagramIcon from '../ui/icons/instagram';
 import PinterestIcon from '../ui/icons/pinterest';
@@ -159,19 +159,13 @@ export function Footer() {
           </nav>
         </div>
       </div>
-      <div>
-        <Divider />
-        <div style={{ padding: 40 }}>
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              gap: 20,
-              flexWrap: 'wrap',
-            }}
-          ></div>
-        </div>
+      <div
+        style={{
+          textAlign: 'center',
+          padding: `${tokens.spacingVerticalXXXL} ${tokens.spacingHorizontalXXXL}`,
+        }}
+      >
+        <Text className={classes.copyRight}>© 2025 Celestia Art</Text>
       </div>
     </footer>
   );

@@ -121,5 +121,7 @@ export const TEAM_MEMBERS: TeamMemberData[] = [
   },
 ];
 
-export const PROMO_CODE_TOTAL = 'FINE-ART-15';
-export const PROMO_CODE_BIG_PRICE = 'GALLERY-GOALS';
+export const PROMO_CODES = {
+  TOTAL: 'FINE-ART-15',
+  BIG_PRICE: 'GALLERY-GOALS',
+};

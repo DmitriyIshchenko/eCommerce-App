@@ -75,14 +75,20 @@ export function ProductCard(props: ProductCardProps) {
       />
       <CardPreview
         style={{
-          aspectRatio: 1,
+          aspectRatio: '1 / 1',
+          overflow: 'hidden',
           margin: 0,
           padding: '8%',
           backgroundColor: tokens.colorNeutralBackground1,
         }}
       >
         <Image
-          style={{ transition: 'transform 0.4s ease-in-out' }}
+          style={{
+            width: '100%',
+            height: '100%',
+            transition: 'transform 0.4s ease-in-out',
+            objectFit: 'contain',
+          }}
           src={props.image ? getSizedImageUrl(props.image, 'medium') : ''}
           alt={props.value.split('-').join(' ')}
           block

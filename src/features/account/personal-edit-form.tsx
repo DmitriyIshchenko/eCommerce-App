@@ -6,7 +6,6 @@ import DatePickerField from '../../components/ui/date-picker-field';
 import { useUser } from '../../hooks/use-user';
 import ControlledInputField from '../../components/ui/controlled-input';
 import {
-  Button,
   Spinner,
   Toast,
   ToastBody,
@@ -18,6 +17,7 @@ import {
 import { useLoading } from '../../hooks/use-loading';
 import { useNavigate } from '@tanstack/react-router';
 import { TOASTER_ID } from '../../lib/constants';
+import CustomButton from '../../components/ui/buttons/custom';
 
 interface NotifyOptions {
   title: string;
@@ -138,9 +138,9 @@ export default function PersonalEditForm() {
           placeholder="Select a date"
         />
 
-        <Button type="submit" appearance="primary" shape="circular" size="large">
+        <CustomButton type="submit" size="large" shape="circular">
           Save
-        </Button>
+        </CustomButton>
       </form>
     </FormProvider>
   );

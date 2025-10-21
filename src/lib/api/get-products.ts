@@ -1,5 +1,4 @@
 import { allColors, allMaterials, PRODUCTS_LIMIT, type Color, type Material } from '../constants';
-import { capitalizeString } from '../utils/capitalizeString';
 import { getApiRootSmart } from './client';
 import { isRangeFacetResult, isTermFacetResult } from './type-guards/facet';
 
@@ -165,7 +164,7 @@ export async function getCategoryProductsFacets(...args: Parameters<typeof getPr
 
   if (materialFacet && isTermFacetResult(materialFacet)) {
     categoryMaterials = materialFacet.terms.map((m) => {
-      const value = typeof m.term === 'string' ? capitalizeString(m.term) : '';
+      const value = typeof m.term === 'string' ? m.term : '';
       const material = allMaterials.find((v) => v.value === value);
       return {
         swatchSrc: material?.swatchSrc ?? '',

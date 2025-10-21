@@ -4,6 +4,7 @@ import {
   InteractionTagSecondary,
   TagGroup,
   makeStyles,
+  tokens,
 } from '@fluentui/react-components';
 import {
   ColorRegular,
@@ -28,7 +29,7 @@ const useStyles = makeStyles({
     pointerEvents: 'none',
     '> span:nth-child(2)': {
       padding: 0,
-      fontSize: '12px',
+      fontSize: tokens.fontSizeBase200,
       fontWeight: 450,
     },
   },

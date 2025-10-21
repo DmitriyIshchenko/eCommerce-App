@@ -1,6 +1,6 @@
 import { LargeTitle, makeStyles, tokens } from '@fluentui/react-components';
 import ButtonLink from '../../components/ui/links/button';
-import { Cart24Regular } from '@fluentui/react-icons';
+import { ArrowRightFilled } from '@fluentui/react-icons';
 
 const useStyles = makeStyles({
   message: {
@@ -22,7 +22,7 @@ export default function EmptyCartMessage() {
         text="Continue shopping"
         to="/catalog/$category/$"
         params={{ category: 'all' }}
-        icon={<Cart24Regular />}
+        icon={<ArrowRightFilled />}
       />
     </div>
   );

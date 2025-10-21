@@ -42,11 +42,17 @@ const useStyles = makeStyles({
       gridTemplateColumns: '100px 1fr',
     },
   },
-  image: {
+  imageContainer: {
     gridColumn: '1/2',
     gridRow: '1/4',
     width: '100%',
-    objectFit: 'cover',
+    aspectRatio: '1 / 1',
+    overflow: 'hidden',
+  },
+  image: {
+    width: '100%',
+    height: '100%',
+    objectFit: 'contain',
   },
   info: {
     display: 'grid',
@@ -125,7 +131,13 @@ export default function CartItem({ item }: Props) {
 
   return (
     <article className={styles.item}>
-      <Image className={styles.image} alt={imageLabel} src={getSizedImageUrl(imageUrl, 'small')} />
+      <div className={styles.imageContainer}>
+        <Image
+          className={styles.image}
+          alt={imageLabel}
+          src={getSizedImageUrl(imageUrl, 'small')}
+        />
+      </div>
 
       <div className={styles.info}>
         <InternalLink

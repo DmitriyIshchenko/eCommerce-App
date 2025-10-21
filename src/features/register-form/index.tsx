@@ -1,9 +1,7 @@
 import { KeyRegular, MailRegular, Person24Regular } from '@fluentui/react-icons';
 import {
-  Button,
   Checkbox,
   Label,
-  Link,
   Spinner,
   Toast,
   ToastBody,
@@ -26,9 +24,11 @@ import ShowHideButton from '../../components/ui/buttons/show-hide';
 import DatePickerField from '../../components/ui/date-picker-field';
 import { DEFAULT_ADDRESS, TOASTER_ID } from '../../lib/constants';
 import { useUser } from '../../hooks/use-user';
-import { createLink, useNavigate } from '@tanstack/react-router';
+import { useNavigate } from '@tanstack/react-router';
 import AddressFieldset from '../../components/ui/address-fieldset';
 import { useLoading } from '../../hooks/use-loading';
+import CustomButton from '../../components/ui/buttons/custom';
+import { InternalLink } from '../../components/ui/links/fui-tanstack';
 
 interface NotifyOptions {
   title: string;
@@ -73,7 +73,6 @@ export default function RegisterForm() {
   const { loading, setLoading } = useLoading();
   const progressToastId = useId('progress');
 
-  const CustomLink = createLink(Link);
   const navigate = useNavigate({ from: '/register' });
   const { dispatchToast, dismissToast } = useToastController(TOASTER_ID);
 
@@ -237,18 +236,12 @@ export default function RegisterForm() {
         />
 
         <div className={styles.buttonContainer}>
-          <Button
-            type="submit"
-            size="large"
-            appearance="primary"
-            shape="circular"
-            disabled={loading}
-          >
+          <CustomButton type="submit" size="large" shape="circular" disabled={loading}>
             Submit
-          </Button>
+          </CustomButton>
 
           <div>
-            Already have an account? <CustomLink to="/login">Sign in</CustomLink>
+            Already have an account? <InternalLink to="/login">Sign in</InternalLink>
           </div>
         </div>
 

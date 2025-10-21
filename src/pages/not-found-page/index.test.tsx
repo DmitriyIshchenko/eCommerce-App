@@ -10,7 +10,7 @@ import { render, waitFor, screen } from '@testing-library/react';
 import { UserContextProvider } from '../../components/contexts/user/context-provider';
 import { LoadingContextProvider } from '../../components/contexts/loading/context-provider';
 import { CartContextProvider } from '../../components/contexts/cart/context-provider';
-import ErrorPage from '.';
+import NotFoundPage from '.';
 
 describe('Ensure that page exists', () => {
   let titleElement: HTMLHeadingElement;
@@ -25,7 +25,7 @@ describe('Ensure that page exists', () => {
           <CartContextProvider>
             <UserContextProvider>
               <div data-testid="is-rendered">
-                <ErrorPage />
+                <NotFoundPage />
               </div>
             </UserContextProvider>
           </CartContextProvider>
@@ -43,7 +43,7 @@ describe('Ensure that page exists', () => {
     await waitFor(() => {
       expect(screen.getByTestId('is-rendered')).toBeInTheDocument();
     });
-    titleElement = screen.getByText(/Unexpected Error/i);
+    titleElement = screen.getByText(/Page not found/i);
   });
 
   test('Title exist', () => {

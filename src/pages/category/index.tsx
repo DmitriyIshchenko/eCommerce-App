@@ -49,6 +49,19 @@ const useStyles = makeStyles({
       gridTemplateColumns: '1fr',
     },
   },
+  noProductsHead: {
+    minHeight: '35vh',
+    display: 'grid',
+    flexBasis: '50%',
+    gridTemplateColumns: '1fr',
+    alignItems: 'center',
+    justifyContent: 'center',
+    textAlign: 'center',
+  },
+  noProductsText: {
+    textAlign: 'center',
+    fontSize: '1.1rem',
+  },
 });
 
 function getTitle(categoryName: string, subcategoryName?: string) {
@@ -117,10 +130,9 @@ export default function CategoryPage({
             {title}
           </LargeTitle>
         </div>
-        <div className={styles.head}>
-          {products
-            ?.slice(0, 4)
-            .map((product) => (
+        {products && products?.length > 0 ? (
+          <div className={styles.head}>
+            {products.slice(0, 4).map((product) => (
               <ProductCard
                 id={product.id}
                 slug={product.slug['en-US']}
@@ -137,7 +149,12 @@ export default function CategoryPage({
                 subCategory={(subcategoryName ?? 'whole').toLowerCase().replace(/\s+/g, '-')}
               />
             ))}
-        </div>
+          </div>
+        ) : (
+          <div className={styles.noProductsHead}>
+            <p className={styles.noProductsText}>No products found</p>
+          </div>
+        )}
       </div>
       <div className={styles.tail}>
         {products
